@@ -183,6 +183,48 @@ export function confirmDialog(message, { title = 'Please confirm', confirmText =
   });
 }
 
+/**
+ * Asks for a written reason (reject / abort / admin notes). Resolves the trimmed text,
+ * or null when cancelled. The length rule matches the server (5–200 characters).
+ */
+export function reasonDialog({ title, message, label = 'Reason', confirmText = 'Submit', danger = false, min = 5, max = 200, placeholder = '' }) {
+  return new Promise((resolve) => {
+    const close = (answer) => { backdrop.remove(); document.removeEventListener('keydown', onKey); resolve(answer); };
+    const onKey = (e) => { if (e.key === 'Escape') close(null); };
+    const textarea = el('textarea', { attrs: { id: 'reason-input', maxlength: max, placeholder, required: true } });
+    const error = el('div', { className: 'field-error' });
+    const counter = el('div', { className: 'hint', text: `0 / ${max}` });
+    textarea.addEventListener('input', () => { counter.textContent = `${textarea.value.length} / ${max}`; });
+
+    const form = el('form', { className: 'form', attrs: { novalidate: true } }, [
+      message ? el('p', { text: message, className: 'mb-0' }) : null,
+      el('div', { className: 'field' }, [el('label', { text: label, attrs: { for: 'reason-input' } }), textarea, counter, error]),
+      el('div', { className: 'modal-actions' }, [
+        el('button', { text: 'Cancel', className: 'btn btn-secondary', attrs: { type: 'button' }, on: { click: () => close(null) } }),
+        el('button', { text: confirmText, className: `btn ${danger ? 'btn-danger' : 'btn-primary'}`, attrs: { type: 'submit' } })
+      ])
+    ]);
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = textarea.value.trim();
+      if (text.length < min || text.length > max) {
+        error.textContent = `Write ${min} to ${max} characters.`;
+        textarea.classList.add('invalid');
+        textarea.focus();
+        return;
+      }
+      close(text);
+    });
+
+    const backdrop = el('div', { className: 'modal-backdrop', on: { click: (e) => { if (e.target === backdrop) close(null); } } }, [
+      el('div', { className: 'modal', attrs: { role: 'dialog', 'aria-modal': 'true' } }, [el('h2', { text: title }), form])
+    ]);
+    document.addEventListener('keydown', onKey);
+    document.body.append(backdrop);
+    textarea.focus();
+  });
+}
+
 // Loading and empty placeholders for lists
 export function loadingNode(text = 'Loading…') {
   return el('div', { text, className: 'loading' });

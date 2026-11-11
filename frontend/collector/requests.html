@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My jobs — WRR</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/collector-requests.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>My jobs</h1>
+      <button type="button" class="btn btn-secondary btn-small" id="refresh">Refresh</button>
+    </div>
+
+    <section class="card mb-2">
+      <div class="row row-between">
+        <div class="tabs" role="tablist" aria-label="Show jobs">
+          <button type="button" class="tab" role="tab" data-status="Assigned,Accepted,Collected">All open</button>
+          <button type="button" class="tab" role="tab" data-status="Assigned">New</button>
+          <button type="button" class="tab" role="tab" data-status="Accepted">To collect</button>
+          <button type="button" class="tab" role="tab" data-status="Collected">To complete</button>
+        </div>
+        <div class="field">
+          <label for="zone" class="sr-only">Zone</label>
+          <select id="zone">
+            <option value="">All zones</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <p class="muted small" id="count"></p>
+    <div id="jobs" class="grid grid-2"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

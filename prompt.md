@@ -60,7 +60,7 @@ The prompts work in two situations:
 - [x] C4 — User: new pickup request
 - [x] C5 — User: my requests, details timeline, cancel
 - [x] C6 — User: points history + cash redemption
-- [ ] C7 — Collector: dashboard + job actions (accept / reject / abort)
+- [x] C7 — Collector: dashboard + job actions (accept / reject / abort)
 - [ ] C8 — Collector: record weight, complete, history
 - [ ] C9 — Admin: dashboard KPIs
 - [ ] C10 — Admin: request queue + assignment
@@ -664,7 +664,7 @@ Done when: a successful redemption lowers the balance immediately and shows as P
 messages appear clearly.
 ```
 
-### C7 — Collector: dashboard + job actions  `[ ]`
+### C7 — Collector: dashboard + job actions  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.2 steps 1–3, FR-08, api-spec.md

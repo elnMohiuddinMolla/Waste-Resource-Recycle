@@ -17,8 +17,41 @@
         <h1 id="greeting">Loading…</h1>
         <p id="zone" class="muted mb-0"></p>
       </div>
+      <a class="btn btn-primary" href="/collector/requests.html">My jobs</a>
     </div>
 
+    <section class="grid grid-4" aria-label="Your jobs">
+      <a class="card card-link" href="/collector/requests.html?status=Assigned">
+        <div class="stat-label">New — waiting for you</div>
+        <div class="stat-value" id="stat-assigned">—</div>
+        <div class="muted small">Accept or reject</div>
+      </a>
+      <a class="card card-link" href="/collector/requests.html?status=Accepted">
+        <div class="stat-label">Accepted — to collect</div>
+        <div class="stat-value" id="stat-accepted">—</div>
+        <div class="muted small">Go, weigh and record</div>
+      </a>
+      <a class="card card-link" href="/collector/requests.html?status=Collected">
+        <div class="stat-label">Weighed — to complete</div>
+        <div class="stat-value" id="stat-collected">—</div>
+        <div class="muted small">Mark as completed</div>
+      </a>
+      <a class="card card-link" href="/collector/records.html">
+        <div class="stat-label">Completed today</div>
+        <div class="stat-value" id="stat-today">—</div>
+        <div class="muted small" id="stat-today-kg"></div>
+      </a>
+    </section>
+
+    <section class="card mt-2">
+      <div class="row row-between">
+        <h2 class="mb-0">Latest notifications</h2>
+        <button type="button" class="btn btn-secondary btn-small" id="mark-all" disabled>Mark all as read</button>
+      </div>
+      <div id="notifications" class="mt-1"></div>
+    </section>
+
+    <h2 class="mt-3">Shortcuts</h2>
     <div id="shortcuts" class="grid grid-3"></div>
   </main>
 
