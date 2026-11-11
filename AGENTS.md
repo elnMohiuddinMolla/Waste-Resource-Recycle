@@ -75,13 +75,13 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 
 **Testing tools:** `npm run e2e` (full story through the API, 45 checks, `wrr_test`), `npm run check:frontend` (static page checks, no database). Results and the manual browser checklist: `docs/e2e-walkthrough.md`.
 
-D1 done: browser checklist run in Chrome (18/18; two layout/UX fixes). Firefox/Edge and CSV-in-Excel are left to check by hand.
+D1 done: browser checklist run in Chrome (18/18; two layout/UX fixes). Edge responsive check: 200/200 page views at 8 sizes (320–1920 px). Firefox and CSV-in-Excel are left to check by hand.
 
 D2 done: `docs/test-cases.md` (50 test cases covering FR-01–FR-21, EC-01–EC-06 and NFRs; 47 pass, 3 not run).
 
 D3 done: `docs/er-diagram.md` (Mermaid ER from `database/schema.sql`), `docs/viva-notes.md` (architecture, transitions, double-spending, snapshots, cookie, 20 questions).
 
-**The project is complete** (prompt.md A1–D3). Left to do by hand: open the site in Firefox and Edge, open an exported CSV in Excel (`docs/e2e-walkthrough.md`).
+**The project is complete** (prompt.md A1–D3). Left to do by hand: open the site in Firefox, open an exported CSV in Excel (`docs/e2e-walkthrough.md`).
 
 **Tests:** `npm test` = unit tests (no database). `npm run test:api` = API tests; they rebuild a separate database `wrr_test` (override with `TEST_DB_NAME`) from `database/*.sql` and refuse to run on `wrr_db`. Add tests for each new module.
 

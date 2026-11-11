@@ -19,8 +19,8 @@
 | Page views in Chrome at 360 px and 1280 px (D1) | `docs/e2e-walkthrough.md` §2 | 50 | 50 | 0 | 100 % |
 | Performance (NFR-02) | `npm run perf` | 3 limits | 3 | 0 | 100 % |
 
-**Test cases in this document:** 50 (21 FR, 6 EC, 23 NFR/security).
-**Result:** 47 Pass, 0 Fail, 3 Not run (TC-37 HTTPS in deployment, TC-47 uptime, TC-49 Firefox/Edge).
+**Test cases in this document:** 51 (25 FR, 6 EC, 20 NFR/security).
+**Result:** 48 Pass, 0 Fail, 3 Not run (TC-37 HTTPS in deployment, TC-47 uptime, TC-49 Firefox).
 
 **How to read the "Actual result" column:** each row names where the evidence comes from:
 - `unit:` = a unit test in `backend/test/unit/`.
@@ -105,7 +105,8 @@ Plastic is 10.00 points/kg; the active rule is ৳0.50 per point with a minimum 
 | TC-46 | NFR-04 | ACID and non-negative balance | — | Parallel completes, parallel redemptions, parallel rule switches, refused correction | No double credit, no overspend, one active rule, rollback leaves nothing behind | api `collector`, `redemption`, `rule`, `record` (concurrency and rollback tests) | Pass |
 | TC-47 | NFR-05 | ≥ 99 % uptime 8 am – 10 pm | Deployed server and monitoring | Measure over a period | ≥ 99 % | Not measurable on a local lab machine | Not run |
 | TC-48 | NFR-06 | Chrome desktop and 360 px phone | — | Open all 25 page views at 360 px and 1280 px; run the story | No sideways page scroll, Menu button works, dialogs fit, no console errors | browser (Chrome 157): all pass after fix 1 in `docs/e2e-walkthrough.md` §3 | Pass |
-| TC-49 | NFR-06 | Firefox and Edge | — | Repeat browser M3, M6, M8, R2 | Same as Chrome | — | Not run |
+| TC-49 | NFR-06 | Firefox | — | Repeat browser M3, M6, M8, R2 | Same as Chrome | — | Not run |
+| TC-51 | NFR-06 | Edge on phones, tablets and desktops | Dev server, seed accounts | Open all 25 page views in Microsoft Edge 157 at 320, 360, 390, 412, 768, 1024, 1440 and 1920 px | No sideways scroll or cut-off content, Menu button only on phones, no console errors | 200/200 views clean after the 320 px filter fix (`docs/e2e-walkthrough.md` §2.3, §3 fix 4) | Pass |
 | TC-50 | NFR-07 / NFR-08 | Layers, config and audit trail | — | Code review; check logs and redemption rows | routes → controllers → services → models, secrets in `.env`; every change records who and when (`changed_by_id`, `admin_id`, `processed_at`) | api `record`, `redemption`: audit rows with admin id and time; layer rule followed in every module | Pass |
 
 ---
@@ -116,7 +117,7 @@ Plastic is 10.00 points/kg; the active rule is ৳0.50 per point with a minimum 
 |---|---|---|
 | TC-37 HTTPS | The project runs only on `localhost` | Put the app behind a web server with a TLS certificate when it is deployed |
 | TC-47 Uptime | Needs a deployed server and weeks of monitoring | Use an uptime monitor after deployment |
-| TC-49 Firefox / Edge | Only Chrome was driven automatically | Open http://localhost:5000 in each browser and repeat `docs/e2e-walkthrough.md` M3, M6, M8, R2 |
+| TC-49 Firefox | Chrome and Edge were checked automatically; Firefox was not | Open http://localhost:5000 in each browser and repeat `docs/e2e-walkthrough.md` M3, M6, M8, R2 |
 | (P2 part) CSV in Excel | The file was checked as text, not opened in Excel | Reports → Export CSV → open the file in Excel |
 
 ---

@@ -117,7 +117,7 @@ Repeat M3, M6, M8 and R2 in each browser.
 |---|---|:---:|
 | Google Chrome | 157 | ✅ all M, R and P checks; all 25 page views at 360 px and 1280 px with no console errors |
 | Mozilla Firefox | | *to do* |
-| Microsoft Edge | | *to do* |
+| Microsoft Edge | 157 | ✅ responsive check on 12 Nov 2026: all 25 page views at 8 sizes (320, 360, 390, 412, 768, 1024, 1440, 1920 px) = 200 views; no sideways scroll, nothing sticking out, Menu button on phones only, no console errors (after fix 4). Forms were not submitted in Edge. |
 
 ### 2.4 Print and export (FR-17)
 
@@ -134,6 +134,7 @@ Repeat M3, M6, M8 and R2 in each browser.
 |:---:|---|---|:---:|
 | 1 | 6 pages at 360 px (`admin/collectors`, `admin/records`, `admin/reports`, `collector/records`, `user/requests`) | The page was wider than the phone (up to 564 px): date inputs and the table in a grid cell would not shrink | ✅ `min-width: 0` on grid/filter cells and inputs (`css/style.css`) |
 | 2 | Any portal page after the admin deactivates the user | User was sent to the login page with no reason given | ✅ login page now says "Your account has been deactivated" (`js/auth.js`, `js/pages/login.js`) |
+| 4 | Filter forms at 320 px (Edge) | Two filter columns were too narrow: dates and dropdown text were cut off | ✅ filters use one column below 400 px (`css/style.css`) |
 | 3 | `admin/records.html` correction dialog | A deduction (−10.00) is shown in a green box | cosmetic, left as is |
 
 *(Add a row for every ❌ in section 2 and tell the developer/agent.)*

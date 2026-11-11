@@ -692,7 +692,9 @@ a.list-item:hover .title { color: var(--green-700); }
 
 /* ---------- Filters & paging ---------- */
 
-.filters { display: grid; gap: 0.75rem; grid-template-columns: 1fr 1fr; align-items: end; }
+.filters { display: grid; gap: 0.75rem; grid-template-columns: 1fr; align-items: end; }
+/* Two columns from 400 px; on the smallest phones dates and dropdowns need the full width */
+@media (min-width: 400px) { .filters { grid-template-columns: 1fr 1fr; } }
 .filters .field { gap: 0.2rem; }
 .filters .actions { grid-column: 1 / -1; display: flex; gap: 0.5rem; flex-wrap: wrap; }
 .filters .form-alert { grid-column: 1 / -1; }
