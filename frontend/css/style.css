@@ -470,7 +470,20 @@ html { scroll-behavior: smooth; }
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .lp-rate:hover, .lp-rate.selected { border-color: var(--green-600); box-shadow: 0 0 0 3px var(--green-100); }
-.lp-rate-icon { font-size: 1.6rem; }
+.lp-rate-icon {
+  display: grid; place-items: center;
+  width: 52px; height: 52px; padding: 8px; margin-bottom: 0.45rem;
+  border-radius: 14px;
+}
+.lp-rate-icon svg { width: 100%; height: 100%; }
+.lp-rate-icon.tone-plastic { background: #e0f2fe; }
+.lp-rate-icon.tone-paper { background: #fbf1e3; }
+.lp-rate-icon.tone-ewaste { background: #e0e7ff; }
+.lp-rate-icon.tone-metal { background: #fee2e2; }
+.lp-rate-icon.tone-glass { background: #dcfce7; }
+.lp-rate-icon.tone-other { background: #ecfccb; padding: 11px; }
+/* The hidden sheet of icon symbols */
+.svg-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 .lp-rate-name { font-weight: 600; font-size: 0.95rem; }
 .lp-rate-value { font-size: 1.35rem; font-weight: 800; color: var(--green-700); }
 .lp-rate-value small { font-size: 0.8rem; font-weight: 600; color: var(--muted); }

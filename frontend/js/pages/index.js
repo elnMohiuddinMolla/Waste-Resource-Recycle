@@ -7,9 +7,19 @@ import { fillIcons } from '../icons.js';
 
 fillIcons(); // the line icons on the role cards
 
-// A picture for each category, chosen by a word in its name
-const ICONS = [[/plastic/i, '🧴'], [/paper|card/i, '📦'], [/e-?waste|electr/i, '🔌'], [/metal|tin|can/i, '🥫'], [/glass/i, '🍾']];
-const iconFor = (name) => (ICONS.find(([re]) => re.test(name)) || [null, '♻️'])[1];
+// A picture for each category, chosen by a word in its name (sprite symbols in index.html)
+const KINDS = [[/plastic/i, 'plastic'], [/paper|card/i, 'paper'], [/e-?waste|electr/i, 'ewaste'], [/metal|tin|can/i, 'metal'], [/glass/i, 'glass']];
+const kindFor = (name) => (KINDS.find(([re]) => re.test(name)) || [null, 'other'])[1];
+
+function rateIcon(name) {
+  const kind = kindFor(name);
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('aria-hidden', 'true');
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttribute('href', `#rate-${kind}`);
+  svg.append(use);
+  return el('span', { className: `lp-rate-icon tone-${kind}` }, [svg]);
+}
 const shortNumber = (n) => String(Number(n)).replace(/\.0+$/, '');
 
 const calc = $('#calc');
@@ -54,7 +64,7 @@ function renderRates() {
         keydown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectCategory(c.category_id); } }
       }
     }, [
-      el('span', { className: 'lp-rate-icon', text: iconFor(c.name) }),
+      rateIcon(c.name),
       el('span', { className: 'lp-rate-name', text: c.name }),
       el('span', { className: 'lp-rate-value' }, [shortNumber(c.points_per_kg) + ' ', el('small', { text: 'pts/kg' })])
     ]));

@@ -10,6 +10,39 @@
   <script type="module" src="/js/pages/index.js"></script>
 </head>
 <body class="landing">
+  <!-- Icons for the waste types in "Today's rates" (used by js/pages/index.js) -->
+  <svg class="svg-sprite" aria-hidden="true" focusable="false">
+    <symbol id="rate-plastic" viewBox="-4 -2 48 104">
+      <path d="M15 8h10v5c0 2.5 7 5 7 13v62a10 10 0 0 1-10 10h-4A10 10 0 0 1 8 88V26c0-8 7-10.5 7-13z" fill="#e0f2fe" stroke="#38bdf8" stroke-width="3"/>
+      <rect x="8" y="46" width="24" height="20" fill="#38bdf8"/>
+      <rect x="14" y="0" width="12" height="9" rx="2" fill="#0284c7"/>
+    </symbol>
+    <symbol id="rate-paper" viewBox="-4 0 60 66">
+      <path d="M0 20h40v42H0z" fill="#d4a26a"/>
+      <path d="M40 20l12-14v42L40 62z" fill="#b5844f"/>
+      <path d="M0 20l12-14h40L40 20z" fill="#e6be8a"/>
+      <path d="M18 20v15" stroke="#8a5a2b" stroke-width="3.5"/>
+    </symbol>
+    <symbol id="rate-ewaste" viewBox="-6 -2 42 58">
+      <rect width="30" height="52" rx="6" fill="#1f2937"/>
+      <rect x="4" y="6" width="22" height="34" rx="2" fill="#60a5fa"/>
+      <path d="M10 18l6-4v6l5-3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="15" cy="45.5" r="2.5" fill="#9ca3af"/>
+    </symbol>
+    <symbol id="rate-metal" viewBox="-6 -2 48 72">
+      <rect y="6" width="36" height="60" rx="5" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+      <rect y="22" width="36" height="22" fill="#ef4444"/>
+      <rect x="3" width="30" height="8" rx="3" fill="#94a3b8"/>
+    </symbol>
+    <symbol id="rate-glass" viewBox="-14 -2 48 60">
+      <path d="M6 0h8v10c0 3 6 5 6 12v26a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V22c0-7 6-9 6-12z" fill="#86efac" stroke="#16a34a" stroke-width="2"/>
+      <rect x="5" y="0" width="10" height="4" rx="1" fill="#15803d"/>
+      <path d="M5 26v16" stroke="#fff" stroke-opacity=".7" stroke-width="2.5" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="rate-other" viewBox="0 0 24 24">
+      <path d="M12 17l-2 2l2 2M10 19h9a2 2 0 0 0 1.75 -2.75l-.55 -1M8.536 11l-.732 -2.732l-2.732 .732M7.804 8.268l-4.5 7.794a2 2 0 0 0 1.506 2.89l1.141 .024M15.464 11l2.732 .732l.732 -2.732M18.196 11.732l-4.5 -7.794a2 2 0 0 0 -3.256 -.14l-.591 .976" fill="none" stroke="#16a34a" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
   <header class="site-header lp-header">
     <div class="container">
       <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">♻</span>WRR</a>
@@ -200,12 +233,12 @@
         </div>
         <div class="lp-rates-grid">
           <ul class="lp-rates" id="rates-list">
-            <li class="lp-rate"><span class="lp-rate-icon">🧴</span><span class="lp-rate-name">Plastic</span><span class="lp-rate-value">10 <small>pts/kg</small></span></li>
-            <li class="lp-rate"><span class="lp-rate-icon">📦</span><span class="lp-rate-name">Paper &amp; Cardboard</span><span class="lp-rate-value">6 <small>pts/kg</small></span></li>
-            <li class="lp-rate"><span class="lp-rate-icon">🔌</span><span class="lp-rate-name">E-waste</span><span class="lp-rate-value">25 <small>pts/kg</small></span></li>
-            <li class="lp-rate"><span class="lp-rate-icon">🥫</span><span class="lp-rate-name">Metal</span><span class="lp-rate-value">15 <small>pts/kg</small></span></li>
-            <li class="lp-rate"><span class="lp-rate-icon">🍾</span><span class="lp-rate-name">Glass</span><span class="lp-rate-value">4 <small>pts/kg</small></span></li>
-            <li class="lp-rate"><span class="lp-rate-icon">♻️</span><span class="lp-rate-name">Other Recyclable Waste</span><span class="lp-rate-value">5 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon tone-plastic"><svg aria-hidden="true"><use href="#rate-plastic"/></svg></span><span class="lp-rate-name">Plastic</span><span class="lp-rate-value">10 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon tone-paper"><svg aria-hidden="true"><use href="#rate-paper"/></svg></span><span class="lp-rate-name">Paper &amp; Cardboard</span><span class="lp-rate-value">6 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon tone-ewaste"><svg aria-hidden="true"><use href="#rate-ewaste"/></svg></span><span class="lp-rate-name">E-waste</span><span class="lp-rate-value">25 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon tone-metal"><svg aria-hidden="true"><use href="#rate-metal"/></svg></span><span class="lp-rate-name">Metal</span><span class="lp-rate-value">15 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon tone-glass"><svg aria-hidden="true"><use href="#rate-glass"/></svg></span><span class="lp-rate-name">Glass</span><span class="lp-rate-value">4 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon tone-other"><svg aria-hidden="true"><use href="#rate-other"/></svg></span><span class="lp-rate-name">Other Recyclable Waste</span><span class="lp-rate-value">5 <small>pts/kg</small></span></li>
           </ul>
 
           <form class="lp-calc" id="calc" novalidate>
