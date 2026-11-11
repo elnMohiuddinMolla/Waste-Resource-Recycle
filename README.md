@@ -1,0 +1,159 @@
+# Waste Resource Recycle (WRR)
+
+A web platform that connects households with local waste collectors for recyclable waste pickup. Households request a pickup, a collector weighs the waste on site, and the household earns reward points (actual kg × category rate) that can be redeemed for cash via bKash, Nagad or bank transfer.
+
+**CSE-3112 Software Engineering Lab** · Faridpur Engineering College
+**Supervisor:** Mohammad Shamsul Islam, Associate Professor & Head, Dept. of CSE
+**Team:** MD Mohiuddin Molla (Reg: 2022254878), Abdul Al Noman (Reg: 935)
+
+---
+
+## Status
+
+| Part | State |
+|---|---|
+| Requirements & design (PRD, API spec, database, architecture, DFD) | Done |
+| Database schema + seed data | Done |
+| Backend REST API — all 44 endpoints | Done, tested and audited |
+| Frontend (User, Collector, Admin portals) | Next |
+| End-to-end testing & lab report | After the frontend |
+
+Progress is tracked step by step in [`prompt.md`](prompt.md).
+
+## Features
+
+- **General users:** register, submit pickup requests (category, estimated kg, address, preferred time), track each request with a full status timeline, cancel while pending, view the points ledger, request cash redemption, in-website notifications.
+- **Waste collectors:** see assigned jobs, accept / reject (with reason) / abort on site, record the actual weight, complete the job (points are credited automatically), view collection history.
+- **Administrators:** assign and reassign collectors, approve / pay / reject redemptions (rejection refunds the points), correct weights (with a balancing ledger entry), manage zones, waste categories, redemption rules and accounts, and run 5 management reports.
+
+Key rules: a strict 8-transition request state machine, a signed points ledger whose balance can never go negative, rate snapshots so later rate changes never alter past rewards, and row locks that prevent double-spending.
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Plain HTML, CSS, JavaScript (served by the same Express server) |
+| Backend | Node.js 18+, Express 4 — layered `routes → controllers → services → models` |
+| Database | MySQL 8.0+ or MariaDB 10.4+ (XAMPP) |
+| Auth | bcryptjs + JWT in an `HttpOnly` cookie |
+
+## Getting started
+
+### 1. Requirements
+- [Node.js](https://nodejs.org/) 18 or newer
+- [XAMPP](https://www.apachefriends.org/) (only its MySQL/MariaDB is used)
+
+### 2. Database
+1. Start **MySQL** in the XAMPP Control Panel.
+2. In phpMyAdmin (`http://localhost/phpmyadmin`) or the MySQL CLI, import **`database/schema.sql`**, then **`database/seed.sql`**. This creates the `wrr_db` database with 10 tables and test data.
+
+   CLI alternative (Git Bash):
+   ```
+   /c/xampp/mysql/bin/mysql.exe -u root < database/schema.sql
+   /c/xampp/mysql/bin/mysql.exe -u root < database/seed.sql
+   ```
+
+### 3. Backend
+```
+cd backend
+npm install
+cp .env.example .env
+```
+Open `backend/.env` and set `JWT_SECRET` to a long random value (the server refuses to start with the example value or anything shorter than 32 characters). Generate one with:
+```
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+```
+If your MySQL `root` user has a password, set `DB_PASSWORD` as well.
+
+### 4. Run
+```
+cd backend
+npm run dev
+```
+You should see:
+```
+WRR server running at http://localhost:5000
+Successfully connected to database: wrr_db
+```
+
+> `http://localhost:5000/` returns a JSON 404 until the frontend is built. The API lives under `/api/v1`.
+
+## Trying the API
+
+Public endpoints open directly in the browser:
+- http://localhost:5000/api/v1/categories
+- http://localhost:5000/api/v1/zones
+
+For everything else, log in first with **Thunder Client** (VS Code) or **Postman** — the session cookie is kept automatically:
+
+```
+POST http://localhost:5000/api/v1/auth/login
+Content-Type: application/json
+
+{ "email": "tanvir@gmail.com", "password": "password123" }
+```
+
+Then try `GET /api/v1/auth/me`, `GET /api/v1/rewards/balance`, `GET /api/v1/pickup-requests/mine`.
+
+### Test accounts (password for all: `password123`)
+
+| Email | Role | Notes |
+|---|---|---|
+| `admin@wrr.com` | Administrator | |
+| `collector1@wrr.com` | Collector | Zone 1, has an accepted job (#2) |
+| `collector2@wrr.com` | Collector | Zone 2 |
+| `tanvir@gmail.com` | User | Zone 1, balance 55.00 points |
+| `sadia@gmail.com` | User | Zone 3, has a pending request (#3) |
+
+Every endpoint, body and status code is documented in [`api-spec.md`](api-spec.md).
+
+## Tests
+
+Run from `backend/`:
+
+| Command | What it does | Needs MySQL |
+|---|---|:---:|
+| `npm test` | Unit tests (state machines, validators, security checks) | No |
+| `npm run test:api` | API tests for every endpoint | Yes |
+| `npm run perf` | NFR-02 performance check: 50 users, 1,000 requests, 50 concurrent calls per endpoint | Yes |
+
+The API and performance tests rebuild a **separate** database, `wrr_test`, from `database/*.sql`. They refuse to run against `wrr_db`, so your data is never touched.
+
+Latest results: 20 unit + 103 API tests passing; slowest core call ~150 ms (limit 2 s) and slowest report ~110 ms (limit 5 s) with 50 concurrent users.
+
+## Project structure
+
+```
+Waste_Resource_Recycle/
+├── backend/
+│   ├── src/
+│   │   ├── config/        db.js (pool, Bangladesh time zone), secret.js (JWT secret check)
+│   │   ├── middleware/    auth (cookie JWT), role, rate limiter, security headers, errors
+│   │   ├── routes/        one router per API area, mounted under /api/v1
+│   │   ├── controllers/   input checks, HTTP responses
+│   │   ├── services/      business rules, transactions, state machines
+│   │   ├── models/        parameterized SQL only
+│   │   ├── utils/         AppError, transaction helper, validators, money
+│   │   └── app.js
+│   ├── test/              unit/ and api/
+│   ├── scripts/           perf-check.js
+│   └── .env.example
+├── database/              schema.sql, seed.sql
+├── frontend/              (next phase)
+└── docs/archive/          superseded documents
+```
+
+## Documentation
+
+| Document | Contents |
+|---|---|
+| [`WRR_PRD.md`](WRR_PRD.md) | Requirements (FR-01–FR-21, NFR-01–NFR-08), business rules, state machine — **source of truth** |
+| [`api-spec.md`](api-spec.md) | Every REST endpoint: paths, bodies, responses, validation, status codes |
+| [`database.md`](database.md) | Tables, constraints, report SQL, transactions, seed data |
+| [`architecture.md`](architecture.md) | Layers, security, folder structure, integration snippets |
+| [`dfd.md`](dfd.md) | Data flow diagrams (Level 0–2) |
+| [`requirement-validation.md`](requirement-validation.md) | Edge cases, security, validation rules, RBAC matrix |
+| [`prd-analysis.md`](prd-analysis.md) | Business analysis and adopted recommendations |
+| [`AGENTS.md`](AGENTS.md) | Project rules for AI coding agents and new teammates |
+| [`prompt.md`](prompt.md) | Step-by-step build plan with progress tracker |
+| [`WRR_Project_Idea.md`](WRR_Project_Idea.md) | Original project proposal |

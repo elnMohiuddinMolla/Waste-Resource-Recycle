@@ -688,6 +688,7 @@ Waste_Resource_Recycle/
 │   └── js/                  # api.js (fetch wrapper, credentials: 'same-origin'), portal logic
 ├── docs/
 │   └── archive/             # Superseded documents (kept for the lab report history)
+├── README.md                # Overview, setup guide, test accounts
 ├── AGENTS.md                # Project context and rules for AI agents and teammates
 ├── prompt.md                # Ready-made task prompts for the remaining steps
 ├── WRR_Project_Idea.md      # Initial proposal

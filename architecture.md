@@ -249,8 +249,9 @@ Waste_Resource_Recycle/
 │   ├── schema.sql                  # 10-table DDL (same as database.md §9)
 │   └── seed.sql                    # Zones, categories, users, rule, sample data
 │
-└── docs/
-    └── archive/                    # Superseded documents
+├── docs/
+│   └── archive/                    # Superseded documents
+└── README.md                       # Overview and setup guide
 ```
 
 ---
