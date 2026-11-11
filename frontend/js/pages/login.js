@@ -10,6 +10,7 @@ const button = form.querySelector('button[type="submit"]');
 
 // Coming back from registration: say so and fill in the email
 if (getParam('registered')) showFormAlert(form, 'Account created. Please log in.', 'success');
+if (getParam('reason') === 'inactive') showFormAlert(form, 'Your account has been deactivated. Please contact the administrator.', 'error');
 if (getParam('email')) form.email.value = getParam('email');
 (form.email.value ? form.password : form.email).focus();
 

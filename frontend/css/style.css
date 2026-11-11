@@ -84,6 +84,8 @@ main.container { flex: 1; padding-top: 1.25rem; padding-bottom: 2rem; }
 .page-title h1 { margin: 0; }
 
 .grid { display: grid; gap: 1rem; }
+/* Let grid cells shrink below their content (wide tables then scroll inside .table-wrap) */
+.grid > *, .filters > * { min-width: 0; }
 .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
 @media (min-width: 640px) {
   .grid-2, .grid-4 { grid-template-columns: repeat(2, 1fr); }
@@ -267,6 +269,7 @@ input, select, textarea {
   font: inherit;
   color: inherit;
   width: 100%;
+  min-width: 0; /* date inputs have a built-in minimum width that overflows on phones */
   padding: 0.6rem 0.7rem;
   border: 1px solid #d1d5db;
   border-radius: 8px;

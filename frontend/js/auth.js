@@ -52,9 +52,12 @@ export async function currentUser() {
  * otherwise sends them to the login page or to their own dashboard.
  */
 export async function requireRole(...roles) {
-  const user = await currentUser();
+  const r = await api('/auth/me');
+  const user = r.ok ? r.body.data : null;
   if (!user) {
-    location.href = `/login.html?next=${encodeURIComponent(location.pathname + location.search)}`;
+    // 403 here means the account was deactivated: tell them why on the login page
+    const reason = r.status === 403 ? '&reason=inactive' : '';
+    location.href = `/login.html?next=${encodeURIComponent(location.pathname + location.search)}${reason}`;
     return new Promise(() => {}); // stop the page here while the browser navigates
   }
   if (!roles.includes(user.role)) {

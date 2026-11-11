@@ -1,4 +1,24 @@
-# End-to-End Walkthrough & NFR Checks (prompt.md D1)
+# End-to-End Walkthrough & NFR Checks (prompt.md ✅ "Enter a valid Bangladeshi mobile number" ✅ ✅ 3 screens, request #4, 120 points estimate ✅ ✅ Rafiqul (same zone) first ✅ "Completed — 150.00 points credited" ✅ badge 4 → cleared ✅ ৳50.00, balance 150 → 50 ✅ TrxID BKBROWSER01 ✅ preview −10.00, ledger ADJUST −10.00 ✅ 5/5 ✅ (after fix 2, see §3) ✅ ✅ ✅ ✅ ✅ (after fix 1) ✅ dialog 16–344 px of 360 ✅ (PDF, A4) ✅ BOM + Total row; Excel *to do* |
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+|
+D1)
 
 **Project:** Waste Resource Recycle (WRR) — CSE-3112 Software Engineering Lab
 **Date:** 11 November 2026
@@ -7,7 +27,7 @@
 This document has two parts:
 
 1. **Automated walkthrough** — the full story run through the same API calls the web pages make (`npm run e2e`), plus a static check of every page (`npm run check:frontend`). Both were run and passed.
-2. **Manual browser checklist** — what needs human eyes (layout at 360 px, three browsers, print, CSV in Excel). Fill in the *Result* column while clicking through.
+2. **Browser checklist** — run on 11 Nov 2026 in real Google Chrome 157 (headless, driven through the Chrome DevTools Protocol) against a freshly seeded `wrr_test` on a separate server: every form was filled and every button clicked in the page. Firefox and Edge, and opening the CSV in Excel, are still to be done by hand (marked *to do*).
 
 ---
 
@@ -51,7 +71,7 @@ For all 23 pages and 28 scripts:
 
 ---
 
-## 2. Manual browser checklist
+## 2. Browser checklist
 
 **Before you start**
 1. Rebuild a clean `wrr_db` if you want the same numbers as below: in phpMyAdmin import `database/schema.sql`, then `database/seed.sql`. *(This erases what is in `wrr_db` now.)*
@@ -59,7 +79,7 @@ For all 23 pages and 28 scripts:
 3. Accounts (password `password123`): `tanvir@gmail.com` (user), `collector1@wrr.com` (collector), `admin@wrr.com` (admin).
 4. Open the browser's developer tools (F12) → **Console**. Any red error during a check is a failure — note it.
 
-Mark each row ✅ / ❌ and write what you saw if it failed.
+Results below are from the Chrome run. To repeat by hand, mark each row ✅ / ❌.
 
 ### 2.1 Story in the browser (Chrome)
 
@@ -95,9 +115,9 @@ Repeat M3, M6, M8 and R2 in each browser.
 
 | Browser | Version | Result |
 |---|---|:---:|
-| Google Chrome | | |
-| Mozilla Firefox | | |
-| Microsoft Edge | | |
+| Google Chrome | 157 | ✅ all M, R and P checks; all 25 page views at 360 px and 1280 px with no console errors |
+| Mozilla Firefox | | *to do* |
+| Microsoft Edge | | *to do* |
 
 ### 2.4 Print and export (FR-17)
 
@@ -112,8 +132,9 @@ Repeat M3, M6, M8 and R2 in each browser.
 
 | # | Where | What happened | Fixed? |
 |:---:|---|---|:---:|
-| — | Automated runs | None | — |
-| | | | |
+| 1 | 6 pages at 360 px (`admin/collectors`, `admin/records`, `admin/reports`, `collector/records`, `user/requests`) | The page was wider than the phone (up to 564 px): date inputs and the table in a grid cell would not shrink | ✅ `min-width: 0` on grid/filter cells and inputs (`css/style.css`) |
+| 2 | Any portal page after the admin deactivates the user | User was sent to the login page with no reason given | ✅ login page now says "Your account has been deactivated" (`js/auth.js`, `js/pages/login.js`) |
+| 3 | `admin/records.html` correction dialog | A deduction (−10.00) is shown in a green box | cosmetic, left as is |
 
 *(Add a row for every ❌ in section 2 and tell the developer/agent.)*
 

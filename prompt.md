@@ -70,7 +70,7 @@ The prompts work in two situations:
 - [x] C14 — Admin: reports (print + CSV export)
 
 **Phase D — Testing & lab report**
-- [ ] D1 — End-to-end walkthrough + NFR checks *(automated part done: `npm run e2e` 45/45, `npm run check:frontend` 352/352; manual browser checklist in `docs/e2e-walkthrough.md` §2 still to fill)*
+- [x] D1 — End-to-end walkthrough + NFR checks *(API 45/45, static 352/352, Chrome 18/18 + 50 page views; Firefox/Edge and CSV-in-Excel by hand still open in `docs/e2e-walkthrough.md`)*
 - [ ] D2 — Test-case table for the lab report
 - [ ] D3 — Documentation sync + viva preparation
 
@@ -781,7 +781,7 @@ Done when: all 5 reports render, print cleanly on A4, and the CSV opens correctl
 
 ## Phase D — Testing & lab report
 
-### D1 — End-to-end walkthrough + NFR checks  `[ ]`
+### D1 — End-to-end walkthrough + NFR checks  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Do not add features.
