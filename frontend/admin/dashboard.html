@@ -8,62 +8,103 @@
   <link rel="stylesheet" href="/css/style.css">
   <script type="module" src="/js/pages/admin-dashboard.js"></script>
 </head>
-<body>
+<body class="db-page">
   <header id="app-header" class="site-header"></header>
 
-  <main class="container">
-    <div class="page-title">
-      <div>
+  <main class="container db">
+    <section class="db-hero db-hero-wide">
+      <div class="db-hero-text">
+        <p class="db-date" id="today"></p>
         <h1 id="greeting">Loading…</h1>
-        <p id="zone" class="muted mb-0"></p>
+        <p class="db-hero-summary" id="attention">Checking the queues…</p>
+        <div class="db-hero-actions">
+          <a class="btn btn-accent" href="/admin/requests.html?status=Pending"><span data-icon="truck"></span>Assign pickups</a>
+          <a class="btn btn-ghost" href="/admin/reports.html"><span data-icon="chart"></span>Reports</a>
+          <button type="button" class="btn btn-ghost" id="refresh"><span data-icon="refresh"></span>Refresh</button>
+        </div>
       </div>
-      <button type="button" class="btn btn-secondary btn-small" id="refresh">Refresh</button>
+    </section>
+
+    <!-- Admins get no notification rows (FR-14): these queues are their alerts -->
+    <h2 class="db-h2">Needs attention</h2>
+    <section class="db-queues" aria-label="Queues">
+      <a class="db-queue" href="/admin/requests.html?status=Pending">
+        <span class="db-stat-icon db-tone-amber" data-icon="clock"></span>
+        <span class="db-queue-value" id="kpi-pending">—</span>
+        <strong>Pending requests</strong>
+        <small>Waiting for a collector</small>
+      </a>
+      <a class="db-queue" href="/admin/requests.html?status=Rejected">
+        <span class="db-stat-icon db-tone-pink" data-icon="alert"></span>
+        <span class="db-queue-value" id="kpi-rejected">—</span>
+        <strong>Rejected by collectors</strong>
+        <small>Need reassigning</small>
+      </a>
+      <a class="db-queue" href="/admin/redemptions.html?status=Pending">
+        <span class="db-stat-icon db-tone-blue" data-icon="cash"></span>
+        <span class="db-queue-value" id="kpi-red-pending">—</span>
+        <strong>Redemptions to review</strong>
+        <small>Approve or reject</small>
+      </a>
+      <a class="db-queue" href="/admin/redemptions.html?status=Approved">
+        <span class="db-stat-icon db-tone-green" data-icon="wallet"></span>
+        <span class="db-queue-value" id="kpi-red-approved">—</span>
+        <strong>Approved, not paid</strong>
+        <small>Send the money</small>
+      </a>
+    </section>
+
+    <h2 class="db-h2">This month <span class="db-h2-note" id="month-range"></span></h2>
+    <section class="db-stats" aria-label="This month">
+      <a class="db-stat" href="/admin/reports.html?type=weight-by-category">
+        <span class="db-stat-icon db-tone-green" data-icon="scale"></span>
+        <span class="db-stat-body">
+          <span class="db-stat-value" id="kpi-kg">—</span>
+          <span class="db-stat-label" id="kpi-kg-note">Collected</span>
+        </span>
+      </a>
+      <a class="db-stat" href="/admin/reports.html?type=redemption-summary">
+        <span class="db-stat-icon db-tone-pink" data-icon="cash"></span>
+        <span class="db-stat-body">
+          <span class="db-stat-value" id="kpi-paid">—</span>
+          <span class="db-stat-label" id="kpi-paid-note">Cash paid out</span>
+        </span>
+      </a>
+      <a class="db-stat" href="/admin/reports.html?type=point-liability">
+        <span class="db-stat-icon db-tone-amber" data-icon="star"></span>
+        <span class="db-stat-body">
+          <span class="db-stat-value" id="kpi-liability">—</span>
+          <span class="db-stat-label" id="kpi-liability-bdt">Points not yet redeemed</span>
+        </span>
+      </a>
+      <a class="db-stat" href="/admin/collectors.html">
+        <span class="db-stat-icon db-tone-blue" data-icon="users"></span>
+        <span class="db-stat-body">
+          <span class="db-stat-value" id="kpi-collectors">—</span>
+          <span class="db-stat-label">Active collectors</span>
+        </span>
+      </a>
+    </section>
+
+    <div class="db-grid">
+      <section class="card db-card">
+        <div class="db-card-head">
+          <h2>Requests by status</h2>
+          <a href="/admin/reports.html?type=request-volume-by-status" class="small">Report</a>
+        </div>
+        <div id="chart-status"></div>
+      </section>
+      <section class="card db-card">
+        <div class="db-card-head">
+          <h2>Collected by category</h2>
+          <a href="/admin/reports.html?type=weight-by-category" class="small">Report</a>
+        </div>
+        <div id="chart-category"></div>
+      </section>
     </div>
 
-    <h2>Needs attention</h2>
-    <section class="grid grid-4 mb-2" aria-label="Queues">
-      <a class="card card-link" href="/admin/requests.html?status=Pending">
-        <div class="stat-label">Pending requests</div>
-        <div class="stat-value" id="kpi-pending">—</div>
-        <div class="muted small">Waiting for a collector</div>
-      </a>
-      <a class="card card-link" href="/admin/requests.html?status=Rejected">
-        <div class="stat-label">Rejected by collectors</div>
-        <div class="stat-value" id="kpi-rejected">—</div>
-        <div class="muted small">Need reassigning</div>
-      </a>
-      <a class="card card-link" href="/admin/redemptions.html?status=Pending">
-        <div class="stat-label">Redemptions to review</div>
-        <div class="stat-value" id="kpi-red-pending">—</div>
-        <div class="muted small">Approve or reject</div>
-      </a>
-      <a class="card card-link" href="/admin/redemptions.html?status=Approved">
-        <div class="stat-label">Approved, not paid</div>
-        <div class="stat-value" id="kpi-red-approved">—</div>
-        <div class="muted small">Send the money</div>
-      </a>
-    </section>
-
-    <h2>Overview</h2>
-    <section class="grid grid-3 mb-2" aria-label="Overview">
-      <a class="card card-link" href="/admin/collectors.html">
-        <div class="stat-label">Active collectors</div>
-        <div class="stat-value" id="kpi-collectors">—</div>
-      </a>
-      <a class="card card-link" href="/admin/reports.html?type=weight-by-category">
-        <div class="stat-label">Collected this month</div>
-        <div class="stat-value" id="kpi-kg">—</div>
-        <div class="muted small" id="kpi-kg-note"></div>
-      </a>
-      <a class="card card-link" href="/admin/reports.html?type=point-liability">
-        <div class="stat-label">Points liability</div>
-        <div class="stat-value" id="kpi-liability">—</div>
-        <div class="muted small" id="kpi-liability-bdt"></div>
-      </a>
-    </section>
-
-    <h2 class="mt-3">Manage</h2>
-    <div id="shortcuts" class="grid grid-3"></div>
+    <h2 class="db-h2">Manage</h2>
+    <div id="shortcuts" class="db-tiles"></div>
   </main>
 
   <footer class="site-footer">

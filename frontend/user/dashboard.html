@@ -8,57 +8,82 @@
   <link rel="stylesheet" href="/css/style.css">
   <script type="module" src="/js/pages/user-dashboard.js"></script>
 </head>
-<body>
+<body class="db-page">
   <header id="app-header" class="site-header"></header>
 
-  <main class="container">
-    <div class="page-title">
-      <div>
+  <main class="container db">
+    <!-- Greeting, the two main actions and the balance -->
+    <section class="db-hero">
+      <div class="db-hero-text">
+        <p class="db-date" id="today"></p>
         <h1 id="greeting">Loading…</h1>
-        <p id="zone" class="muted mb-0"></p>
+        <p class="db-chip" id="zone"></p>
+        <!-- NFR-01: "New pickup request" is one tap away from the dashboard -->
+        <div class="db-hero-actions">
+          <a class="btn btn-accent" href="/user/new-request.html"><span data-icon="plus"></span>New pickup request</a>
+          <a class="btn btn-ghost" href="/user/redeem.html"><span data-icon="cash"></span>Redeem points</a>
+        </div>
       </div>
+      <a class="db-balance" href="/user/history.html" aria-label="Available points — open my points history">
+        <span class="db-balance-label">Available points</span>
+        <span class="db-balance-value" id="stat-balance">—</span>
+        <span class="db-balance-cash" id="stat-bdt"></span>
+        <progress class="db-progress" id="redeem-progress" max="100" value="0"></progress>
+        <span class="db-balance-note" id="redeem-note"></span>
+      </a>
+    </section>
+
+    <section class="db-stats" aria-label="Your summary">
+      <a class="db-stat" href="/user/requests.html">
+        <span class="db-stat-icon db-tone-blue" data-icon="truck"></span>
+        <span class="db-stat-body">
+          <span class="db-stat-value" id="stat-active">—</span>
+          <span class="db-stat-label">Active requests</span>
+        </span>
+      </a>
+      <a class="db-stat" href="/user/requests.html?status=Completed">
+        <span class="db-stat-icon db-tone-green" data-icon="check"></span>
+        <span class="db-stat-body">
+          <span class="db-stat-value" id="stat-completed">—</span>
+          <span class="db-stat-label">Completed pickups</span>
+        </span>
+      </a>
+      <a class="db-stat" href="/user/requests.html" id="next-link">
+        <span class="db-stat-icon db-tone-amber" data-icon="clock"></span>
+        <span class="db-stat-body">
+          <span class="db-stat-value db-stat-value-sm" id="stat-next">—</span>
+          <span class="db-stat-label">Next pickup</span>
+        </span>
+      </a>
+      <a class="db-stat" href="/user/notifications.html">
+        <span class="db-stat-icon db-tone-pink" data-icon="bell"></span>
+        <span class="db-stat-body">
+          <span class="db-stat-value" id="stat-unread">—</span>
+          <span class="db-stat-label">Unread notifications</span>
+        </span>
+      </a>
+    </section>
+
+    <div class="db-grid">
+      <section class="card db-card">
+        <div class="db-card-head">
+          <h2>Current pickup</h2>
+          <a href="/user/requests.html" class="small" id="tracker-link">My requests</a>
+        </div>
+        <div id="tracker"></div>
+      </section>
+
+      <section class="card db-card">
+        <div class="db-card-head">
+          <h2>Latest requests</h2>
+          <a href="/user/requests.html" class="small">See all</a>
+        </div>
+        <div id="latest"></div>
+      </section>
     </div>
 
-    <!-- NFR-01: "New pickup request" is one tap away from the dashboard -->
-    <section class="card cta-card mb-2">
-      <div>
-        <h2 class="mb-0">Have recyclables at home?</h2>
-        <p class="muted small mb-0">Request a pickup and earn points for every kilogram.</p>
-      </div>
-      <a class="btn btn-primary" href="/user/new-request.html">New pickup request</a>
-    </section>
-
-    <section class="grid grid-4" id="stats" aria-label="Your summary">
-      <a class="card card-link" href="/user/history.html">
-        <div class="stat-label">Available points</div>
-        <div class="stat-value" id="stat-balance">—</div>
-        <div class="muted small" id="stat-bdt"></div>
-      </a>
-      <a class="card card-link" href="/user/requests.html">
-        <div class="stat-label">Active requests</div>
-        <div class="stat-value" id="stat-active">—</div>
-        <div class="muted small">Pending, assigned, accepted or collected</div>
-      </a>
-      <a class="card card-link" href="/user/requests.html?status=Completed">
-        <div class="stat-label">Completed pickups</div>
-        <div class="stat-value" id="stat-completed">—</div>
-      </a>
-      <a class="card card-link" href="/user/notifications.html">
-        <div class="stat-label">Unread notifications</div>
-        <div class="stat-value" id="stat-unread">—</div>
-      </a>
-    </section>
-
-    <section class="card mt-2">
-      <div class="row row-between">
-        <h2 class="mb-0">Latest requests</h2>
-        <a href="/user/requests.html" class="small">See all</a>
-      </div>
-      <div id="latest" class="mt-1"></div>
-    </section>
-
-    <h2 class="mt-3">Shortcuts</h2>
-    <div id="shortcuts" class="grid grid-3"></div>
+    <h2 class="db-h2">Quick actions</h2>
+    <div id="shortcuts" class="db-tiles"></div>
   </main>
 
   <footer class="site-footer">

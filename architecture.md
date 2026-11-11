@@ -63,6 +63,7 @@ graph TD
   - `ui.js` — `el()` element builder (text only via `textContent`), `clear`, `$`, `getParam`, `formatDateTime` / `formatDate` (shows the server's Bangladesh time as `10 Nov 2026, 02:05 pm`), `formatPoints`, `formatTaka`, `statusBadge`, `showFieldErrors` / `showApiError` / `showFormAlert` / `clearErrors`, `setLoading`, `toast`, `confirmDialog`, `reasonDialog` (asks for a 5–200 character reason), `formDialog` (a small form in a dialog that stays open with the server's errors), `loadingNode`, `emptyNode`.
   - `auth.js` — `requireRole(...roles)`, `currentUser`, `redirectIfLoggedIn`, `renderHeader(user)` (role menu that folds behind a button on phones, name, logout), `safeNext`, `DASHBOARDS`.
   - `notifications.js` — unread badge polling every 30 s (users and collectors), `notificationsChanged()`.
+  - `icons.js` — `icon(name)` builds a small line icon with `createElementNS` (no `innerHTML`); `fillIcons()` fills every `<span data-icon="…">`.
   - `pages/<page>.js` — one script per page.
 - **Page guard:** each portal page calls `GET /api/v1/auth/me` on load. If the user is not logged in, the page redirects to `login.html`; with the wrong role it goes to the user's own dashboard. If the account was deactivated (`/auth/me` answers 403), the login page says "Your account has been deactivated". This is only for convenience; the real protection is on the server.
 
