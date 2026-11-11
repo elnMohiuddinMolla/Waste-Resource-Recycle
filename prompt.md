@@ -47,7 +47,7 @@ The prompts work in two situations:
 - [x] B14 — Notifications: list, mark one, mark all
 - [x] B15 — Admin: waste categories
 - [x] B16 — Admin: zones
-- [ ] B17 — Admin: redemption rules
+- [x] B17 — Admin: redemption rules
 - [ ] B18 — Admin: users + collector accounts
 - [ ] B19 — Admin: collection records + weight correction (ADJUST)
 - [ ] B20 — Admin: 5 reports
@@ -448,7 +448,7 @@ Tests: create, duplicate, rename, deactivate → disappears from GET /zones and 
 with that zone give 400; existing users/requests keep their zone; non-admin 403.
 ```
 
-### B17 — Admin: redemption rules  `[ ]`
+### B17 — Admin: redemption rules  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read api-spec.md §8.8, WRR_PRD.md FR-16, database.md §5

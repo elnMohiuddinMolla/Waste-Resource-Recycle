@@ -1170,30 +1170,50 @@ All three endpoints: `Required (Role: admin)`. Zones are never deleted (foreign 
 
 ---
 
-#### 8.8 Redemption Tariff Governance
-- **Endpoint:** `POST /api/v1/admin/redemption-rules`
-- **Authentication:** `Required (Role: admin)`
-- **Request Body:**
-  ```json
-  {
-    "taka_per_point": 0.6000,
-    "min_points": 100.00
-  }
-  ```
-- **Business Rule:** Sets all existing rules `is_active = FALSE`, then inserts new active rule.
-- **Response `201 Created`:**
-  ```json
-  {
-    "success": true,
-    "message": "New redemption tariff rule activated.",
-    "data": {
-      "rule_id": 2,
-      "taka_per_point": "0.6000",
-      "min_points": "100.00",
-      "is_active": true
+#### 8.8 Redemption Tariff Governance (FR-16)
+Both endpoints: `Required (Role: admin)`. Exactly one rule is active at any time (database UNIQUE index `uq_rule_single_active`). Old rules are never edited or deleted; a pending redemption keeps the `rule_id` and `cash_amount` it was created with (requirement-validation EC-06).
+
+- **Endpoint:** `GET /api/v1/admin/redemption-rules`
+  - **Response `200 OK`** (`archived` is newest first):
+    ```json
+    {
+      "success": true,
+      "data": {
+        "active": {
+          "rule_id": 2, "taka_per_point": "0.6000", "min_points": "100.00", "is_active": true,
+          "effective_from": "2026-11-12 10:00:00", "updated_by": 1, "updated_by_name": "System Administrator"
+        },
+        "archived": [
+          {
+            "rule_id": 1, "taka_per_point": "0.5000", "min_points": "100.00", "is_active": false,
+            "effective_from": "2026-11-10 00:00:00", "updated_by": 1, "updated_by_name": "System Administrator"
+          }
+        ]
+      }
     }
-  }
-  ```
+    ```
+    `active` is `null` if no rule is active.
+- **Endpoint:** `POST /api/v1/admin/redemption-rules`
+  - **Request Body:**
+    ```json
+    {
+      "taka_per_point": 0.6000,
+      "min_points": 100.00
+    }
+    ```
+  - **Validation:** `taka_per_point` more than 0, below 1,000,000, at most 4 decimals (number or numeric string); `min_points` from 0 to 99999999.99.
+  - **Business Rule (one transaction):** lock all rule rows (`SELECT ... FOR UPDATE`, so two admins' switches run one after another), set every rule `is_active = FALSE`, then insert the new active rule with `updated_by` = admin and `effective_from = NOW()`.
+  - **Response `201 Created`:**
+    ```json
+    {
+      "success": true,
+      "message": "New redemption tariff rule activated.",
+      "data": {
+        "rule_id": 2, "taka_per_point": "0.6000", "min_points": "100.00", "is_active": true,
+        "effective_from": "2026-11-12 10:00:00", "updated_by": 1, "updated_by_name": "System Administrator"
+      }
+    }
+    ```
 
 ---
 
