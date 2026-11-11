@@ -380,22 +380,30 @@ html { scroll-behavior: smooth; }
   position: absolute;
   display: none;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 0.85rem;
+  gap: 0.65rem;
+  padding: 0.55rem 0.9rem 0.55rem 0.55rem;
   border-radius: 14px;
   background: #fff;
   color: var(--text);
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
-  animation: lp-bob 4s ease-in-out infinite;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
+  animation: lp-bob 5s ease-in-out infinite;
+  white-space: nowrap;
 }
-.lp-float strong { display: block; font-size: 0.85rem; }
-.lp-float small { display: block; font-size: 0.75rem; color: var(--muted); }
-.lp-float-icon { font-size: 1.3rem; }
-/* Over the corners of the bins picture: away from the headline and inside the screen */
-.lp-float-a { top: 0; left: -1.5rem; }
-.lp-float-b { bottom: 0; right: -0.5rem; animation-delay: -2s; }
-@media (min-width: 1200px) { .lp-float { display: flex; } }
-@keyframes lp-bob { 50% { transform: translateY(-8px); } }
+.lp-float strong { display: block; font-size: 0.85rem; line-height: 1.25; }
+.lp-float small { display: flex; align-items: center; gap: 0.35rem; font-size: 0.75rem; color: var(--muted); }
+.lp-float-icon { flex: none; display: grid; place-items: center; width: 36px; height: 36px; padding: 8px; border-radius: 10px; }
+.lp-float-icon svg { width: 100%; height: 100%; }
+.lp-float-icon-blue { background: #dbeafe; color: #1d4ed8; }
+.lp-float-icon-green { background: var(--green-100); color: var(--green-700); }
+.lp-float-plus { color: var(--green-700) !important; font-weight: 700; }
+/* A small green "live" dot: the collector is on the way */
+.lp-live { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2); }
+/* On the corners of the bins picture: never over the headline, always inside the screen */
+.lp-float-a { top: 0.25rem; left: 0; }
+.lp-float-b { bottom: 0.25rem; right: 0; animation-delay: -2.5s; }
+@media (min-width: 760px) { .lp-float { display: flex; } }
+@keyframes lp-bob { 50% { transform: translateY(-6px); } }
 @media (prefers-reduced-motion: reduce) { .lp-float { animation: none; } html { scroll-behavior: auto; } }
 
 /* Numbers strip, overlapping the hero */
