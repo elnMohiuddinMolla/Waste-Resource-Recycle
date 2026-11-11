@@ -72,7 +72,7 @@ The prompts work in two situations:
 **Phase D — Testing & lab report**
 - [x] D1 — End-to-end walkthrough + NFR checks *(API 45/45, static 352/352, Chrome 18/18 + 50 page views; Firefox/Edge and CSV-in-Excel by hand still open in `docs/e2e-walkthrough.md`)*
 - [x] D2 — Test-case table for the lab report
-- [ ] D3 — Documentation sync + viva preparation
+- [x] D3 — Documentation sync + viva preparation
 
 ---
 
@@ -814,7 +814,7 @@ walkthrough; mark anything not yet verified as "Not run". Add a summary: automat
 (unit + API) and pass rate.
 ```
 
-### D3 — Documentation sync + viva preparation  `[ ]`
+### D3 — Documentation sync + viva preparation  `[x]`
 
 ```
 Follow the Common Rules in prompt.md.

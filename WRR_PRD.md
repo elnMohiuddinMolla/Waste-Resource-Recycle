@@ -459,7 +459,7 @@ The project adheres to a strict Three-Tier Architecture, as specified in the pro
 
 The complete, executable SQL DDL is `database/schema.sql`, documented in [`database.md`](database.md) §9. The summary below must stay in sync with it.
 
-> **Note:** The report's ER diagram (`WRR_ER_Diagram_A4.svg`, `WRR_ER_Diagram_Revised.mmd`) still shows the original columns and must be redrawn to match the schema below.
+> **Note:** The report's old ER diagram images (`WRR_ER_Diagram_A4.svg`, `WRR_ER_Diagram_Revised.mmd`) showed the original columns. The up-to-date diagram with every column is [`docs/er-diagram.md`](docs/er-diagram.md), drawn from `database/schema.sql`.
 
 ```mermaid
 erDiagram

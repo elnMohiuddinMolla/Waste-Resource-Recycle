@@ -42,7 +42,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 - **Frontend and CSP:** the Content-Security-Policy blocks inline code. Use separate `.js`/`.css` files, `addEventListener` and CSS classes — never inline `<script>`, `onclick="..."` or `style="..."`.
 - **Layers:** controllers call services only; services never contain SQL; all SQL (including row locks such as `userModel.lockById`) lives in models.
 
-## 5. Current code status
+## 5. Current code status — complete
 
 **Built, tested and audited** (`prompt.md` A1–A3, B1–B21) — all 44 endpoints of `api-spec.md` §2. `npm run perf` checks NFR-02 (latest: slowest core call ~150 ms, slowest report ~110 ms with 50 concurrent users), matching `api-spec.md`:
 
@@ -79,7 +79,9 @@ D1 done: browser checklist run in Chrome (18/18; two layout/UX fixes). Firefox/E
 
 D2 done: `docs/test-cases.md` (50 test cases covering FR-01–FR-21, EC-01–EC-06 and NFRs; 47 pass, 3 not run).
 
-Not done yet: doc sync and viva notes (D3), testing and lab-report docs (D1–D3).
+D3 done: `docs/er-diagram.md` (Mermaid ER from `database/schema.sql`), `docs/viva-notes.md` (architecture, transitions, double-spending, snapshots, cookie, 20 questions).
+
+**The project is complete** (prompt.md A1–D3). Left to do by hand: open the site in Firefox and Edge, open an exported CSV in Excel (`docs/e2e-walkthrough.md`).
 
 **Tests:** `npm test` = unit tests (no database). `npm run test:api` = API tests; they rebuild a separate database `wrr_test` (override with `TEST_DB_NAME`) from `database/*.sql` and refuse to run on `wrr_db`. Add tests for each new module.
 
