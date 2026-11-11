@@ -52,10 +52,17 @@ Key rules: a strict 8-transition request state machine, a signed points ledger w
    /c/xampp/mysql/bin/mysql.exe -u root < database/schema.sql
    /c/xampp/mysql/bin/mysql.exe -u root < database/seed.sql
    ```
-   **Already have a `wrr_db` from before 12 Nov 2026?** Run the migration once instead of re-importing (it only adds the photo column):
+   **Already have a `wrr_db` from before 12 Nov 2026?** Run the migrations once, in order, instead of re-importing. They only add new things and keep your data:
    ```
    /c/xampp/mysql/bin/mysql.exe -u root < database/migrations/001_add_pickup_photo.sql
+   /c/xampp/mysql/bin/mysql.exe -u root < database/migrations/002_add_support_tickets.sql
    ```
+   | Migration | What it adds | PRD |
+   |---|---|---|
+   | `001_add_pickup_photo.sql` | `pickup_requests.photo_path` column (waste photo) | v1.4.0 |
+   | `002_add_support_tickets.sql` | `support_tickets` table (help & support) | v1.5.0 |
+
+   Run each one only once: running 001 again fails with "Duplicate column", and 002 with "Table already exists". Both mean it is already done.
 
 ### 3. Backend
 ```
