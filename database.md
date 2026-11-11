@@ -227,7 +227,7 @@ To meet the response-time targets of NFR-02 (2 s for core operations, 5 s for re
 
 | Index Name | Target Table | Indexed Columns | Index Type | Query Optimization Rationale |
 |---|---|---|:---:|---|
-| `PRIMARY` | All 10 Tables | `*_id` | B-Tree (Clustered) | Primary key random access ($O(1)$). |
+| `PRIMARY` | All 11 Tables | `*_id` | B-Tree (Clustered) | Primary key random access ($O(1)$). |
 | `email` (auto-named) | `users` | `email` | UNIQUE | Login credential lookups. |
 | `idx_req_status` | `pickup_requests` | `status` | Non-Unique | Admin dashboard unassigned queue filtering. |
 | `idx_req_collector` | `pickup_requests` | `collector_id, status` | Composite | Collector portal assigned tasks retrieval. |

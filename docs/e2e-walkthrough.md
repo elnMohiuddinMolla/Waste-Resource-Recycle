@@ -22,7 +22,7 @@ D1)
 
 **Project:** Waste Resource Recycle (WRR) — CSE-3112 Software Engineering Lab
 **Date:** 11 November 2026
-**Build:** commit after `5e339b8` (all 44 endpoints, 23 pages)
+**Build:** commit after `5e339b8` (all 44 endpoints, 23 pages). *Sections 1–3 record that run. Features added later (waste photo, help & support: 50 endpoints, 26 pages) are covered in `docs/test-cases.md` TC-51–TC-56.*
 
 This document has two parts:
 
@@ -146,9 +146,9 @@ Repeat M3, M6, M8 and R2 in each browser.
 From `backend/`, with MySQL running:
 
 ```
-npm test                # 20 unit tests
-npm run test:api        # 103 API tests (separate wrr_test database)
+npm test                # 22 unit tests
+npm run test:api        # 114 API tests (separate wrr_test database)
 npm run e2e             # this walkthrough, 45 checks (wrr_test)
-npm run check:frontend  # 352 static checks of the pages (no database)
+npm run check:frontend  # 453 static checks of the pages (no database)
 npm run perf            # NFR-02 timings (wrr_test)
 ```

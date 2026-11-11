@@ -14,7 +14,7 @@
 | API tests (`wrr_test` database) | `npm run test:api` | 114 | 114 | 0 | 100 % |
 | **Automated total (unit + API)** | | **136** | **136** | **0** | **100 %** |
 | End-to-end story through the API | `npm run e2e` | 45 checks | 45 | 0 | 100 % |
-| Static page checks (23 pages, 28 scripts) | `npm run check:frontend` | 352 checks | 352 | 0 | 100 % |
+| Static page checks (26 pages, 32 scripts) | `npm run check:frontend` | 453 checks | 453 | 0 | 100 % |
 | Browser story in Chrome (D1) | `docs/e2e-walkthrough.md` §2 | 18 checks | 18 | 0 | 100 % |
 | Page views in Chrome at 360 px and 1280 px (D1) | `docs/e2e-walkthrough.md` §2 | 50 | 50 | 0 | 100 % |
 | Performance (NFR-02) | `npm run perf` | 3 limits | 3 | 0 | 100 % |
@@ -60,7 +60,7 @@ Plastic is 10.00 points/kg; the active rule is ৳0.50 per point with a minimum 
 | TC-15 | FR-11 | Points = ROUND(kg × rate, 2) | Rate 10.00 | Weigh 30 kg; weigh a weight with 3 decimals | 300.00; rounding done by the database to 2 decimals | api `collector`: "points are rounded to 2 decimals by the database"; e2e step 2: 300.00 | Pass |
 | TC-16 | FR-12 | History with filters and paging | Several requests and records | `GET /pickup-requests/mine?status=&category_id=&from=&to=`; `GET /collector/history`; `GET /rewards/history` | Only own rows, newest first, filters and paging work; ledger signed | api `pickup`, `collector`, `redemption`: filters, paging, signed ledger | Pass |
 | TC-17 | FR-13 | Every status change is logged | — | Run assign → reject → reassign → accept → collect → complete | One `request_status_logs` row per change with old/new status, who, note, time | api `pickup` / `collector`: log rows checked; e2e step 2: 7-step timeline | Pass |
-| TC-18 | FR-14 | Notifications (11 types), badge, mark read | — | Run the pickup and redemption flows; open notifications; mark one / all read | All 11 types created for the right person; admin gets none; unread count drops | api `collector` (7 pickup types), `redemption` (4 redemption types), `notification` (read one / all, owner only); browser M7: badge 4 → cleared | Pass |
+| TC-18 | FR-14 | Notifications (12 types), badge, mark read | — | Run the pickup and redemption flows; open notifications; mark one / all read | All 12 types created for the right person; admin gets none; unread count drops | api `collector` (7 pickup types), `redemption` (4 redemption types), `support` (`SUPPORT_ANSWERED`), `notification` (read one / all, owner only); browser M7: badge 4 → cleared | Pass |
 | TC-19 | FR-15 | Request a cash redemption | Balance ≥ 100 | `POST /redemptions` with 150 points, bKash | 201 Pending, ৳75.00, points held at once with a `REDEEM` row; below minimum or above balance → 422 | api `redemption`: 422 cases, REDEEM row; e2e step 3; browser M8: balance 150 → 50 | Pass |
 | TC-20 | FR-16 | One active redemption rule | Active rule ৳0.50 | Admin `POST /admin/redemption-rules` ৳0.60, min 100 | New rule active, old one archived; two admins at the same moment still leave one active | api `rule`: archive, concurrency test | Pass |
 | TC-21 | FR-17 | Five reports, print and CSV | Some completed pickups and redemptions | Run each report with filters; print; export CSV | Correct SQL totals, default dates = this month (BD time), only the filters each report uses; clean A4 print; CSV with BOM and Total row | api `report`: 7 tests; e2e step 7; browser M11, P1, P2 | Pass |
@@ -135,6 +135,6 @@ From `backend/`, with MySQL running:
 npm test                # 22 unit tests
 npm run test:api        # 114 API tests (separate wrr_test database)
 npm run e2e             # 45 end-to-end checks (wrr_test)
-npm run check:frontend  # 352 static page checks (no database)
+npm run check:frontend  # 453 static page checks (no database)
 npm run perf            # NFR-02 timings (wrr_test)
 ```

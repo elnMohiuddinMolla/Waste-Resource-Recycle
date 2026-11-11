@@ -22,9 +22,10 @@ Progress is tracked step by step in [`prompt.md`](prompt.md).
 
 ## Features
 
-- **General users:** register, submit pickup requests (category, estimated kg, address, preferred time), track each request with a full status timeline, cancel while pending, view the points ledger, request cash redemption, in-website notifications.
-- **Waste collectors:** see assigned jobs, accept / reject (with reason) / abort on site, record the actual weight, complete the job (points are credited automatically), view collection history.
-- **Administrators:** assign and reassign collectors, approve / pay / reject redemptions (rejection refunds the points), correct weights (with a balancing ledger entry), manage zones, waste categories, redemption rules and accounts, and run 5 management reports.
+- **General users:** register, submit pickup requests (category, a photo of the waste, estimated kg, address, preferred time), track each request with a full status timeline, cancel while pending, view the points ledger, request cash redemption, in-website notifications, open support tickets.
+- **Waste collectors:** see assigned jobs with the waste photo, accept / reject (with reason) / abort on site, record the actual weight, complete the job (points are credited automatically), view collection history, open support tickets.
+- **Administrators:** assign and reassign collectors, approve / pay / reject redemptions (rejection refunds the points), correct weights (with a balancing ledger entry), manage zones, waste categories, redemption rules and accounts, answer support tickets, and run 5 management reports.
+- **Everyone:** a public Help & FAQ page with the admin's contact details.
 
 Key rules: a strict 8-transition request state machine, a signed points ledger whose balance can never go negative, rate snapshots so later rate changes never alter past rewards, and row locks that prevent double-spending.
 
