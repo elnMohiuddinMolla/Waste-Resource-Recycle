@@ -195,9 +195,47 @@ main.container { flex: 1; padding-top: 1.25rem; padding-bottom: 2rem; }
     gap: 0.15rem;
   }
   .header-user { border-top: 0; padding: 0 0 0 0.75rem; margin: 0; }
-  /* Compact links so the admin's ten menu items fit on one line */
-  .site-nav a { padding: 0.45rem 0.42rem; font-size: 0.9rem; }
-  .header-user .who { font-size: 0.85rem; }
+}
+
+/* Menu icons (admin): beside the text in the phone menu and in the sidebar */
+.site-nav a svg { width: 18px; height: 18px; flex: none; vertical-align: -4px; margin-right: 0.55rem; }
+
+/* Admin sidebar on wide screens. The header keeps only the brand; the menu becomes a
+   fixed white column on the left, with the user and Logout at its bottom. */
+@media (min-width: 960px) {
+  body.has-sidebar { --sidebar: 232px; padding-left: var(--sidebar); }
+  .has-sidebar .site-header { margin-left: calc(-1 * var(--sidebar)); }
+  .has-sidebar .site-header .container { max-width: none; padding: 0 1.25rem; }
+  .has-sidebar .site-nav {
+    position: fixed; top: 56px; left: 0; bottom: 0;
+    width: var(--sidebar);
+    flex-direction: column; align-items: stretch; gap: 2px;
+    padding: 1rem 0.75rem;
+    background: var(--card);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+  }
+  .has-sidebar .site-nav a {
+    display: flex; align-items: center;
+    padding: 0.55rem 0.75rem;
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.93rem;
+  }
+  .has-sidebar .site-nav a svg { margin-right: 0.7rem; color: var(--muted); }
+  .has-sidebar .site-nav a:hover { background: #f3f6f4; }
+  .has-sidebar .site-nav a.active { background: var(--green-50); color: var(--green-900); font-weight: 600; }
+  .has-sidebar .site-nav a.active svg { color: var(--green-700); }
+  .has-sidebar .header-user {
+    margin-top: auto;
+    padding: 0.9rem 0.5rem 0;
+    border-top: 1px solid var(--border);
+    justify-content: space-between;
+    color: var(--text);
+  }
+  .has-sidebar .header-user .role { color: var(--muted); opacity: 1; }
+  .has-sidebar .header-user .btn-light { background: var(--card); color: var(--text); border-color: var(--border); }
+  .has-sidebar .header-user .btn-light:hover { border-color: var(--green-600); color: var(--green-900); }
 }
 
 .site-footer {
@@ -1069,6 +1107,7 @@ tr.total-row td { font-weight: 700; background: #f9fafb; border-top: 2px solid v
 /* ---------- Print (reports, C14) ---------- */
 
 @media print {
+  body.has-sidebar { padding-left: 0; }
   @page { size: A4; margin: 15mm; }
   .site-header, .site-footer, .no-print, .toast-area, .btn { display: none !important; }
   .print-only { display: block; }

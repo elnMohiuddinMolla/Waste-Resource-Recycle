@@ -6,6 +6,7 @@
 import { api } from './api.js';
 import { el, clear, $ } from './ui.js';
 import { startBadge } from './notifications.js';
+import { icon } from './icons.js';
 
 export const DASHBOARDS = {
   user: '/user/dashboard.html',
@@ -39,6 +40,12 @@ const NAV = {
     ['Records', '/admin/records.html'],
     ['Reports', '/admin/reports.html']
   ]
+};
+
+// Icons for the admin sidebar (desktop); on phones the same links fold behind "Menu"
+const ADMIN_ICONS = {
+  Dashboard: 'home', Requests: 'list', Redemptions: 'cash', Users: 'users', Collectors: 'truck',
+  Zones: 'map', Categories: 'tag', Rules: 'sliders', Records: 'clipboard', Reports: 'chart'
 };
 
 // The logged-in user, or null (never redirects)
@@ -96,10 +103,13 @@ export function renderHeader(user) {
   if (!header) return;
   header.className = 'site-header';
   clear(header);
+  // The admin has ten menu items: on wide screens they go in a left sidebar (css: .has-sidebar)
+  document.body.classList.toggle('has-sidebar', user.role === 'admin');
 
   let badge = null;
   const links = (NAV[user.role] || []).map(([label, href, hasBadge]) => {
     const a = el('a', { text: label, attrs: { href } });
+    if (user.role === 'admin') a.prepend(icon(ADMIN_ICONS[label]));
     if (location.pathname === href) {
       a.classList.add('active');
       a.setAttribute('aria-current', 'page');
