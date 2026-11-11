@@ -57,7 +57,7 @@ The prompts work in two situations:
 - [x] C1 — Shared frontend core (styles, api.js, auth guard, layout, UI helpers)
 - [x] C2 — Public pages: landing, login, register
 - [x] C3 — User: dashboard + notifications page
-- [ ] C4 — User: new pickup request
+- [x] C4 — User: new pickup request
 - [ ] C5 — User: my requests, details timeline, cancel
 - [ ] C6 — User: points history + cash redemption
 - [ ] C7 — Collector: dashboard + job actions (accept / reject / abort)
@@ -617,7 +617,7 @@ read", link to the related request when request_id is set.
 Done when: numbers match the seed data for tanvir@gmail.com and marking read updates the badge.
 ```
 
-### C4 — User: new pickup request  `[ ]`
+### C4 — User: new pickup request  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.1 step 3, FR-03, api-spec.md §3.1.
