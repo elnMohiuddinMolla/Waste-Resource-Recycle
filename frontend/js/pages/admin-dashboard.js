@@ -65,7 +65,7 @@ function bars(box, rows, emptyText) {
   const max = Math.max(...rows.map((r) => r.value)) || 1;
   box.append(el('ul', { className: 'db-bars' }, rows.map((r) => el('li', {}, [
     el('span', { className: 'db-bar-label' }, [r.label]),
-    el('progress', { className: `db-bar ${r.tone || ''}`, attrs: { max, value: r.value, 'aria-label': `${r.text}` } }),
+    el('progress', { className: 'db-bar', attrs: { max, value: r.value, 'aria-label': `${r.text}` } }),
     el('span', { className: 'db-bar-value', text: r.text })
   ]))));
 }
@@ -90,20 +90,19 @@ async function loadMonth() {
     const byCat = {};
     for (const r of rows) byCat[r.category_name] = (byCat[r.category_name] || 0) + Number(r.total_weight_kg);
     bars($('#chart-category'), Object.entries(byCat).sort((a, b) => b[1] - a[1])
-      .map(([name, value]) => ({ label: name, value, text: `${value.toFixed(2)} kg`, tone: 'tone-green' })), 'Nothing collected yet this month.');
+      .map(([name, value]) => ({ label: name, value, text: `${value.toFixed(2)} kg` })), 'Nothing collected yet this month.');
   }
 
   if (status.ok) {
-    const tone = { Pending: 'tone-amber', Assigned: 'tone-blue', Accepted: 'tone-blue', Collected: 'tone-blue', Completed: 'tone-green', Rejected: 'tone-pink', Cancelled: 'tone-grey' };
     bars($('#chart-status'), status.body.data.map((r) => ({
-      label: statusBadge(r.status), value: r.request_count, text: `${r.request_count} · ${Number(r.percentage).toFixed(0)}%`, tone: tone[r.status]
+      label: statusBadge(r.status), value: r.request_count, text: `${r.request_count} · ${Number(r.percentage).toFixed(0)}%`
     })), 'No requests this month.');
   }
 
   if (redemptions.ok) {
     const paid = redemptions.body.data.find((r) => r.status === 'Paid');
     set('#kpi-paid', formatTaka(paid ? paid.total_cash_bdt : 0));
-    set('#kpi-paid-note', `Cash paid out in ${plural(paid ? paid.redemption_count : 0, 'redemption')}`);
+    set('#kpi-paid-note', `Paid out · ${plural(paid ? paid.redemption_count : 0, 'redemption')}`);
   }
 
   if (liability.ok) {
@@ -111,7 +110,7 @@ async function loadMonth() {
     set('#kpi-liability', `${formatPoints(row.net_outstanding_point_liability)} pts`);
     set('#kpi-liability-bdt', row.estimated_cash_liability_bdt === null
       ? 'Not yet redeemed'
-      : `Not yet redeemed (≈ ${formatTaka(row.estimated_cash_liability_bdt)})`);
+      : `Unredeemed · ≈ ${formatTaka(row.estimated_cash_liability_bdt).replace(' ', ' ')}`);
   }
 }
 

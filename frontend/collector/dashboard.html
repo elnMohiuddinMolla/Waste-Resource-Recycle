@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <script type="module" src="/js/pages/collector-dashboard.js"></script>
 </head>
-<body class="db-page">
+<body>
   <header id="app-header" class="site-header"></header>
 
   <main class="container db">
@@ -19,8 +19,8 @@
         <h1 id="greeting">Loading…</h1>
         <p class="db-chip" id="zone"></p>
         <div class="db-hero-actions">
-          <a class="btn btn-accent" href="/collector/requests.html"><span data-icon="truck"></span>Open my jobs</a>
-          <a class="btn btn-ghost" href="/collector/records.html"><span data-icon="history"></span>Collection history</a>
+          <a class="btn btn-primary" href="/collector/requests.html"><span data-icon="truck"></span>Open my jobs</a>
+          <a class="btn btn-secondary" href="/collector/records.html"><span data-icon="history"></span>Collection history</a>
         </div>
       </div>
       <a class="db-balance" href="/collector/records.html" aria-label="Today's collections — open my collection history">
@@ -35,19 +35,19 @@
     <h2 class="db-h2">Your jobs</h2>
     <section class="db-pipeline" aria-label="Your jobs by stage">
       <a class="db-stage" href="/collector/requests.html?status=Assigned">
-        <span class="db-stage-top"><span class="db-stat-icon db-tone-blue" data-icon="bell"></span><span class="db-stage-step">Step 1</span></span>
+        <span class="db-stage-top"><span class="db-stat-icon" data-icon="bell"></span><span class="db-stage-step">Step 1</span></span>
         <span class="db-stage-value" id="stat-assigned">—</span>
         <strong>New jobs</strong>
         <small>Accept or reject</small>
       </a>
       <a class="db-stage" href="/collector/requests.html?status=Accepted">
-        <span class="db-stage-top"><span class="db-stat-icon db-tone-amber" data-icon="truck"></span><span class="db-stage-step">Step 2</span></span>
+        <span class="db-stage-top"><span class="db-stat-icon" data-icon="truck"></span><span class="db-stage-step">Step 2</span></span>
         <span class="db-stage-value" id="stat-accepted">—</span>
         <strong>To collect</strong>
         <small>Go, weigh and record</small>
       </a>
       <a class="db-stage" href="/collector/requests.html?status=Collected">
-        <span class="db-stage-top"><span class="db-stat-icon db-tone-green" data-icon="check"></span><span class="db-stage-step">Step 3</span></span>
+        <span class="db-stage-top"><span class="db-stat-icon" data-icon="check"></span><span class="db-stage-step">Step 3</span></span>
         <span class="db-stage-value" id="stat-collected">—</span>
         <strong>To complete</strong>
         <small>Mark as completed</small>

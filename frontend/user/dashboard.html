@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/style.css">
   <script type="module" src="/js/pages/user-dashboard.js"></script>
 </head>
-<body class="db-page">
+<body>
   <header id="app-header" class="site-header"></header>
 
   <main class="container db">
@@ -20,8 +20,8 @@
         <p class="db-chip" id="zone"></p>
         <!-- NFR-01: "New pickup request" is one tap away from the dashboard -->
         <div class="db-hero-actions">
-          <a class="btn btn-accent" href="/user/new-request.html"><span data-icon="plus"></span>New pickup request</a>
-          <a class="btn btn-ghost" href="/user/redeem.html"><span data-icon="cash"></span>Redeem points</a>
+          <a class="btn btn-primary" href="/user/new-request.html"><span data-icon="plus"></span>New pickup request</a>
+          <a class="btn btn-secondary" href="/user/redeem.html"><span data-icon="cash"></span>Redeem points</a>
         </div>
       </div>
       <a class="db-balance" href="/user/history.html" aria-label="Available points — open my points history">
@@ -35,28 +35,28 @@
 
     <section class="db-stats" aria-label="Your summary">
       <a class="db-stat" href="/user/requests.html">
-        <span class="db-stat-icon db-tone-blue" data-icon="truck"></span>
+        <span class="db-stat-icon" data-icon="truck"></span>
         <span class="db-stat-body">
           <span class="db-stat-value" id="stat-active">—</span>
           <span class="db-stat-label">Active requests</span>
         </span>
       </a>
       <a class="db-stat" href="/user/requests.html?status=Completed">
-        <span class="db-stat-icon db-tone-green" data-icon="check"></span>
+        <span class="db-stat-icon" data-icon="check"></span>
         <span class="db-stat-body">
           <span class="db-stat-value" id="stat-completed">—</span>
           <span class="db-stat-label">Completed pickups</span>
         </span>
       </a>
       <a class="db-stat" href="/user/requests.html" id="next-link">
-        <span class="db-stat-icon db-tone-amber" data-icon="clock"></span>
+        <span class="db-stat-icon" data-icon="clock"></span>
         <span class="db-stat-body">
           <span class="db-stat-value db-stat-value-sm" id="stat-next">—</span>
           <span class="db-stat-label">Next pickup</span>
         </span>
       </a>
       <a class="db-stat" href="/user/notifications.html">
-        <span class="db-stat-icon db-tone-pink" data-icon="bell"></span>
+        <span class="db-stat-icon" data-icon="bell"></span>
         <span class="db-stat-body">
           <span class="db-stat-value" id="stat-unread">—</span>
           <span class="db-stat-label">Unread notifications</span>
