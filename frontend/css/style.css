@@ -24,8 +24,8 @@
   --blue-700: #1d4ed8;
   --blue-50: #eff6ff;
 
-  --radius: 10px;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --radius: 12px;
+  --shadow: 0 1px 2px rgba(16, 24, 20, 0.05), 0 1px 3px rgba(16, 24, 20, 0.04);
   --font: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Bengali", Arial, sans-serif;
 }
 
@@ -274,7 +274,39 @@ main.container { flex: 1; padding-top: 1.25rem; padding-bottom: 2rem; }
   justify-content: center;
   padding: 1.5rem 1rem;
 }
-.auth-card { width: 100%; max-width: 440px; }
+.auth-card { width: 100%; max-width: 440px; padding: 1.5rem; }
+.auth-card .muted { color: var(--muted); }
+
+/* Brand panel beside the login / register form on wide screens */
+.auth-side { display: none; }
+@media (min-width: 900px) {
+  .auth-wrap { display: grid; grid-template-columns: minmax(360px, 0.9fr) 1.1fr; padding: 0; align-items: stretch; }
+  .auth-wrap > .auth-card { align-self: center; justify-self: center; margin: 2rem; }
+  .auth-side {
+    position: sticky; top: 0;
+    height: 100vh;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 2.5rem 3rem;
+    color: #fff;
+    background:
+      radial-gradient(circle at 85% 15%, rgba(163, 230, 53, 0.22), transparent 45%),
+      radial-gradient(circle at 10% 95%, rgba(34, 197, 94, 0.25), transparent 50%),
+      linear-gradient(160deg, #0b2e22 0%, #11503a 60%, #15803d 100%);
+  }
+  .auth-side .brand { color: #fff; margin: 0; }
+  .auth-side .brand-mark { color: #fff; }
+  .auth-side h2 { font-size: 2.2rem; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+  .auth-side p { color: rgba(255, 255, 255, 0.82); max-width: 420px; margin-bottom: 1.75rem; }
+  .auth-side small { color: rgba(255, 255, 255, 0.6); }
+}
+.auth-points { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.9rem; }
+.auth-points li { display: flex; align-items: center; gap: 0.75rem; color: rgba(255, 255, 255, 0.9); }
+.auth-point-icon {
+  flex: none; display: grid; place-items: center;
+  width: 38px; height: 38px; padding: 9px; border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.15); color: #a3e635;
+}
+.auth-point-icon svg { width: 100%; height: 100%; }
 .auth-card .brand-big { text-align: center; margin-bottom: 1rem; }
 .auth-card .brand-big .brand-mark { width: 44px; height: 44px; font-size: 1.2rem; color: #fff; }
 
@@ -730,7 +762,7 @@ input:focus, select:focus, textarea:focus {
 .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { width: 100%; border-collapse: collapse; background: #fff; font-size: 0.92rem; }
 th, td { text-align: left; padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
-th { background: #f9fafb; font-weight: 600; white-space: nowrap; }
+th { background: #f8faf9; font-weight: 600; white-space: nowrap; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
 tbody tr:hover { background: #fafafa; }
 td.num, th.num { text-align: right; white-space: nowrap; }
 

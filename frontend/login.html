@@ -10,6 +10,21 @@
 </head>
 <body>
   <div class="auth-wrap">
+    <!-- Brand panel: wide screens only (decoration; the form works without it) -->
+    <aside class="auth-side" aria-hidden="true">
+      <a class="brand" href="/" tabindex="-1"><span class="brand-mark">♻</span>WRR</a>
+      <div>
+        <h2>Welcome back.</h2>
+        <p>Log in to book pickups, follow your jobs or run the service.</p>
+        <ul class="auth-points">
+          <li><span class="auth-point-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19a2 2 0 100-4 2 2 0 000 4zM17 19a2 2 0 100-4 2 2 0 000 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>A collector from your zone comes to your door</li>
+          <li><span class="auth-point-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5 21h14M6 7h12M6 7l-3 7a3 3 0 006 0L6 7zM18 7l-3 7a3 3 0 006 0l-3-7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Weighed on a real scale, points credited at once</li>
+          <li><span class="auth-point-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7h20v10H2zM12 15a3 3 0 100-6 3 3 0 000 6zM6 10v4M18 10v4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Cash out through bKash, Nagad or your bank</li>
+          <li><span class="auth-point-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Follow every step of every pickup</li>
+        </ul>
+      </div>
+      <small>CSE-3112 Software Engineering Lab · Faridpur Engineering College</small>
+    </aside>
     <div class="card auth-card">
       <div class="brand-big">
         <a href="/" class="brand-mark" aria-label="WRR home">♻</a>
@@ -36,6 +51,7 @@
       </form>
 
       <p class="center small mt-2 mb-0">New here? <a href="/register.html">Create an account</a></p>
+      <p class="center small mt-1 mb-0"><a href="/" class="muted">← Back to home</a> · <a href="/help.html" class="muted">Help</a></p>
     </div>
   </div>
 </body>
