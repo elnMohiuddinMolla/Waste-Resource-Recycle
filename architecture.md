@@ -231,11 +231,12 @@ Waste_Resource_Recycle/
 │   │   ├── controllers/
 │   │   ├── services/
 │   │   ├── models/
-│   │   ├── utils/                  # AppError, transaction helper, validators, money
+│   │   ├── utils/                  # AppError, transaction helper, validators, money, image (photo check), photoStore
 │   │   └── app.js                  # Middleware, /api/v1 routes, express.static('../frontend')
 │   ├── test/
 │   │   ├── unit/                   # no database needed (npm test)
 │   │   └── api/                    # rebuilds the wrr_test database (npm run test:api)
+│   ├── uploads/pickups/            # waste photos (gitignored; served only via GET /pickup-requests/:id/photo)
 │   ├── scripts/
 │   │   ├── perf-check.js           # NFR-02 timings, 50 users (npm run perf)
 │   │   ├── e2e-walkthrough.js      # full story through the API (npm run e2e)
@@ -262,7 +263,8 @@ Waste_Resource_Recycle/
 │
 ├── database/
 │   ├── schema.sql                  # 10-table DDL (same as database.md §9)
-│   └── seed.sql                    # Zones, categories, users, rule, sample data
+│   ├── seed.sql                    # Zones, categories, users, rule, sample data
+│   └── migrations/                 # changes for an existing database (001: pickup photo)
 │
 ├── docs/
 │   ├── e2e-walkthrough.md          # D1 walkthrough and browser checklist results

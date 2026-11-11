@@ -4,8 +4,7 @@ import { api, query } from '../api.js';
 import { requireRole, renderHeader } from '../auth.js';
 import {
   el, $, clear, getParam, formatDateTime, formatPoints, statusBadge, confirmDialog, toast,
-  setLoading, showFormAlert, clearErrors, loadingNode, emptyNode
-} from '../ui.js';
+  setLoading, showFormAlert, clearErrors, loadingNode, emptyNode, requestPhoto } from '../ui.js';
 
 const user = await requireRole('user');
 renderHeader(user);
@@ -169,6 +168,7 @@ function renderDetail(req) {
       el('h2', { text: `Request #${req.request_id}`, className: 'mb-0' }),
       statusBadge(req.status)
     ]),
+    requestPhoto(req.request_id, req.has_photo),
     el('dl', { className: 'details' }, [
       ...row('Category', req.category_name),
       ...(req.other_description ? row('Description', req.other_description) : []),

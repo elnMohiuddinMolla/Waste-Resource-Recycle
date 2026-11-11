@@ -3,16 +3,22 @@
 // errors are always shown too.
 import { api } from '../api.js';
 import { requireRole, renderHeader } from '../auth.js';
+import { fillIcons } from '../icons.js';
 import { el, $, clear, clearErrors, showFieldErrors, showFormAlert, showApiError, setLoading, formatPoints, formatDateTime, toast } from '../ui.js';
 
 const user = await requireRole('user');
 renderHeader(user);
 
+fillIcons();
 const form = $('#request-form');
 const button = form.querySelector('button[type="submit"]');
 const otherField = $('#other-field');
 const PHONE = /^(?:\+8801|01)[3-9]\d{8}$/;
 let categories = [];
+let photoData = null; // the chosen photo, made smaller, as a data URL
+
+const PHOTO_MAX_SIDE = 1280;  // longest side in pixels after shrinking
+const PHOTO_QUALITY = 0.82;   // JPEG quality
 
 // "Now" in Bangladesh time as YYYY-MM-DDTHH:mm, for the datetime-local minimum
 function bdNow() {
@@ -77,6 +83,69 @@ function fillDefaults() {
   form.preferred_at.min = bdNow();
 }
 
+// ---------- Waste photo (PRD v1.4.0, FR-03) ----------
+
+// Read a file as a data URL (the CSP allows data: images, not blob: ones)
+function readAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('read failed'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// Phone photos are often 3-8 MB: draw them on a canvas at most 1280 px wide and
+// save as JPEG, which is usually 150-400 KB (the server accepts up to 2 MB).
+async function shrinkPhoto(file) {
+  const img = new Image();
+  img.src = await readAsDataUrl(file);
+  await img.decode();
+  const scale = Math.min(1, PHOTO_MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(img.naturalWidth * scale);
+  canvas.height = Math.round(img.naturalHeight * scale);
+  canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL('image/jpeg', PHOTO_QUALITY);
+}
+
+function showPhoto(dataUrl) {
+  photoData = dataUrl;
+  const has = Boolean(dataUrl);
+  $('#photo-preview').classList.toggle('hidden', !has);
+  $('#photo-empty').classList.toggle('hidden', has);
+  $('#photo-meta').classList.toggle('hidden', !has);
+  if (has) {
+    $('#photo-preview').src = dataUrl;
+    const kb = Math.round((dataUrl.length - dataUrl.indexOf(',') - 1) * 3 / 4 / 1024);
+    $('#photo-info').textContent = `Photo ready · ${kb} KB`;
+  } else {
+    $('#photo-preview').removeAttribute('src');
+    form.photo.value = '';
+  }
+}
+
+form.photo.addEventListener('change', async () => {
+  const file = form.photo.files[0];
+  const box = form.photo.closest('.field').querySelector('.field-error');
+  box.textContent = '';
+  form.photo.classList.remove('invalid');
+  if (!file) return;
+  if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
+    showPhoto(null);
+    box.textContent = 'Choose a JPG, PNG or WebP photo.';
+    return;
+  }
+  $('#photo-info').textContent = 'Preparing photo…';
+  try {
+    showPhoto(await shrinkPhoto(file));
+  } catch {
+    showPhoto(null);
+    box.textContent = 'This photo could not be read. Try another one.';
+  }
+});
+$('#photo-change').addEventListener('click', () => form.photo.click());
+
 function readForm() {
   return {
     category_id: Number(form.category_id.value) || '',
@@ -102,6 +171,7 @@ function localChecks(v) {
   if (!v.zone_id) errors.push({ field: 'zone_id', message: 'Select a zone.' });
   if (!v.pickup_address) errors.push({ field: 'pickup_address', message: 'Enter the pickup address.' });
   if (!PHONE.test(v.contact_phone)) errors.push({ field: 'contact_phone', message: 'Enter a valid Bangladeshi mobile number (e.g. 01711000000).' });
+  if (!photoData) errors.push({ field: 'photo', message: 'Add a photo of the waste.' });
   return errors;
 }
 
@@ -126,7 +196,7 @@ form.addEventListener('submit', async (event) => {
   const errors = localChecks(values);
   if (errors.length) return showFieldErrors(form, errors);
 
-  const body = { ...values };
+  const body = { ...values, photo: photoData };
   if (!body.other_description) delete body.other_description;
 
   setLoading(button, true, 'Submitting…');
@@ -142,6 +212,7 @@ form.addEventListener('submit', async (event) => {
 
 $('#another').addEventListener('click', () => {
   form.reset();
+  showPhoto(null);
   fillDefaults();
   form.zone_id.value = user.zone_id || '';
   updateOtherField();

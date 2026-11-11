@@ -1,7 +1,7 @@
 // API tests: admin waste categories (api-spec.md §8.6, PRD FR-04, §5.2, requirement-validation EC-03)
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { resetDatabase, startServer, bdDateTime } = require('./helpers');
+const { resetDatabase, startServer, bdDateTime, SAMPLE_PHOTO } = require('./helpers');
 
 let api;
 let pool;
@@ -29,7 +29,8 @@ function requestBody(categoryId) {
     pickup_address: 'House 14, Road 2, Baitul Aman',
     contact_phone: '01811000004',
     estimated_weight_kg: 4,
-    preferred_at: bdDateTime(1)
+    preferred_at: bdDateTime(1),
+    photo: SAMPLE_PHOTO
   };
 }
 

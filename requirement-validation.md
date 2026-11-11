@@ -23,7 +23,7 @@ This report checks `WRR_PRD.md` v1.3.0 across 8 dimensions. Each item is marked:
 | 3. Error Handling | Covered | Status codes fixed in PRD §10 and `api-spec.md` §1.4. |
 | 4. Security | Covered | NFR-03. |
 | 5. Validation | Covered | Field rules below match `api-spec.md`. |
-| 6. Permissions (RBAC) | Covered | 44 endpoints in `api-spec.md` §2. |
+| 6. Permissions (RBAC) | Covered | 45 endpoints in `api-spec.md` §2. |
 | 7. Notifications | Covered | 11 types in FR-14. |
 | 8. Exception Resilience | Covered | 6 fail-safes. |
 

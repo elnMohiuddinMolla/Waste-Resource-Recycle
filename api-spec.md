@@ -97,46 +97,47 @@ List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is g
 | 8 | `GET` | `/api/v1/pickup-requests/mine` | Required | `user` | Lists authenticated user's submitted requests. |
 | 9 | `GET` | `/api/v1/pickup-requests/:id` | Required | `user`, `collector`, `admin` | Retrieves detailed job information & status audit timeline. |
 | 10 | `PUT` | `/api/v1/pickup-requests/:id/cancel` | Required | `user` | Cancels request strictly while in `Pending` state. |
+| 11 | `GET` | `/api/v1/pickup-requests/:id/photo` | Required | `user`, `collector`, `admin` | Returns the waste photo of a request (same access as details). |
 | **Collector Operations** | | | | | |
-| 11 | `GET` | `/api/v1/collector/requests` | Required | `collector` | Retrieves pickup jobs assigned to the logged-in collector (filter by zone/status). |
-| 12 | `PUT` | `/api/v1/collector/requests/:id/accept` | Required | `collector` | Accepts an assigned pickup job (`Accepted`). |
-| 13 | `PUT` | `/api/v1/collector/requests/:id/reject` | Required | `collector` | Rejects an assigned job with mandatory reason note. |
-| 14 | `PUT` | `/api/v1/collector/requests/:id/abort` | Required | `collector` | On-site cancellation with mandatory reason note. |
-| 15 | `POST` | `/api/v1/collector/collection-records` | Required | `collector` | Records physical scale weight & snapshots rate (`Collected`). |
-| 16 | `PUT` | `/api/v1/collector/requests/:id/complete`| Required | `collector` | Atomic transaction: completes job and issues `EARN` points. |
-| 17 | `GET` | `/api/v1/collector/history` | Required | `collector` | Lists completed pickups and metrics for the logged-in collector. |
+| 12 | `GET` | `/api/v1/collector/requests` | Required | `collector` | Retrieves pickup jobs assigned to the logged-in collector (filter by zone/status). |
+| 13 | `PUT` | `/api/v1/collector/requests/:id/accept` | Required | `collector` | Accepts an assigned pickup job (`Accepted`). |
+| 14 | `PUT` | `/api/v1/collector/requests/:id/reject` | Required | `collector` | Rejects an assigned job with mandatory reason note. |
+| 15 | `PUT` | `/api/v1/collector/requests/:id/abort` | Required | `collector` | On-site cancellation with mandatory reason note. |
+| 16 | `POST` | `/api/v1/collector/collection-records` | Required | `collector` | Records physical scale weight & snapshots rate (`Collected`). |
+| 17 | `PUT` | `/api/v1/collector/requests/:id/complete`| Required | `collector` | Atomic transaction: completes job and issues `EARN` points. |
+| 18 | `GET` | `/api/v1/collector/history` | Required | `collector` | Lists completed pickups and metrics for the logged-in collector. |
 | **Rewards & Ledger** | | | | | |
-| 18 | `GET` | `/api/v1/rewards/balance` | Required | `user` | Computes live spendable point balance via `SUM(points)`. |
-| 19 | `GET` | `/api/v1/rewards/history` | Required | `user` | Lists paginated ledger rows (`EARN`, `REDEEM`, `REFUND`, `ADJUST`). |
+| 19 | `GET` | `/api/v1/rewards/balance` | Required | `user` | Computes live spendable point balance via `SUM(points)`. |
+| 20 | `GET` | `/api/v1/rewards/history` | Required | `user` | Lists paginated ledger rows (`EARN`, `REDEEM`, `REFUND`, `ADJUST`). |
 | **Cash Redemptions** | | | | | |
-| 20 | `GET` | `/api/v1/redemptions/rules/active` | Required | `user`, `admin` | Returns active conversion rate and minimum threshold. |
-| 21 | `POST` | `/api/v1/redemptions` | Required | `user` | Submits cash withdrawal; holds points via negative ledger entry. |
-| 22 | `GET` | `/api/v1/redemptions/mine` | Required | `user` | Lists user's redemption requests and disbursement states. |
+| 21 | `GET` | `/api/v1/redemptions/rules/active` | Required | `user`, `admin` | Returns active conversion rate and minimum threshold. |
+| 22 | `POST` | `/api/v1/redemptions` | Required | `user` | Submits cash withdrawal; holds points via negative ledger entry. |
+| 23 | `GET` | `/api/v1/redemptions/mine` | Required | `user` | Lists user's redemption requests and disbursement states. |
 | **Notifications** | | | | | |
-| 23 | `GET` | `/api/v1/notifications` | Required | All Roles | Lists in-website alerts with unread badge count. |
-| 24 | `PATCH` | `/api/v1/notifications/:id/read` | Required | All Roles | Marks a single notification as read. |
-| 25 | `PATCH` | `/api/v1/notifications/read-all` | Required | All Roles | Marks all notifications for authenticated user as read. |
+| 24 | `GET` | `/api/v1/notifications` | Required | All Roles | Lists in-website alerts with unread badge count. |
+| 25 | `PATCH` | `/api/v1/notifications/:id/read` | Required | All Roles | Marks a single notification as read. |
+| 26 | `PATCH` | `/api/v1/notifications/read-all` | Required | All Roles | Marks all notifications for authenticated user as read. |
 | **Admin Operations** | | | | | |
-| 26 | `GET` | `/api/v1/admin/pickup-requests` | Required | `admin` | Lists all platform pickup requests with multi-filters. |
-| 27 | `PUT` | `/api/v1/admin/pickup-requests/:id/assign` | Required | `admin` | Assigns an active collector to a pending/rejected request. |
-| 28 | `GET` | `/api/v1/admin/redemptions` | Required | `admin` | Lists pending and processed cash redemptions. |
-| 29 | `PATCH` | `/api/v1/admin/redemptions/:id` | Required | `admin` | Processes redemption: `approve`, `reject` (+ refund), or `paid` (+ TrxID). |
-| 30 | `GET` | `/api/v1/admin/collection-records` | Required | `admin` | Lists certified scale receipts for audit. |
-| 31 | `PUT` | `/api/v1/admin/collection-records/:id` | Required | `admin` | Corrects scale weight; updates ledger (`ADJUST`); guards balance. |
+| 27 | `GET` | `/api/v1/admin/pickup-requests` | Required | `admin` | Lists all platform pickup requests with multi-filters. |
+| 28 | `PUT` | `/api/v1/admin/pickup-requests/:id/assign` | Required | `admin` | Assigns an active collector to a pending/rejected request. |
+| 29 | `GET` | `/api/v1/admin/redemptions` | Required | `admin` | Lists pending and processed cash redemptions. |
+| 30 | `PATCH` | `/api/v1/admin/redemptions/:id` | Required | `admin` | Processes redemption: `approve`, `reject` (+ refund), or `paid` (+ TrxID). |
+| 31 | `GET` | `/api/v1/admin/collection-records` | Required | `admin` | Lists certified scale receipts for audit. |
+| 32 | `PUT` | `/api/v1/admin/collection-records/:id` | Required | `admin` | Corrects scale weight; updates ledger (`ADJUST`); guards balance. |
 | **Admin Governance** | | | | | |
-| 32 | `GET` | `/api/v1/admin/categories` | Required | `admin` | Lists all waste categories (active & inactive). |
-| 33 | `POST` | `/api/v1/admin/categories` | Required | `admin` | Adds a new recyclable category. |
-| 34 | `PUT` | `/api/v1/admin/categories/:id` | Required | `admin` | Updates category point rates and active status. |
-| 35 | `GET` | `/api/v1/admin/zones` | Required | `admin` | Lists all zones (active & inactive). |
-| 36 | `POST` | `/api/v1/admin/zones` | Required | `admin` | Creates a new municipal operational zone. |
-| 37 | `PUT` | `/api/v1/admin/zones/:id` | Required | `admin` | Updates zone boundary name and active status. |
-| 38 | `GET` | `/api/v1/admin/redemption-rules` | Required | `admin` | Lists current active conversion rule and archived rules. |
-| 39 | `POST` | `/api/v1/admin/redemption-rules` | Required | `admin` | Archives existing rule and activates new conversion rate. |
-| 40 | `GET` | `/api/v1/admin/users` | Required | `admin` | Lists user and collector accounts with status filters. |
-| 41 | `POST` | `/api/v1/admin/collectors` | Required | `admin` | Provisions a new waste collector account. |
-| 42 | `PATCH` | `/api/v1/admin/users/:id/status` | Required | `admin` | Activates or deactivates a user/collector account. |
-| 43 | `PATCH` | `/api/v1/admin/users/:id/zone` | Required | `admin` | Updates assigned operational zone for a collector. |
-| 44 | `GET` | `/api/v1/admin/reports/:type` | Required | `admin` | Computes 5 SQL analytical and operational KPI reports. |
+| 33 | `GET` | `/api/v1/admin/categories` | Required | `admin` | Lists all waste categories (active & inactive). |
+| 34 | `POST` | `/api/v1/admin/categories` | Required | `admin` | Adds a new recyclable category. |
+| 35 | `PUT` | `/api/v1/admin/categories/:id` | Required | `admin` | Updates category point rates and active status. |
+| 36 | `GET` | `/api/v1/admin/zones` | Required | `admin` | Lists all zones (active & inactive). |
+| 37 | `POST` | `/api/v1/admin/zones` | Required | `admin` | Creates a new municipal operational zone. |
+| 38 | `PUT` | `/api/v1/admin/zones/:id` | Required | `admin` | Updates zone boundary name and active status. |
+| 39 | `GET` | `/api/v1/admin/redemption-rules` | Required | `admin` | Lists current active conversion rule and archived rules. |
+| 40 | `POST` | `/api/v1/admin/redemption-rules` | Required | `admin` | Archives existing rule and activates new conversion rate. |
+| 41 | `GET` | `/api/v1/admin/users` | Required | `admin` | Lists user and collector accounts with status filters. |
+| 42 | `POST` | `/api/v1/admin/collectors` | Required | `admin` | Provisions a new waste collector account. |
+| 43 | `PATCH` | `/api/v1/admin/users/:id/status` | Required | `admin` | Activates or deactivates a user/collector account. |
+| 44 | `PATCH` | `/api/v1/admin/users/:id/zone` | Required | `admin` | Updates assigned operational zone for a collector. |
+| 45 | `GET` | `/api/v1/admin/reports/:type` | Required | `admin` | Computes 5 SQL analytical and operational KPI reports. |
 
 ---
 
@@ -359,7 +360,8 @@ List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is g
     "contact_phone": "01811000004",
     "other_description": null,
     "estimated_weight_kg": 15.00,
-    "preferred_at": "2026-11-15T10:00:00"
+    "preferred_at": "2026-11-15T10:00:00",
+    "photo": "data:image/jpeg;base64,/9j/4AAQSkZJRg..."
   }
   ```
 - **Validation Rules:**
@@ -370,8 +372,10 @@ List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is g
   - `estimated_weight_kg`: Required, must be positive (`> 0.00`).
   - `contact_phone`: Bangladeshi mobile format; the form pre-fills it from the user's profile.
   - `pickup_address`: Required, at most 255 characters. `other_description`: at most 1000 characters.
+  - `photo` (PRD v1.4.0): Required. A data URL of a JPG, PNG or WebP image, at most 2 MB after decoding. The type is checked from the file's first bytes, not from the label, so anything else → 400 on `photo`. This route accepts a JSON body of up to 3 MB; a larger body → **413**. The browser shrinks photos to at most 1280 px (JPEG) before sending.
 - **Database Transaction Steps:**
-  1. Inserts into `pickup_requests` with `status = 'Pending'`.
+  0. Saves the photo as `backend/uploads/pickups/<random 32 hex>.<jpg|png|webp>` (deleted again if the transaction fails).
+  1. Inserts into `pickup_requests` with `status = 'Pending'` and `photo_path` = that file name.
   2. Inserts initial audit log into `request_status_logs` (`old_status = NULL`, `new_status = 'Pending'`).
   3. Inserts a `PICKUP_SUBMITTED` notification for the user.
 - **Response `201 Created`:**
@@ -410,6 +414,7 @@ List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is g
           "zone_name": "Zone 1 - Baitul Aman",
           "pickup_address": "House 14, Road 2, Baitul Aman",
           "estimated_weight_kg": "15.00",
+      "has_photo": false,
           "actual_weight_kg": "15.50",
           "preferred_at": "2026-11-10T11:00:00.000Z",
           "status": "Completed",
@@ -502,6 +507,14 @@ List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is g
   }
   ```
 
+#### 3.5 Get the Waste Photo (PRD v1.4.0)
+- **Endpoint:** `GET /api/v1/pickup-requests/:id/photo`
+- **Authentication:** `Required (Roles: user [owner], collector [assigned], admin)` — the same people who may see the request (§3.3). Anyone else → **404**; not logged in → **401**.
+- **Response `200 OK`:** the image bytes with `Content-Type: image/jpeg | image/png | image/webp` and `Cache-Control: private, max-age=3600`. The frontend uses this URL directly in `<img src>` (same origin, cookie sent automatically).
+- **Errors:** `404` "This request has no photo." for requests made before v1.4.0; `404` when the request does not exist or is not yours.
+
+---
+
 ---
 
 ### Module 4: Collector Operations
@@ -522,6 +535,7 @@ List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is g
         "pickup_address": "House 14, Road 2, Baitul Aman",
         "category_name": "Paper & Cardboard",
         "estimated_weight_kg": "20.00",
+        "has_photo": 0,
         "preferred_at": "2026-11-13T14:00:00.000Z",
         "status": "Accepted"
       }
@@ -1323,6 +1337,8 @@ All endpoints: `Required (Role: admin)`. Responses never include `password_hash`
 | HTTP Status | Error Scenario | Sample Response Payload |
 |:---:|---|---|
 | `400` | Past Preferred Date | `{"success": false, "message": "Validation failed.", "errors": [{"field": "preferred_at", "message": "Preferred date must be in the future."}]}` |
+| `400` | Missing or Invalid Photo | `{"success": false, "message": "Validation failed.", "errors": [{"field": "photo", "message": "Add a photo of the waste."}]}` (or "The photo must be a JPG, PNG or WebP image." / "The photo must be at most 2 MB.") |
+| `413` | Body Too Large | A pickup request body over 3 MB. |
 | `400` | Missing Other Description | `{"success": false, "message": "Validation failed.", "errors": [{"field": "other_description", "message": "Description is mandatory for 'Other' category."}]}` |
 | `401` | Missing / Expired Auth Cookie | `{"success": false, "message": "Authentication required. Please log in."}` |
 | `403` | Resident Accessing Admin API | `{"success": false, "message": "Access denied. Insufficient permissions for role: user."}` |

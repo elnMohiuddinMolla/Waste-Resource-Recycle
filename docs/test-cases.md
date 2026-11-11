@@ -10,17 +10,17 @@
 
 | Suite | Command | Tests | Passed | Failed | Pass rate |
 |---|---|:---:|:---:|:---:|:---:|
-| Unit tests (no database) | `npm test` | 20 | 20 | 0 | 100 % |
-| API tests (`wrr_test` database) | `npm run test:api` | 103 | 103 | 0 | 100 % |
-| **Automated total (unit + API)** | | **123** | **123** | **0** | **100 %** |
+| Unit tests (no database) | `npm test` | 22 | 22 | 0 | 100 % |
+| API tests (`wrr_test` database) | `npm run test:api` | 106 | 106 | 0 | 100 % |
+| **Automated total (unit + API)** | | **128** | **128** | **0** | **100 %** |
 | End-to-end story through the API | `npm run e2e` | 45 checks | 45 | 0 | 100 % |
 | Static page checks (23 pages, 28 scripts) | `npm run check:frontend` | 352 checks | 352 | 0 | 100 % |
 | Browser story in Chrome (D1) | `docs/e2e-walkthrough.md` §2 | 18 checks | 18 | 0 | 100 % |
 | Page views in Chrome at 360 px and 1280 px (D1) | `docs/e2e-walkthrough.md` §2 | 50 | 50 | 0 | 100 % |
 | Performance (NFR-02) | `npm run perf` | 3 limits | 3 | 0 | 100 % |
 
-**Test cases in this document:** 51 (25 FR, 6 EC, 20 NFR/security).
-**Result:** 48 Pass, 0 Fail, 3 Not run (TC-37 HTTPS in deployment, TC-47 uptime, TC-49 Firefox).
+**Test cases in this document:** 53 (27 FR, 6 EC, 20 NFR/security).
+**Result:** 50 Pass, 0 Fail, 3 Not run (TC-37 HTTPS in deployment, TC-47 uptime, TC-49 Firefox).
 
 **How to read the "Actual result" column:** each row names where the evidence comes from:
 - `unit:` = a unit test in `backend/test/unit/`.
@@ -68,6 +68,8 @@ Plastic is 10.00 points/kg; the active rule is ৳0.50 per point with a minimum 
 | TC-23 | FR-19 | Zone management | Admin | Create, rename, deactivate a zone | Duplicate name → 409; inactive zone not offered for new users/requests; old rows keep it | api `zone`: 7 tests | Pass |
 | TC-24 | FR-20 | User and collector management | Admin | Create a collector; change their zone; deactivate/activate accounts; try to deactivate self and a collector with open jobs | Collector can log in; a collector with open jobs → 409 (MF-02); self-deactivation refused | api `user`: 10 tests | Pass |
 | TC-25 | FR-21 | Process redemptions | Redemption Pending | Approve → mark paid with TrxID; on another, reject with a note | Pending → Approved → Paid (TrxID needed); reject from Pending/Approved refunds with `REFUND`; Paid is final | api `redemption`: approve/paid/reject/refund tests; e2e steps 3–4; browser M9 | Pass |
+| TC-52 | FR-03 (v1.4.0) | Waste photo is required and checked | Logged in as Tanvir | Submit with no photo; with an HTML file labelled PNG; with a GIF; with 2.1 MB; with a 3 MB+ body; then with a big real photo in the browser | 400 on `photo` for the first four (type checked from the bytes), 413 for the body; in the browser the photo is shrunk to ≤ 1280 px and previewed, then the request is created | api `pickup` "a photo is required…"; unit `image` (2 tests); browser: 802 KB PNG → 68 KB, 510×1280, request created | Pass |
+| TC-53 | FR-03 / NFR-03.7 | Who can see the photo | Request with a photo | Open `GET /pickup-requests/:id/photo` as the owner, another user, an unassigned collector, the assigned collector, admin, nobody | Owner, assigned collector and admin get the same bytes (200); another user and the unassigned collector 404; no cookie 401; older requests say "no photo" | api `pickup` (2 tests); browser: photo shown in My requests, admin details and the collector's job card | Pass |
 
 ---
 
@@ -127,8 +129,8 @@ Plastic is 10.00 points/kg; the active rule is ৳0.50 per point with a minimum 
 From `backend/`, with MySQL running:
 
 ```
-npm test                # 20 unit tests
-npm run test:api        # 103 API tests (separate wrr_test database)
+npm test                # 22 unit tests
+npm run test:api        # 106 API tests (separate wrr_test database)
 npm run e2e             # 45 end-to-end checks (wrr_test)
 npm run check:frontend  # 352 static page checks (no database)
 npm run perf            # NFR-02 timings (wrr_test)

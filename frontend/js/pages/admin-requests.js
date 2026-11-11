@@ -3,8 +3,7 @@
 import { api, query } from '../api.js';
 import { requireRole, renderHeader } from '../auth.js';
 import {
-  el, $, clear, getParam, formatDateTime, formatPoints, statusBadge, toast, setLoading, loadingNode, emptyNode
-} from '../ui.js';
+  el, $, clear, getParam, formatDateTime, formatPoints, statusBadge, toast, setLoading, loadingNode, emptyNode, requestPhoto } from '../ui.js';
 
 const user = await requireRole('admin');
 renderHeader(user);
@@ -120,6 +119,7 @@ function renderDetail(req) {
       text: `Rejected by ${lastRejection.changed_by}: ${lastRejection.note || 'no reason given'}`
     }));
   }
+  detailBox.append(requestPhoto(req.request_id, req.has_photo));
   detailBox.append(el('dl', { className: 'details' }, [
     ...row('Household', req.user_name),
     ...row('Phone', el('a', { text: req.contact_phone, attrs: { href: `tel:${req.contact_phone}` } })),

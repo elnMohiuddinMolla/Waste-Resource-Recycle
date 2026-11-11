@@ -14,7 +14,7 @@ A web platform that connects households with local waste collectors for recyclab
 |---|---|
 | Requirements & design (PRD, API spec, database, architecture, DFD) | Done |
 | Database schema + seed data | Done |
-| Backend REST API — all 44 endpoints | Done, tested and audited |
+| Backend REST API — all 45 endpoints | Done, tested and audited |
 | Frontend (User, Collector, Admin portals) | Done |
 | End-to-end testing, test cases, ER diagram, viva notes | Done |
 
@@ -51,6 +51,10 @@ Key rules: a strict 8-transition request state machine, a signed points ledger w
    ```
    /c/xampp/mysql/bin/mysql.exe -u root < database/schema.sql
    /c/xampp/mysql/bin/mysql.exe -u root < database/seed.sql
+   ```
+   **Already have a `wrr_db` from before 12 Nov 2026?** Run the migration once instead of re-importing (it only adds the photo column):
+   ```
+   /c/xampp/mysql/bin/mysql.exe -u root < database/migrations/001_add_pickup_photo.sql
    ```
 
 ### 3. Backend
@@ -121,7 +125,7 @@ Run from `backend/`:
 
 The API and performance tests rebuild a **separate** database, `wrr_test`, from `database/*.sql`. They refuse to run against `wrr_db`, so your data is never touched.
 
-Latest results: 20 unit + 103 API tests passing; slowest core call ~150 ms (limit 2 s) and slowest report ~110 ms (limit 5 s) with 50 concurrent users.
+Latest results: 22 unit + 106 API tests passing; slowest core call ~150 ms (limit 2 s) and slowest report ~110 ms (limit 5 s) with 50 concurrent users.
 
 ## Project structure
 
@@ -140,7 +144,7 @@ Waste_Resource_Recycle/
 │   ├── test/              unit/ and api/
 │   ├── scripts/           perf-check.js, e2e-walkthrough.js, frontend-check.js
 │   └── .env.example
-├── database/              schema.sql, seed.sql
+├── database/              schema.sql, seed.sql, migrations/ (changes for an existing database)
 ├── frontend/              HTML pages per role, css/style.css, js/ (api, ui, auth, notifications, pages/)
 └── docs/                 test results, test cases, ER diagram, viva notes; archive/ = superseded documents
 ```

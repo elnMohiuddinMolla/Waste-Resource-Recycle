@@ -62,6 +62,7 @@ erDiagram
         varchar pickup_address "255"
         varchar contact_phone "20"
         text other_description
+        varchar photo_path "waste photo file"
         decimal estimated_weight_kg "> 0"
         datetime preferred_at
         enum status "7 states"

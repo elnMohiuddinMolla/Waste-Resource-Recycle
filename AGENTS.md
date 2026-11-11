@@ -6,7 +6,7 @@ Instructions for any AI coding agent (Claude Code, Codex, Cursor, Copilot, ...) 
 
 | Topic | File |
 |---|---|
-| Requirements (FR-01–FR-21, NFR-01–NFR-08, business rules, state machine) | `WRR_PRD.md` (v1.3.0) |
+| Requirements (FR-01–FR-21, NFR-01–NFR-08, business rules, state machine) | `WRR_PRD.md` (v1.4.0) |
 | Every endpoint, payload, validation rule and status code | `api-spec.md` |
 | Tables, constraints, report SQL, transactions, seed data | `database.md` (= `database/schema.sql` + `database/seed.sql`) |
 | Architecture and folder structure | `architecture.md` |
@@ -44,13 +44,13 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 
 ## 5. Current code status — complete
 
-**Built, tested and audited** (`prompt.md` A1–A3, B1–B21) — all 44 endpoints of `api-spec.md` §2. `npm run perf` checks NFR-02 (latest: slowest core call ~150 ms, slowest report ~110 ms with 50 concurrent users), matching `api-spec.md`:
+**Built, tested and audited** (`prompt.md` A1–A3, B1–B21) — all 45 endpoints of `api-spec.md` §2 (the 45th, the pickup photo, came with PRD v1.4.0). `npm run perf` checks NFR-02 (latest: slowest core call ~150 ms, slowest report ~110 ms with 50 concurrent users), matching `api-spec.md`:
 
 | Area | Endpoints (prefix `/api/v1`) |
 |---|---|
 | Auth | `POST /auth/register`, `POST /auth/login`, `POST /auth/logout` (no login needed), `GET /auth/me` |
 | Catalog (public) | `GET /categories`, `GET /zones` |
-| Pickup (user) | `POST /pickup-requests`, `GET /pickup-requests/mine` (status, from, to, category_id), `GET /pickup-requests/:id`, `PUT /pickup-requests/:id/cancel` |
+| Pickup (user) | `POST /pickup-requests`, `GET /pickup-requests/mine` (status, from, to, category_id), `GET /pickup-requests/:id`, `GET /pickup-requests/:id/photo`, `PUT /pickup-requests/:id/cancel` |
 | Admin requests | `GET /admin/pickup-requests`, `PUT /admin/pickup-requests/:id/assign` |
 | Collector | `GET /collector/requests`, `PUT /collector/requests/:id/accept\|reject\|abort\|complete`, `POST /collector/collection-records`, `GET /collector/history` (from, to, category_id) |
 | Rewards | `GET /rewards/balance`, `GET /rewards/history` |
@@ -64,7 +64,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 | Admin reports | `GET /admin/reports/:type` — `weight-by-category`, `request-volume-by-status`, `collector-performance`, `point-liability`, `redemption-summary` (SQL = database.md §6) |
 
 **Shared pieces — reuse them, never write a second version:**
-- `utils/AppError.js` (throw `new AppError(status, message, errors)`), `utils/transaction.js` (`withTransaction`), `utils/validators.js` (incl. `toNonNegativeAmount`, `toBoolean`), `utils/money.js` (compare DECIMAL strings as integer cents).
+- `utils/AppError.js` (throw `new AppError(status, message, errors)`), `utils/transaction.js` (`withTransaction`), `utils/validators.js` (incl. `toNonNegativeAmount`, `toBoolean`), `utils/money.js` (compare DECIMAL strings as integer cents), `utils/image.js` (`parsePhoto`: data URL → checked JPG/PNG/WebP ≤ 2 MB), `utils/photoStore.js` (`save`, `fullPath`, `remove`; files in `backend/uploads/pickups/`, `UPLOAD_DIR` in tests).
 - `controllers/accountInput.js` (`parseAccountInput`, shared by register and collector creation) and `services/account.service.js` (`createAccount`, `setStatus`, `setCollectorZone`).
 - `controllers/common.js`: `parseRequestId`, `parsePaging`, `parseStatusList`, `isRealDate`, `parseDate`, `parseDateRange`, `parseOptionalId`, `parseReason`.
 - `services/requestStateMachine.js` (T1–T8, `assertTransition`), `services/redemptionStateMachine.js` (`nextStatus`, `PAYOUT_METHODS`), `services/notification.service.js` (`NOTIFICATION_TYPES`, `createNotification`, `listForUser`, `markOneRead`, `markAllRead`).
@@ -82,6 +82,8 @@ D2 done: `docs/test-cases.md` (50 test cases covering FR-01–FR-21, EC-01–EC-
 D3 done: `docs/er-diagram.md` (Mermaid ER from `database/schema.sql`), `docs/viva-notes.md` (architecture, transitions, double-spending, snapshots, cookie, 20 questions).
 
 **The project is complete** (prompt.md A1–D3). Left to do by hand: open the site in Firefox, open an exported CSV in Excel (`docs/e2e-walkthrough.md`).
+
+**Waste photo (PRD v1.4.0):** every new pickup request needs a photo (`photo` data URL in `POST /pickup-requests`); `user/new-request.html` shrinks it in the browser (canvas, ≤ 1280 px JPEG); details, job cards, the collector's next job and the admin view show it with `ui.requestPhoto()`. An existing database needs `database/migrations/001_add_pickup_photo.sql` once.
 
 **Tests:** `npm test` = unit tests (no database). `npm run test:api` = API tests; they rebuild a separate database `wrr_test` (override with `TEST_DB_NAME`) from `database/*.sql` and refuse to run on `wrr_db`. Add tests for each new module.
 

@@ -14,6 +14,7 @@ router.use(authenticateToken);
 router.post('/', requireRole('user'), pickupController.create);
 router.get('/mine', requireRole('user'), pickupController.listMine);
 router.get('/:id', requireRole('user', 'collector', 'admin'), pickupController.getOne);
+router.get('/:id/photo', requireRole('user', 'collector', 'admin'), pickupController.getPhoto);
 router.put('/:id/cancel', requireRole('user'), pickupController.cancel);
 
 module.exports = router;

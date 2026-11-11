@@ -4,6 +4,7 @@
 // ==============================================================================
 
 const AppError = require('../utils/AppError');
+const { parsePhoto } = require('../utils/image');
 const pickupService = require('../services/pickup.service');
 const {
   parseRequestId, parsePaging, parseStatusList, parseDateRange, parseOptionalId
@@ -44,6 +45,9 @@ async function create(req, res, next) {
     if (otherDescription.length > 1000) {
       errors.push({ field: 'other_description', message: 'Description must be at most 1000 characters.' });
     }
+    // A photo of the waste is required (PRD v1.4.0, FR-03)
+    const photo = parsePhoto(body.photo);
+    if (photo.error) errors.push({ field: 'photo', message: photo.error });
 
     if (errors.length > 0) throw new AppError(400, 'Validation failed.', errors);
 
@@ -54,13 +58,28 @@ async function create(req, res, next) {
       contactPhone,
       otherDescription,
       estimatedWeightKg,
-      preferredAt: preferred.sql
+      preferredAt: preferred.sql,
+      photo
     });
 
     res.status(201).json({
       success: true,
       message: 'Pickup request submitted successfully.',
       data: created
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// GET /pickup-requests/:id/photo: the photo file, for the owner, the assigned collector and admins
+async function getPhoto(req, res, next) {
+  try {
+    const id = parseRequestId(req);
+    const photo = await pickupService.getPhoto(req.user, id);
+    res.set('Cache-Control', 'private, max-age=3600');
+    res.type(photo.mime).sendFile(photo.path, (err) => {
+      if (err) next(err.code === 'ENOENT' ? new AppError(404, 'Photo file not found.') : err);
     });
   } catch (err) {
     next(err);
@@ -107,5 +126,6 @@ module.exports = {
   create,
   listMine,
   getOne,
-  cancel
+  cancel,
+  getPhoto
 };

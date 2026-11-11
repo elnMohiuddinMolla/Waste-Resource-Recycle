@@ -1,7 +1,7 @@
 // API tests: admin zones (api-spec.md §8.7, PRD FR-19)
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { resetDatabase, startServer, bdDateTime } = require('./helpers');
+const { resetDatabase, startServer, bdDateTime, SAMPLE_PHOTO } = require('./helpers');
 
 let api;
 let pool;
@@ -104,7 +104,7 @@ test('a deactivated zone cannot be picked for new users or requests; existing on
 
     r = await api.call('POST', '/pickup-requests', {
       cookie: tanvir,
-      body: { category_id: 1, zone_id: 1, pickup_address: 'House 14', contact_phone: '01811000004', estimated_weight_kg: 3, preferred_at: bdDateTime(1) }
+      body: { category_id: 1, zone_id: 1, pickup_address: 'House 14', contact_phone: '01811000004', estimated_weight_kg: 3, preferred_at: bdDateTime(1), photo: SAMPLE_PHOTO }
     });
     assert.equal(r.status, 400);
     assert.equal(r.body.errors[0].field, 'zone_id');

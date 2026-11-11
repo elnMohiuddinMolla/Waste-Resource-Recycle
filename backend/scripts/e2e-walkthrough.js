@@ -7,7 +7,7 @@
 // It rebuilds the separate test database (TEST_DB_NAME, default wrr_test) — never wrr_db.
 // ==============================================================================
 
-const { resetDatabase, startServer, bdDateTime } = require('../test/api/helpers');
+const { resetDatabase, startServer, bdDateTime, SAMPLE_PHOTO } = require('../test/api/helpers');
 
 const results = [];
 let currentStep = '';
@@ -48,7 +48,7 @@ async function main() {
     check('the request form can load 6 active categories', cats.length === 6);
     r = await call('POST', '/pickup-requests', user, {
       category_id: 1, zone_id: me.zone_id, pickup_address: me.address, contact_phone: me.phone,
-      estimated_weight_kg: 25, preferred_at: bdDateTime(1)
+      estimated_weight_kg: 25, preferred_at: bdDateTime(1), photo: SAMPLE_PHOTO
     });
     const reqId = r.body.data && r.body.data.request_id;
     check('submit request returns 201 Pending', r.status === 201 && r.body.data.status === 'Pending', `request #${reqId}`);

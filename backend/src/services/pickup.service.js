@@ -11,6 +11,8 @@ const categoryModel = require('../models/category.model');
 const zoneModel = require('../models/zone.model');
 const { assertTransition } = require('./requestStateMachine');
 const { createNotification, NOTIFICATION_TYPES } = require('./notification.service');
+const photoStore = require('../utils/photoStore');
+const { MIME_BY_EXT } = require('../utils/image');
 
 /**
  * Creates a Pending request, its first status log and a confirmation notification,
@@ -34,36 +36,45 @@ async function createRequest(user, data) {
     throw new AppError(400, 'Validation failed.', errors);
   }
 
-  const requestId = await withTransaction(async (conn) => {
-    const id = await pickupModel.insert(conn, {
-      userId: user.user_id,
-      categoryId: data.categoryId,
-      zoneId: data.zoneId,
-      pickupAddress: data.pickupAddress,
-      contactPhone: data.contactPhone,
-      otherDescription: data.otherDescription || null,
-      estimatedWeightKg: data.estimatedWeightKg,
-      preferredAt: data.preferredAt
-    });
+  // Save the photo first; if the database step fails, delete it again
+  const photoPath = await photoStore.save(data.photo.buffer, data.photo.ext);
+  let requestId;
+  try {
+    requestId = await withTransaction(async (conn) => {
+      const id = await pickupModel.insert(conn, {
+        userId: user.user_id,
+        categoryId: data.categoryId,
+        zoneId: data.zoneId,
+        pickupAddress: data.pickupAddress,
+        contactPhone: data.contactPhone,
+        otherDescription: data.otherDescription || null,
+        photoPath,
+        estimatedWeightKg: data.estimatedWeightKg,
+        preferredAt: data.preferredAt
+      });
 
-    await statusLogModel.insert(conn, {
-      requestId: id,
-      changedById: user.user_id,
-      oldStatus: null,
-      newStatus: 'Pending',
-      note: 'User submitted request'
-    });
+      await statusLogModel.insert(conn, {
+        requestId: id,
+        changedById: user.user_id,
+        oldStatus: null,
+        newStatus: 'Pending',
+        note: 'User submitted request'
+      });
 
-    await createNotification({
-      connection: conn,
-      userId: user.user_id,
-      requestId: id,
-      type: NOTIFICATION_TYPES.PICKUP_SUBMITTED,
-      message: `Pickup request #${id} (${category.name}) submitted. We will assign a collector soon.`
-    });
+      await createNotification({
+        connection: conn,
+        userId: user.user_id,
+        requestId: id,
+        type: NOTIFICATION_TYPES.PICKUP_SUBMITTED,
+        message: `Pickup request #${id} (${category.name}) submitted. We will assign a collector soon.`
+      });
 
-    return id;
-  });
+      return id;
+    });
+  } catch (err) {
+    await photoStore.remove(photoPath);
+    throw err;
+  }
 
   return pickupModel.findById(requestId);
 }
@@ -107,6 +118,7 @@ async function getRequestDetails(viewer, requestId) {
     pickup_address: r.pickup_address,
     contact_phone: r.contact_phone,
     other_description: r.other_description,
+    has_photo: Boolean(r.photo_path),
     estimated_weight_kg: r.estimated_weight_kg,
     actual_weight_kg: r.actual_weight_kg,
     points_earned: r.points_earned,
@@ -146,8 +158,17 @@ async function cancelRequest(user, requestId) {
   });
 }
 
+// The stored photo of a request, for the same people who may see the request
+async function getPhoto(viewer, requestId) {
+  const r = await pickupModel.findPhoto(requestId);
+  if (!r || !canView(viewer, r)) throw new AppError(404, `Pickup request #${requestId} not found.`);
+  if (!r.photo_path) throw new AppError(404, 'This request has no photo.');
+  return { path: photoStore.fullPath(r.photo_path), mime: MIME_BY_EXT[r.photo_path.split('.').pop()] };
+}
+
 module.exports = {
   createRequest,
+  getPhoto,
   listMyRequests,
   getRequestDetails,
   cancelRequest

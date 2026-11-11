@@ -71,6 +71,7 @@ CREATE TABLE pickup_requests (
   pickup_address VARCHAR(255) NOT NULL,
   contact_phone VARCHAR(20) NOT NULL,
   other_description TEXT,
+  photo_path VARCHAR(64) NULL, -- file name in backend/uploads/pickups (required for new requests)
   estimated_weight_kg DECIMAL(10,2) NOT NULL CHECK (estimated_weight_kg > 0),
   preferred_at DATETIME NOT NULL,
   status ENUM('Pending','Assigned','Accepted','Rejected','Collected','Completed','Cancelled')

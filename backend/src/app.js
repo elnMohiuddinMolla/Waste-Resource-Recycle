@@ -22,6 +22,9 @@ const app = express();
 
 app.disable('x-powered-by'); // don't advertise "Express" to the world
 app.use(securityHeaders);
+// A pickup request carries a photo (data URL, at most 2 MB decoded): allow 3 MB there only.
+// It must come first: the general parser below then skips the body that was already read.
+app.use('/api/v1/pickup-requests', express.json({ limit: '3mb' }));
 app.use(express.json());
 app.use(cookieParser());
 

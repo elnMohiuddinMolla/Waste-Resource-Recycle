@@ -77,6 +77,7 @@ The WRR database contains **10 normalized relational tables** (`3NF`), mapping d
 | `pickup_address`| `VARCHAR(255)` | No | - | Specific street/house pickup location. |
 | `contact_phone` | `VARCHAR(20)` | No | - | Contact phone for on-site arrival coordination. |
 | `other_description` | `TEXT` | Yes | NULL | Mandatory if category has `is_other = TRUE`. |
+| `photo_path` | `VARCHAR(64)` | Yes | NULL | File name of the waste photo in `backend/uploads/pickups/` (random, chosen by the server). Required by the API for new requests since PRD v1.4.0; NULL for older rows. Added to an existing database by `database/migrations/001_add_pickup_photo.sql`. |
 | `estimated_weight_kg` | `DECIMAL(10,2)` | No | - | Estimated weight input by user ($> 0$). |
 | `preferred_at` | `DATETIME` | No | - | Preferred collection date/time (Must be in future). |
 | `status` | `ENUM(...)` | No | `'Pending'` | Lifecycle state (one of 7 states; allowed transitions in PRD §5.1). |
@@ -652,6 +653,7 @@ CREATE TABLE pickup_requests (
   pickup_address VARCHAR(255) NOT NULL,
   contact_phone VARCHAR(20) NOT NULL,
   other_description TEXT,
+  photo_path VARCHAR(64) NULL, -- file name in backend/uploads/pickups (required for new requests)
   estimated_weight_kg DECIMAL(10,2) NOT NULL CHECK (estimated_weight_kg > 0),
   preferred_at DATETIME NOT NULL,
   status ENUM('Pending','Assigned','Accepted','Rejected','Collected','Completed','Cancelled')
@@ -839,6 +841,7 @@ erDiagram
         varchar pickup_address "255"
         varchar contact_phone "20"
         text other_description
+        varchar photo_path "waste photo file"
         decimal estimated_weight_kg "> 0"
         datetime preferred_at
         enum status "7 states"

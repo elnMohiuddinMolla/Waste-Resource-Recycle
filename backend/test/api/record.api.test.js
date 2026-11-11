@@ -2,7 +2,7 @@
 // (api-spec.md §8.5, PRD FR-18, §5.3, NFR-08, requirement-validation EC-01)
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { resetDatabase, startServer, bdDateTime } = require('./helpers');
+const { resetDatabase, startServer, bdDateTime, SAMPLE_PHOTO } = require('./helpers');
 
 let api;
 let pool;
@@ -140,7 +140,7 @@ test('validation, unknown record and roles', async () => {
 test('a newly completed job can be corrected too', async () => {
   const created = await api.call('POST', '/pickup-requests', {
     cookie: tanvir,
-    body: { category_id: 2, zone_id: 1, pickup_address: 'House 14', contact_phone: '01811000004', estimated_weight_kg: 10, preferred_at: bdDateTime(1) }
+    body: { category_id: 2, zone_id: 1, pickup_address: 'House 14', contact_phone: '01811000004', estimated_weight_kg: 10, preferred_at: bdDateTime(1), photo: SAMPLE_PHOTO }
   });
   const id = created.body.data.request_id;
   await api.call('PUT', `/admin/pickup-requests/${id}/assign`, { cookie: admin, body: { collector_id: 2 } });

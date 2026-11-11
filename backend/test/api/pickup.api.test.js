@@ -1,7 +1,7 @@
 // API tests: catalog + pickup requests, user side (api-spec.md Modules 2 and 3)
 const { test, before, after } = require('node:test');
 const assert = require('node:assert/strict');
-const { resetDatabase, startServer, bdDateTime } = require('./helpers');
+const { resetDatabase, startServer, bdDateTime, SAMPLE_PHOTO } = require('./helpers');
 
 let api;
 let tanvir; // user 4, zone 1
@@ -15,7 +15,8 @@ const validBody = () => ({
   pickup_address: 'House 14, Road 2, Baitul Aman',
   contact_phone: '01811000004',
   estimated_weight_kg: 8.5,
-  preferred_at: bdDateTime(2)
+  preferred_at: bdDateTime(2),
+  photo: SAMPLE_PHOTO
 });
 
 before(async () => {
@@ -75,7 +76,7 @@ test('submit validates the body', async () => {
   assert.equal(r.status, 400);
   assert.deepEqual(
     r.body.errors.map((e) => e.field).sort(),
-    ['category_id', 'contact_phone', 'estimated_weight_kg', 'pickup_address', 'preferred_at', 'zone_id']
+    ['category_id', 'contact_phone', 'estimated_weight_kg', 'photo', 'pickup_address', 'preferred_at', 'zone_id']
   );
 });
 
@@ -210,4 +211,68 @@ test("a user cannot cancel someone else's request (404)", async () => {
   assert.equal(r.status, 404);
   const d = await api.call('GET', '/pickup-requests/3', { cookie: sadia });
   assert.equal(d.body.data.status, 'Pending');
+});
+
+// ---------- Waste photo (PRD v1.4.0, FR-03) ----------
+
+test('a photo is required and must really be a JPG, PNG or WebP of at most 2 MB', async () => {
+  const send = (photo) => api.call('POST', '/pickup-requests', { cookie: tanvir, body: { ...validBody(), photo } });
+  const fieldsOf = (r) => r.body.errors.map((e) => e.field);
+
+  let r = await send(undefined);
+  assert.equal(r.status, 400);
+  assert.deepEqual(fieldsOf(r), ['photo']);
+
+  // An HTML file labelled as a PNG is refused: the first bytes decide, not the label
+  r = await send('data:image/png;base64,' + Buffer.from('<html><script>alert(1)</script></html>').toString('base64'));
+  assert.equal(r.status, 400);
+  assert.deepEqual(fieldsOf(r), ['photo']);
+
+  r = await send('data:image/gif;base64,R0lGODlhAQABAAAAACw=');
+  assert.equal(r.status, 400);
+
+  // 2.1 MB that starts like a JPEG: too big
+  const big = Buffer.alloc(2.1 * 1024 * 1024, 0);
+  big[0] = 0xff; big[1] = 0xd8; big[2] = 0xff;
+  r = await send('data:image/jpeg;base64,' + big.toString('base64'));
+  assert.equal(r.status, 400);
+  assert.match(r.body.errors[0].message, /2 MB/);
+
+  // A body over the 3 MB limit is refused before it is read
+  r = await send('data:image/jpeg;base64,' + Buffer.alloc(3 * 1024 * 1024).toString('base64'));
+  assert.equal(r.status, 413);
+});
+
+test('the photo is stored and only the owner, the assigned collector and admins can see it', async () => {
+  const created = await api.call('POST', '/pickup-requests', { cookie: tanvir, body: validBody() });
+  assert.equal(created.status, 201);
+  const id = created.body.data.request_id;
+  const sample = Buffer.from(SAMPLE_PHOTO.split(',')[1], 'base64');
+
+  const details = await api.call('GET', `/pickup-requests/${id}`, { cookie: tanvir });
+  assert.equal(details.body.data.has_photo, true);
+
+  let p = await api.raw(`/pickup-requests/${id}/photo`, tanvir);
+  assert.equal(p.status, 200);
+  assert.match(p.type, /^image\/png/);
+  assert.ok(p.bytes.equals(sample), 'the same bytes come back');
+
+  assert.equal((await api.raw(`/pickup-requests/${id}/photo`, admin)).status, 200);
+  assert.equal((await api.raw(`/pickup-requests/${id}/photo`, sadia)).status, 404);      // another user
+  assert.equal((await api.raw(`/pickup-requests/${id}/photo`, collector1)).status, 404); // not assigned yet
+  assert.equal((await api.raw(`/pickup-requests/${id}/photo`)).status, 401);             // not logged in
+
+  await api.call('PUT', `/admin/pickup-requests/${id}/assign`, { cookie: admin, body: { collector_id: 2 } });
+  assert.equal((await api.raw(`/pickup-requests/${id}/photo`, collector1)).status, 200); // now assigned
+
+  const jobs = await api.call('GET', '/collector/requests', { cookie: collector1 });
+  assert.equal(Boolean(jobs.body.data.find((j) => j.request_id === id).has_photo), true);
+});
+
+test('older requests without a photo say so', async () => {
+  const d = await api.call('GET', '/pickup-requests/1', { cookie: tanvir }); // seed request, made before photos
+  assert.equal(d.body.data.has_photo, false);
+  const p = await api.call('GET', '/pickup-requests/1/photo', { cookie: tanvir });
+  assert.equal(p.status, 404);
+  assert.match(p.body.message, /no photo/);
 });

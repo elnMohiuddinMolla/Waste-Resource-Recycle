@@ -38,6 +38,26 @@
             <div class="field-error"></div>
           </div>
 
+          <!-- PRD v1.4.0 (FR-03): a photo of the waste is required -->
+          <div class="field">
+            <span class="field-label" id="photo-label">Photo of the waste</span>
+            <label class="photo-picker" for="photo">
+              <input id="photo" name="photo" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" aria-labelledby="photo-label" required>
+              <img id="photo-preview" class="photo-preview hidden" alt="The waste photo you chose">
+              <span class="photo-empty" id="photo-empty">
+                <span class="photo-empty-icon" data-icon="camera"></span>
+                <strong>Take or choose a photo</strong>
+                <small>JPG, PNG or WebP</small>
+              </span>
+            </label>
+            <div class="photo-meta hidden" id="photo-meta">
+              <span id="photo-info"></span>
+              <button type="button" class="btn btn-secondary btn-small" id="photo-change">Change photo</button>
+            </div>
+            <div class="hint">Helps the collector bring the right bag or vehicle. Big photos are made smaller before they are sent.</div>
+            <div class="field-error"></div>
+          </div>
+
           <div class="form-row">
             <div class="field">
               <label for="estimated_weight_kg">Estimated weight (kg)</label>

@@ -6,6 +6,9 @@ node_modules/
 .env.*
 !.env.example
 
+# Uploaded pickup photos (user data, not source code)
+backend/uploads/
+
 # Logs and OS files
 *.log
 npm-debug.log*

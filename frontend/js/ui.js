@@ -323,3 +323,15 @@ export function loadingNode(text = 'Loading…') {
 export function emptyNode(text) {
   return el('div', { text, className: 'empty' });
 }
+
+/**
+ * The waste photo of a pickup request (PRD v1.4.0). The image comes from the logged-in
+ * API, so only people who may see the request can load it. Clicking opens the full photo.
+ */
+export function requestPhoto(requestId, hasPhoto) {
+  if (!hasPhoto) return el('p', { className: 'no-photo', text: 'No photo (sent before photos were required).' });
+  const src = `/api/v1/pickup-requests/${requestId}/photo`;
+  return el('a', { className: 'request-photo-link', attrs: { href: src, target: '_blank', rel: 'noopener', title: 'Open the full photo' } }, [
+    el('img', { className: 'request-photo', attrs: { src, alt: `Photo of the waste for request #${requestId}`, loading: 'lazy' } })
+  ]);
+}

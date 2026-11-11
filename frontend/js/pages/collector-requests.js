@@ -5,8 +5,7 @@ import { api, query } from '../api.js';
 import { requireRole, renderHeader } from '../auth.js';
 import {
   el, $, clear, getParam, formatDateTime, formatPoints, statusBadge, confirmDialog, reasonDialog,
-  toast, setLoading, loadingNode, emptyNode
-} from '../ui.js';
+  toast, setLoading, loadingNode, emptyNode, requestPhoto } from '../ui.js';
 
 const user = await requireRole('collector');
 renderHeader(user);
@@ -120,6 +119,7 @@ function renderJob(job) {
       ]),
       statusBadge(job.status)
     ]),
+    requestPhoto(job.request_id, job.has_photo),
     el('dl', { className: 'details' }, [
       ...detailRow('Household', job.user_name),
       ...detailRow('Phone', el('a', { text: job.contact_phone, className: 'phone-link', attrs: { href: `tel:${job.contact_phone}` } })),

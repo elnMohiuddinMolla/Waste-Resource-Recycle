@@ -4,9 +4,9 @@
 | Document Attribute | Specification Details |
 |---|---|
 | **Project Title** | Waste Resource Recycle (WRR) Management System |
-| **Document Version** | 1.3.0 (Consistency pass across all design documents) |
+| **Document Version** | 1.4.0 (Change request: a photo of the waste on every pickup request; see G14) |
 | **Status** | Approved / Baseline for Implementation |
-| **Date** | November 11, 2026 |
+| **Date** | November 12, 2026 |
 | **Academic Course** | Software Engineering Lab (CSE-3112) |
 | **Academic Department** | Department of Computer Science & Engineering (CSE) |
 | **Institution** | Faridpur Engineering College |
@@ -39,7 +39,7 @@
 3. **Informal & Inefficient Ecosystem:** Traditional recyclable scrap collection relies on unorganized itinerant collectors ("feriwala" / "tokai") with unpredictable collection schedules, inconsistent manual pricing, and zero digital accountability.
 4. **Lack of Citizen Motivation:** Without convenient pickup options and tangible economic incentives, households lack the incentive to sort recyclables at the source.
 
-### 2.2 Survey Traceability & Gap-Fix Log (G1–G13)
+### 2.2 Survey Traceability & Gap-Fix Log (G1–G14)
 This PRD incorporates all findings from the client survey (`WRR_REQ_Question_SURVEY.pdf`) and the gap-fix resolutions documented in `WRR_Revised_Requirements_and_Design.md`:
 
 | Gap ID | Defect / Omission in Original Design | Survey Origin | Engineering Resolution & PRD Update |
@@ -57,6 +57,7 @@ This PRD incorporates all findings from the client survey (`WRR_REQ_Question_SUR
 | **G11** | Status logs omitted previous state and rejection reasons | Collector workflow | Added `old_status`, `new_status`, and `note` (mandatory rejection reason) in `request_status_logs`. |
 | **G12** | Teammate name discrepancy across earlier documents | Header consistency | Standardized as **Abdul Al Noman** across all deliverables. Earlier documents also say "Roman"; **spelling still to be confirmed.** |
 | **G13** | Architectural diagram lacked newly added modules | System architecture | Updated 3-tier diagram to include Notifications, Redemption Rules, and 10 tables. |
+| **G14** | Collectors could not see the waste before travelling, so they could not plan bags or a vehicle | Change request after implementation (v1.4.0, 12 Nov 2026) | `FR-03` now requires a photo of the waste (JPG/PNG/WebP, ≤ 2 MB). Added `pickup_requests.photo_path`, `GET /api/v1/pickup-requests/:id/photo` (owner, assigned collector, admin) and migration `database/migrations/001_add_pickup_photo.sql`. Requests made before v1.4.0 have no photo. |
 
 ---
 
@@ -392,7 +393,7 @@ $$\text{Points Earned} = \text{ROUND}(\text{actual\_weight\_kg} \times \text{poi
 |---|---|---|
 | **FR-01** | Authentication | **Registration & Login:** General Users self-register with full name, email, phone, password, address, and zone. Collectors are created exclusively by Admin. All roles log in via email and password (minimum 8 characters, hashed with `bcryptjs`, cost $\ge 10$). Sessions use a stateless JWT stored in an `HttpOnly` cookie (7-day expiry); users can log out. |
 | **FR-02** | Security | **Role-Based Access Control:** Every API endpoint is restricted by role. Deactivated accounts (`status = 'inactive'`) are rejected at authentication. |
-| **FR-03** | Pickup | **Pickup Request Submission:** User submits category, estimated weight (kg, required, $> 0$), pickup address, contact phone, zone, and a preferred date/time. `preferred_at` must be strictly in the future. If `is_other = true`, `other_description` is mandatory. Initial status is `Pending`. |
+| **FR-03** | Pickup | **Pickup Request Submission:** User submits category, estimated weight (kg, required, $> 0$), pickup address, contact phone, zone, a preferred date/time and **a photo of the waste** (JPG, PNG or WebP, at most 2 MB; the browser shrinks large photos before sending). `preferred_at` must be strictly in the future. If `is_other = true`, `other_description` is mandatory. The photo can be seen only by the owner, the assigned collector and admins. Initial status is `Pending`. |
 | **FR-04** | Catalog | **Waste Category Visibility:** Only categories marked `is_active = true` are presented to users in pickup forms. |
 | **FR-05** | Tracking | **Request Tracking:** Users can view the current status and the full chronological audit history of each submitted request. |
 | **FR-06** | Pickup | **Request Cancellation:** The user may cancel a pickup request strictly while it remains in `Pending` status. Transition to `Cancelled` logs the action and halts further processing. |
@@ -422,7 +423,7 @@ All three survey performance priorities (Q31–Q33) were ranked as **Very Import
 |---|---|---|
 | **NFR-01** | **Usability** | A user must be able to submit a pickup request within $\le 3$ screen transitions. Form inputs must feature clear semantic labels, input masks, and helpful inline validation. The layout must be visually consistent across all three role portals. |
 | **NFR-02** | **Performance** | Core transactional API operations (submission, assignment, weighing, status updates) must respond in $\le 2.0$ seconds. Complex analytical reports must generate in $\le 5.0$ seconds under a simulated load of 50 concurrent active users. |
-| **NFR-03** | **Security** | 1. Passwords (minimum 8 characters) hashed using `bcryptjs` (work factor $\ge 10$).<br>2. All traffic between browser and server uses HTTPS in deployment (plain HTTP on `localhost` during development).<br>3. 100% of database interactions must use parameterized queries (via `mysql2`) to eliminate SQL injection.<br>4. All HTML rendering must escape untrusted strings to prevent XSS (use `textContent`, never `innerHTML` with user data).<br>5. Login is rate-limited to **5 failed attempts per 15 minutes** per IP (HTTP 429).<br>6. JWT kept in an `HttpOnly`, `SameSite=Lax` cookie; never returned in a response body or stored in `localStorage`.<br>7. Strict server-side RBAC and ownership checks on every endpoint.<br>8. The server refuses to start with a `JWT_SECRET` shorter than 32 characters or the example value.<br>9. Every response sends a Content-Security-Policy (same-origin scripts and styles only), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: same-origin`; the `X-Powered-By` header is removed.<br>10. Login answers an unknown email and a wrong password with the same message and the same response time. |
+| **NFR-03** | **Security** | 1. Passwords (minimum 8 characters) hashed using `bcryptjs` (work factor $\ge 10$).<br>2. All traffic between browser and server uses HTTPS in deployment (plain HTTP on `localhost` during development).<br>3. 100% of database interactions must use parameterized queries (via `mysql2`) to eliminate SQL injection.<br>4. All HTML rendering must escape untrusted strings to prevent XSS (use `textContent`, never `innerHTML` with user data).<br>5. Login is rate-limited to **5 failed attempts per 15 minutes** per IP (HTTP 429).<br>6. JWT kept in an `HttpOnly`, `SameSite=Lax` cookie; never returned in a response body or stored in `localStorage`.<br>7. Strict server-side RBAC and ownership checks on every endpoint.<br>8. The server refuses to start with a `JWT_SECRET` shorter than 32 characters or the example value.<br>9. Every response sends a Content-Security-Policy (same-origin scripts and styles only), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY` and `Referrer-Policy: same-origin`; the `X-Powered-By` header is removed.<br>10. Login answers an unknown email and a wrong password with the same message and the same response time.<br>11. Uploaded photos are checked by their first bytes (not the name or label), stored outside the public folder under a random server-chosen name, and served only through the logged-in API. |
 | **NFR-04** | **Reliability & ACID** | Workflows modifying multiple tables (e.g., Completion + Reward `EARN`; Redemption + Ledger `REDEEM`) must execute inside atomic database transactions (`START TRANSACTION` / `COMMIT` / `ROLLBACK`). User balance must never be negative. |
 | **NFR-05** | **Availability** | The system must guarantee $\ge 99\%$ uptime during designated core operating hours (8:00 AM – 10:00 PM BST). |
 | **NFR-06** | **Compatibility** | Fully functional and visually responsive across current desktop and mobile versions of Google Chrome, Mozilla Firefox and Microsoft Edge starting from a minimum viewport width of $360\text{ px}$. |
@@ -524,6 +525,7 @@ Primary lifecycle table for recycling pickup jobs.
 - `pickup_address` VARCHAR(255) NOT NULL
 - `contact_phone` VARCHAR(20) NOT NULL
 - `other_description` TEXT
+- `photo_path` VARCHAR(64) NULL *(file name of the waste photo in `backend/uploads/pickups/`; required for new requests since v1.4.0)*
 - `estimated_weight_kg` DECIMAL(10,2) NOT NULL CHECK (`estimated_weight_kg` > 0)
 - `preferred_at` DATETIME NOT NULL
 - `status` ENUM('Pending','Assigned','Accepted','Rejected','Collected','Completed','Cancelled') NOT NULL DEFAULT 'Pending'
@@ -616,7 +618,7 @@ The complete REST contract (request/response bodies, validation, status codes) l
 |---|---|---|
 | Auth | `POST /auth/register`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/me` | FR-01, FR-02 |
 | Public catalog | `GET /categories`, `GET /zones` | FR-03, FR-04 |
-| User requests | `POST /pickup-requests`, `GET /pickup-requests/mine`, `GET /pickup-requests/:id`, `PUT /pickup-requests/:id/cancel` | FR-03, FR-05, FR-06 |
+| User requests | `POST /pickup-requests`, `GET /pickup-requests/mine`, `GET /pickup-requests/:id`, `GET /pickup-requests/:id/photo`, `PUT /pickup-requests/:id/cancel` | FR-03, FR-05, FR-06 |
 | Collector | `GET /collector/requests`, `PUT /collector/requests/:id/accept`, `/reject`, `/abort`, `/complete`, `POST /collector/collection-records`, `GET /collector/history` | FR-08 – FR-10, FR-12 |
 | Rewards | `GET /rewards/balance`, `GET /rewards/history` | FR-11, FR-12 |
 | Redemptions | `GET /redemptions/rules/active`, `POST /redemptions`, `GET /redemptions/mine` | FR-15 |

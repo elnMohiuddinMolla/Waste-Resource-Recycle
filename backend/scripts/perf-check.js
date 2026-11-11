@@ -8,7 +8,7 @@
 // read endpoint, alone and with 50 calls at the same moment.
 // ==============================================================================
 
-const { resetDatabase, startServer } = require('../test/api/helpers');
+const { resetDatabase, startServer, SAMPLE_PHOTO } = require('../test/api/helpers');
 
 const USERS = 50;
 const REQUESTS = 1000;
@@ -141,7 +141,7 @@ async function main() {
     const tomorrow = new Date(Date.now() + 30 * 3600 * 1000 + 6 * 3600 * 1000).toISOString().slice(0, 16);
     const writes = await Promise.all(userCookies.map((cookie) => timed(() => api.call('POST', '/pickup-requests', {
       cookie,
-      body: { category_id: 1, zone_id: 1, pickup_address: 'House 1', contact_phone: '01811000999', estimated_weight_kg: 3, preferred_at: tomorrow }
+      body: { category_id: 1, zone_id: 1, pickup_address: 'House 1', contact_phone: '01811000999', estimated_weight_kg: 3, preferred_at: tomorrow, photo: SAMPLE_PHOTO }
     }))));
     const slowestWrite = Math.max(...writes.map((w) => w.ms));
     const writesOk = writes.every((w) => w.status === 201) && slowestWrite <= CORE_LIMIT_MS;

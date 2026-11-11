@@ -116,7 +116,7 @@ When the collector records the weight, the category's current `points_per_kg` is
 16. **What happens when the admin corrects a weight?** In one transaction: the new weight is saved, an ADJUST row of `ROUND(new kg × rate, 2) − points already posted` is written, and the status log gets "Weight corrected from X kg to Y kg" with the admin's id.
 
 17. **How did you test it?**
-    - 20 unit tests and 103 API tests on a separate `wrr_test` database, all passing.
+    - 22 unit tests and 106 API tests on a separate `wrr_test` database, all passing.
     - A 45-check end-to-end story.
     - 352 static page checks.
     - A real Chrome run of the browser checklist at 360 px and 1280 px.
@@ -130,15 +130,23 @@ When the collector records the weight, the category's current `points_per_kg` is
 
 ---
 
-## 7. Numbers to remember
+## 7. A requirement change: the waste photo (PRD v1.4.0)
+
+After implementation the team decided collectors should see the waste before travelling. In Waterfall this is a **change request**: PRD v1.4.0 records it as G14, FR-03 now needs a photo, and every design document, the schema (plus a migration for the existing database) and the tests were updated together.
+
+- **How it is sent:** the browser shrinks the photo on a canvas (≤ 1280 px JPEG, usually 100–400 KB) and sends it as a data URL inside the same JSON request, so no extra upload library is needed.
+- **Why it is safe:** the server checks the first bytes (JPG/PNG/WebP "magic numbers"), not the file name, so a renamed HTML or program file is refused; it allows at most 2 MB; it saves the file under a random name outside `frontend/`; the photo is served only through `GET /pickup-requests/:id/photo` to the owner, the assigned collector and admins.
+- **Consistency:** the file is written first and deleted again if the database transaction fails, so there is never a request pointing at a missing file.
+
+## 8. Numbers to remember
 
 | Item | Value |
 |---|---|
 | Tables | 10 |
-| API endpoints | 44 under `/api/v1` |
+| API endpoints | 45 under `/api/v1` |
 | Pages | 23 (3 public, 6 user, 4 collector, 10 admin) |
 | Request statuses / transitions | 7 / 8 |
 | Notification types | 11 |
 | Reports | 5 |
-| Tests | 20 unit + 103 API (100 % pass), 45 e2e checks |
+| Tests | 22 unit + 106 API (100 % pass), 45 e2e checks |
 | Seed rates | Plastic 10, Paper 6, E-waste 25, Metal 15, Glass 4, Other 5 points/kg; ৳0.50 per point, minimum 100 points |

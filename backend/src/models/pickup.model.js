@@ -8,10 +8,10 @@ async function insert(connection, r) {
   const [result] = await connection.execute(
     `INSERT INTO pickup_requests
        (user_id, category_id, zone_id, pickup_address, contact_phone,
-        other_description, estimated_weight_kg, preferred_at, status)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Pending')`,
+        other_description, photo_path, estimated_weight_kg, preferred_at, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Pending')`,
     [r.userId, r.categoryId, r.zoneId, r.pickupAddress, r.contactPhone,
-      r.otherDescription, r.estimatedWeightKg, r.preferredAt]
+      r.otherDescription, r.photoPath, r.estimatedWeightKg, r.preferredAt]
   );
   return result.insertId;
 }
@@ -103,6 +103,7 @@ async function listForCollector(collectorId, { statuses, zoneId }) {
   const [rows] = await pool.execute(
     `SELECT pr.request_id, u.full_name AS user_name, pr.contact_phone, pr.pickup_address,
             z.name AS zone_name, wc.name AS category_name, pr.other_description,
+            pr.photo_path IS NOT NULL AS has_photo,
             pr.estimated_weight_kg, pr.preferred_at, pr.status
      FROM pickup_requests pr
      JOIN users u ON u.user_id = pr.user_id
@@ -152,12 +153,21 @@ async function listByUser(userId, { status, from, to, categoryId, limit, offset 
   return { total: Number(total), rows };
 }
 
+// Who may see a request's photo, and the stored file name
+async function findPhoto(requestId) {
+  const [rows] = await pool.execute(
+    'SELECT request_id, user_id, collector_id, photo_path FROM pickup_requests WHERE request_id = ?',
+    [requestId]
+  );
+  return rows[0] || null;
+}
+
 async function findDetails(requestId) {
   const [rows] = await pool.execute(
     `SELECT pr.request_id, pr.user_id, pr.collector_id, pr.status,
             wc.name AS category_name, wc.points_per_kg,
             z.name AS zone_name, pr.pickup_address, pr.contact_phone,
-            pr.other_description, pr.estimated_weight_kg,
+            pr.other_description, pr.photo_path, pr.estimated_weight_kg,
             cr.actual_weight_kg, cr.points_per_kg_applied,
             earn.points AS points_earned,
             pr.preferred_at, pr.created_at,
@@ -187,5 +197,6 @@ module.exports = {
   listForAdmin,
   listForCollector,
   listByUser,
+  findPhoto,
   findDetails
 };

@@ -4,7 +4,7 @@ import { api, query } from '../api.js';
 import { startDashboard, relativeTime } from './dashboard-shell.js';
 import { notificationsChanged } from '../notifications.js';
 import { icon } from '../icons.js';
-import { el, $, clear, formatDateTime, statusBadge, toast, setLoading, loadingNode, emptyNode } from '../ui.js';
+import { el, $, clear, formatDateTime, statusBadge, toast, setLoading, loadingNode, emptyNode, requestPhoto } from '../ui.js';
 
 await startDashboard('collector', [
   ['My jobs', 'Accept, reject or work on your pickups.', '/collector/requests.html', 'truck'],
@@ -49,6 +49,7 @@ function renderNextJob(jobs) {
       ]),
       statusBadge(job.status)
     ]),
+    requestPhoto(job.request_id, job.has_photo),
     el('ul', { className: 'db-details' }, [
       detail('users', el('span', { text: job.user_name })),
       detail('phone', el('a', { text: job.contact_phone, className: 'phone-link', attrs: { href: `tel:${job.contact_phone}` } })),
