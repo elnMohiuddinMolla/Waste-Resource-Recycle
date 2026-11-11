@@ -1131,9 +1131,21 @@ Changing `points_per_kg` never changes past rewards: each collection record keep
 
 ---
 
-#### 8.7 Operational Zone Governance (Create & Update)
+#### 8.7 Operational Zone Governance (List, Create & Update)
+All three endpoints: `Required (Role: admin)`. Zones are never deleted (foreign keys are `RESTRICT`); deactivate them instead.
+
+- **Endpoint:** `GET /api/v1/admin/zones` — every zone, active and inactive, ordered by id.
+  - **Response `200 OK`:**
+    ```json
+    {
+      "success": true,
+      "data": [
+        { "zone_id": 1, "name": "Zone 1 - Baitul Aman", "description": "Covers Baitul Aman, ...", "is_active": true },
+        { "zone_id": 4, "name": "Zone 4 - Aliabad", "description": null, "is_active": false }
+      ]
+    }
+    ```
 - **Endpoint:** `POST /api/v1/admin/zones`
-  - **Authentication:** `Required (Role: admin)`
   - **Request Body:**
     ```json
     {
@@ -1141,18 +1153,20 @@ Changing `points_per_kg` never changes past rewards: each collection record keep
       "description": "Covers Ambikapur and north peri-urban areas."
     }
     ```
-  - **Response `201 Created`**
-- **Endpoint:** `PUT /api/v1/admin/zones/:id`
-  - **Authentication:** `Required (Role: admin)`
+  - **Validation:** `name` 2–100 characters; `description` optional text up to 1000 characters (missing, `null` or `""` → stored as `null`). New zones start active.
+  - **Response `201 Created`:** `{ "success": true, "message": "Zone created.", "data": { "zone_id": 5, "name": "Zone 5 - Ambikapur", "description": "Covers Ambikapur and north peri-urban areas.", "is_active": true } }`
+  - **Response `409 Conflict`:** the name already exists (letter case is ignored).
+- **Endpoint:** `PUT /api/v1/admin/zones/:id` — partial update: send any of `name`, `description`, `is_active` (at least one).
   - **Request Body:**
     ```json
     {
-      "name": "Zone 5 - Ambikapur",
       "description": "Updated coverage notes",
       "is_active": false
     }
     ```
-  - **Response `200 OK`**
+  - **Response `200 OK`:** the updated zone (same shape as above).
+  - **Errors:** unknown id → 404; name used by another zone → 409; bad values or empty body → 400.
+  - **Effect of `is_active: false`:** the zone disappears from `GET /zones`; registering or submitting a request with it gives 400. Existing users, collectors and requests keep their zone and keep working.
 
 ---
 

@@ -42,7 +42,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 
 ## 5. Current code status
 
-**Built and tested** (`prompt.md` A1–A3, B1–B15), matching `api-spec.md`:
+**Built and tested** (`prompt.md` A1–A3, B1–B16), matching `api-spec.md`:
 
 | Area | Endpoints (prefix `/api/v1`) |
 |---|---|
@@ -55,6 +55,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 | Redemptions | `GET /redemptions/rules/active`, `POST /redemptions`, `GET /redemptions/mine`, `GET /admin/redemptions`, `PATCH /admin/redemptions/:id` |
 | Notifications | `GET /notifications` (unread_only, limit), `PATCH /notifications/:id/read`, `PATCH /notifications/read-all` |
 | Admin categories | `GET /admin/categories`, `POST /admin/categories`, `PUT /admin/categories/:id` (partial update) |
+| Admin zones | `GET /admin/zones`, `POST /admin/zones`, `PUT /admin/zones/:id` (partial update) |
 
 **Shared pieces — reuse them, never write a second version:**
 - `utils/AppError.js` (throw `new AppError(status, message, errors)`), `utils/transaction.js` (`withTransaction`), `utils/validators.js` (incl. `toNonNegativeAmount`, `toBoolean`), `utils/money.js` (compare DECIMAL strings as integer cents).
@@ -63,7 +64,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 - Models: `statusLog.model.insert(connection, ...)` (always inside the transaction), `pickup.model.findByIdForUpdate` (row lock), `ledger.model.insertEarn` / `insertRedemptionRow` / `getBalance(userId, connection)`, `rule.model.findActive`.
 - Points and money are computed in SQL with `ROUND(..., 2)`. A job or request that is not yours returns 404.
 
-Not built yet: admin zones, rules, users, weight correction, reports (B16–B20), backend audit (B21), `frontend/` (C1–C14), testing and lab-report docs (D1–D3).
+Not built yet: admin redemption rules, users, weight correction, reports (B17–B20), backend audit (B21), `frontend/` (C1–C14), testing and lab-report docs (D1–D3).
 
 **Tests:** `npm test` = unit tests (no database). `npm run test:api` = API tests; they rebuild a separate database `wrr_test` (override with `TEST_DB_NAME`) from `database/*.sql` and refuse to run on `wrr_db`. Add tests for each new module.
 

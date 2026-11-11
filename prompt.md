@@ -46,7 +46,7 @@ The prompts work in two situations:
 - [x] B13 — Admin: redemption queue + approve / paid / reject
 - [x] B14 — Notifications: list, mark one, mark all
 - [x] B15 — Admin: waste categories
-- [ ] B16 — Admin: zones
+- [x] B16 — Admin: zones
 - [ ] B17 — Admin: redemption rules
 - [ ] B18 — Admin: users + collector accounts
 - [ ] B19 — Admin: collection records + weight correction (ADJUST)
@@ -433,7 +433,7 @@ public list and new requests (400), while an Assigned request in that category c
 completed; validation 400; non-admin 403.
 ```
 
-### B16 — Admin: zones  `[ ]`
+### B16 — Admin: zones  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read api-spec.md §8.7, WRR_PRD.md FR-19.

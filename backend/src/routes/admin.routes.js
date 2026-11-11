@@ -6,6 +6,7 @@ const express = require('express');
 const adminController = require('../controllers/admin.controller');
 const redemptionController = require('../controllers/redemption.controller');
 const categoryController = require('../controllers/category.controller');
+const zoneController = require('../controllers/zone.controller');
 const { authenticateToken } = require('../middleware/auth');
 const { requireRole } = require('../middleware/role');
 
@@ -22,5 +23,9 @@ router.patch('/redemptions/:id', redemptionController.processDecision);
 router.get('/categories', categoryController.list);
 router.post('/categories', categoryController.create);
 router.put('/categories/:id', categoryController.update);
+
+router.get('/zones', zoneController.list);
+router.post('/zones', zoneController.create);
+router.put('/zones/:id', zoneController.update);
 
 module.exports = router;
