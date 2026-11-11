@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Secrets (copy backend/.env.example to backend/.env)
+.env
+.env.*
+!.env.example
+
+# Logs and OS files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Editor folders
+.vscode/
+.idea/
