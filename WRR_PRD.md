@@ -4,7 +4,7 @@
 | Document Attribute | Specification Details |
 |---|---|
 | **Project Title** | Waste Resource Recycle (WRR) Management System |
-| **Document Version** | 1.4.0 (Change request: a photo of the waste on every pickup request; see G14) |
+| **Document Version** | 1.5.0 (Change requests: waste photo on every pickup request, G14; help page and support tickets, G15) |
 | **Status** | Approved / Baseline for Implementation |
 | **Date** | November 12, 2026 |
 | **Academic Course** | Software Engineering Lab (CSE-3112) |
@@ -39,7 +39,7 @@
 3. **Informal & Inefficient Ecosystem:** Traditional recyclable scrap collection relies on unorganized itinerant collectors ("feriwala" / "tokai") with unpredictable collection schedules, inconsistent manual pricing, and zero digital accountability.
 4. **Lack of Citizen Motivation:** Without convenient pickup options and tangible economic incentives, households lack the incentive to sort recyclables at the source.
 
-### 2.2 Survey Traceability & Gap-Fix Log (G1–G14)
+### 2.2 Survey Traceability & Gap-Fix Log (G1–G15)
 This PRD incorporates all findings from the client survey (`WRR_REQ_Question_SURVEY.pdf`) and the gap-fix resolutions documented in `WRR_Revised_Requirements_and_Design.md`:
 
 | Gap ID | Defect / Omission in Original Design | Survey Origin | Engineering Resolution & PRD Update |
@@ -56,8 +56,9 @@ This PRD incorporates all findings from the client survey (`WRR_REQ_Question_SUR
 | **G10** | Estimated quantity missing from pickup submission | Survey Q8 | Integrated `estimated_weight_kg` into `FR-03`. |
 | **G11** | Status logs omitted previous state and rejection reasons | Collector workflow | Added `old_status`, `new_status`, and `note` (mandatory rejection reason) in `request_status_logs`. |
 | **G12** | Teammate name discrepancy across earlier documents | Header consistency | Standardized as **Abdul Al Noman** across all deliverables. Earlier documents also say "Roman"; **spelling still to be confirmed.** |
-| **G13** | Architectural diagram lacked newly added modules | System architecture | Updated 3-tier diagram to include Notifications, Redemption Rules, and 10 tables. |
+| **G13** | Architectural diagram lacked newly added modules | System architecture | Updated 3-tier diagram to include Notifications, Redemption Rules, and 11 tables. |
 | **G14** | Collectors could not see the waste before travelling, so they could not plan bags or a vehicle | Change request after implementation (v1.4.0, 12 Nov 2026) | `FR-03` now requires a photo of the waste (JPG/PNG/WebP, ≤ 2 MB). Added `pickup_requests.photo_path`, `GET /api/v1/pickup-requests/:id/photo` (owner, assigned collector, admin) and migration `database/migrations/001_add_pickup_photo.sql`. Requests made before v1.4.0 have no photo. |
+| **G15** | Users and collectors had no way inside the system to report a problem (a missed pickup, a wrong weight, an unpaid cash-out) | Change request after implementation (v1.5.0, 12 Nov 2026) | Added `FR-22`: a public Help & FAQ page and support tickets (`support_tickets` table, 5 endpoints, `SUPPORT_ANSWERED` notification). Migration `database/migrations/002_add_support_tickets.sql`. |
 
 ---
 
@@ -387,7 +388,7 @@ $$\text{Points Earned} = \text{ROUND}(\text{actual\_weight\_kg} \times \text{poi
 
 ---
 
-## 6. Detailed Functional Requirements (FR-01 to FR-21)
+## 6. Detailed Functional Requirements (FR-01 to FR-22)
 
 | Requirement ID | Module | Functional Description & Verification Rules |
 |---|---|---|
@@ -404,7 +405,7 @@ $$\text{Points Earned} = \text{ROUND}(\text{actual\_weight\_kg} \times \text{poi
 | **FR-11** | Rewards | **Reward Point Calculation:** $\text{Points} = \text{ROUND}(\text{actual\_weight\_kg} \times \text{points\_per\_kg\_applied}, 2)$. Enforced ledger consistency prevents retroactive rate alterations. |
 | **FR-12** | History | **Collection History:** Paginated history with filters. Users filter their requests by status, date range and waste category (`GET /pickup-requests/mine`) and see their full points ledger; collectors filter their completed collections by date range and waste category (`GET /collector/history`). |
 | **FR-13** | Audit | **Status Audit Logging:** Every status change is captured in `request_status_logs` recording `old_status`, `new_status`, `changed_by_id`, `note`, and `changed_at`. |
-| **FR-14** | Notifications | **In-Website Notifications:** A `notifications` row is created for these 11 events (`type` code → recipient):<br>`PICKUP_SUBMITTED` → user · `PICKUP_ASSIGNED` → collector · `PICKUP_ACCEPTED` → user · `PICKUP_REJECTED` → user · `PICKUP_ABORTED` → user · `PICKUP_COLLECTED` → user · `PICKUP_COMPLETED` (with points) → user · `REDEMPTION_REQUESTED` → user · `REDEMPTION_APPROVED` → user · `REDEMPTION_REJECTED` (points refunded) → user · `REDEMPTION_PAID` (with TrxID) → user.<br>Admins do not receive notification rows; their dashboard shows live queue counts (Pending/Rejected requests, Pending/Approved redemptions). Includes unread count badge, mark-one-read and mark-all-read. |
+| **FR-14** | Notifications | **In-Website Notifications:** A `notifications` row is created for these 12 events (`type` code → recipient):<br>`PICKUP_SUBMITTED` → user · `PICKUP_ASSIGNED` → collector · `PICKUP_ACCEPTED` → user · `PICKUP_REJECTED` → user · `PICKUP_ABORTED` → user · `PICKUP_COLLECTED` → user · `PICKUP_COMPLETED` (with points) → user · `REDEMPTION_REQUESTED` → user · `REDEMPTION_APPROVED` → user · `REDEMPTION_REJECTED` (points refunded) → user · `REDEMPTION_PAID` (with TrxID) → user · `SUPPORT_ANSWERED` → the user or collector who opened the ticket (v1.5.0).<br>Admins do not receive notification rows; their dashboard shows live queue counts (Pending/Rejected requests, Pending/Approved redemptions). Includes unread count badge, mark-one-read and mark-all-read. |
 | **FR-15** | Redemptions | **Cash Redemption Request:** User requests redemption specifying points ($\ge \text{min\_points}$, $\le \text{balance}$), payout channel (`bKash`, `Nagad`, `Bank`), and account number. Points are held immediately via a `REDEEM` ledger entry. |
 | **FR-16** | Governance | **Redemption Rules Management:** Admin configures `taka_per_point` and `min_points`. Exactly one rule is active at any time; prior rules are archived for historical audit. |
 | **FR-17** | Analytics | **Administrative Reports:** Admin can generate 5 distinct reports (computed via SQL queries):<br>1. Total weight collected by category, zone, and date range.<br>2. Request volume broken down by status.<br>3. Collector performance (completed pickups, total kg, rejection rate).<br>4. Points issued vs. points redeemed vs. outstanding liability.<br>5. Redemption summary by status.<br>Reports can be printed or exported. |
@@ -412,6 +413,7 @@ $$\text{Points Earned} = \text{ROUND}(\text{actual\_weight\_kg} \times \text{poi
 | **FR-19** | Governance | **Zone Management:** Admin can create, modify, activate, and deactivate operational zones. |
 | **FR-20** | Governance | **User & Collector Management:** Admin can view, activate, and deactivate user accounts, create collector accounts, and assign collectors' operating zones. |
 | **FR-21** | Redemptions | **Redemption Processing:** Admin reviews redemptions to approve, reject (from `Pending` or `Approved`, with mandatory note; creates `REFUND` ledger entry), or mark `Paid` (from `Approved`, with mandatory `payout_trx_id`). See §5.4 for allowed transitions. |
+| **FR-22** | Support | **Help & Support (v1.5.0):** A public **Help & FAQ** page answers common questions and shows the admin's phone and email. Logged-in users and collectors open **support tickets** (category `Pickup`, `Points`, `Redemption`, `Account` or `Other`; subject 5–120 and message 10–2000 characters), optionally linked to one of their own pickup requests or (users) cash redemptions. At most 5 tickets that are not closed per person (422). An admin lists tickets by status and replies (`Open` → `Answered`, may reply again) — the opener gets a `SUPPORT_ANSWERED` notification in the same transaction; the opener or an admin closes the ticket (`Closed`, final). Admins cannot open tickets. |
 
 ---
 
@@ -456,7 +458,7 @@ The project adheres to a strict Three-Tier Architecture, as specified in the pro
 
 ---
 
-## 9. Database Schema & Data Dictionary (10 Tables)
+## 9. Database Schema & Data Dictionary (11 Tables)
 
 The complete, executable SQL DDL is `database/schema.sql`, documented in [`database.md`](database.md) §9. The summary below must stay in sync with it.
 
@@ -604,6 +606,19 @@ In-website user notifications.
 - `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 - *Index:* `idx_notif_user (user_id, is_read)`
 
+#### Table 11: `support_tickets` (v1.5.0, FR-22)
+Help requests from users and collectors, answered by an admin.
+- `ticket_id` INT AUTO_INCREMENT PRIMARY KEY
+- `user_id` INT NOT NULL, FOREIGN KEY $\to$ `users(user_id)` *(who opened it: a user or collector)*
+- `category` ENUM('Pickup','Points','Redemption','Account','Other') NOT NULL
+- `subject` VARCHAR(120) NOT NULL; `message` TEXT NOT NULL
+- `request_id` INT NULL, FOREIGN KEY $\to$ `pickup_requests(request_id)` *(optional; must be visible to the opener)*
+- `redemption_id` INT NULL, FOREIGN KEY $\to$ `cash_redemptions(redemption_id)` *(optional; must be the opener's own)*
+- `status` ENUM('Open','Answered','Closed') NOT NULL DEFAULT 'Open'
+- `admin_reply` TEXT NULL; `admin_id` INT NULL, FOREIGN KEY $\to$ `users(user_id)`
+- `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP; `replied_at`, `closed_at` DATETIME NULL
+- *Indexes:* `idx_ticket_user (user_id, status)`, `idx_ticket_status (status, created_at)`
+
 ---
 
 ## 10. REST API Summary
@@ -626,6 +641,7 @@ The complete REST contract (request/response bodies, validation, status codes) l
 | Admin operations | `GET /admin/pickup-requests`, `PUT /admin/pickup-requests/:id/assign`, `GET /admin/redemptions`, `PATCH /admin/redemptions/:id`, `GET /admin/collection-records`, `PUT /admin/collection-records/:id` | FR-07, FR-18, FR-21 |
 | Admin governance | `/admin/categories`, `/admin/zones`, `/admin/redemption-rules`, `/admin/users`, `POST /admin/collectors`, `PATCH /admin/users/:id/status`, `PATCH /admin/users/:id/zone` | FR-16, FR-19, FR-20 |
 | Reports | `GET /admin/reports/:type` (5 types) | FR-17 |
+| Support (v1.5.0) | `POST /support-tickets`, `GET /support-tickets/mine`, `PATCH /support-tickets/:id/close`, `GET /admin/support-tickets`, `PUT /admin/support-tickets/:id/reply` | FR-22 |
 
 ---
 
@@ -676,7 +692,7 @@ Waste_Resource_Recycle/
 │   ├── .env.example
 │   └── .env                 # Local credentials (never committed)
 ├── database/
-│   ├── schema.sql           # Complete 10-table MySQL DDL with constraints
+│   ├── schema.sql           # Complete 11-table MySQL DDL with constraints
 │   └── seed.sql             # Default admin, zones, categories, sample rates, test users
 ├── frontend/
 │   ├── index.html           # Landing page
@@ -723,7 +739,7 @@ Waste_Resource_Recycle/
 
 ### 12.2 Acceptance Criteria for Lab Defense
 - [x] Complete PRD and System Design tracing back to client survey priorities.
-- [x] Database initialized with all 10 tables and verified foreign keys.
+- [x] Database initialized with all 11 tables and verified foreign keys.
 - [ ] End-to-end user request submission $\to$ admin assignment $\to$ collector acceptance and weighing $\to$ automated points crediting.
 - [ ] Cash redemption workflow demonstrating point lock on request, refund on rejection, and paid completion.
 - [ ] In-website notification delivery across all primary milestones.

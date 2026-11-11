@@ -13,6 +13,7 @@ const markAllBtn = $('#mark-all');
 
 // Where a notification leads: its pickup request or the redemption page
 function linkFor(n) {
+  if (n.type === 'SUPPORT_ANSWERED') return { href: '/support.html', text: 'View answer' };
   if (n.request_id) return { href: `/user/requests.html?id=${n.request_id}`, text: `View request #${n.request_id}` };
   if (n.redemption_id) return { href: '/user/redeem.html', text: 'View redemptions' };
   return null;

@@ -6,7 +6,7 @@ Instructions for any AI coding agent (Claude Code, Codex, Cursor, Copilot, ...) 
 
 | Topic | File |
 |---|---|
-| Requirements (FR-01–FR-21, NFR-01–NFR-08, business rules, state machine) | `WRR_PRD.md` (v1.4.0) |
+| Requirements (FR-01–FR-22, NFR-01–NFR-08, business rules, state machine) | `WRR_PRD.md` (v1.5.0) |
 | Every endpoint, payload, validation rule and status code | `api-spec.md` |
 | Tables, constraints, report SQL, transactions, seed data | `database.md` (= `database/schema.sql` + `database/seed.sql`) |
 | Architecture and folder structure | `architecture.md` |
@@ -36,7 +36,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 - **Status codes:** 400 validation · 401 not logged in · 403 role/inactive · 404 · 409 state conflict or duplicate · 422 business rule (balance, min_points, negative correction) · 429 rate limit · 500.
 - **Ledger:** balance = `SUM(points)`; never negative. One `EARN` per record (DB unique index). Completion, redemption, rejection and weight correction each run in one transaction.
 - **Redemptions:** `approve` Pending→Approved, `paid` Approved→Paid (needs `payout_trx_id`), `reject` Pending/Approved→Rejected (+REFUND). Lock the user row with `SELECT ... FOR UPDATE` when submitting.
-- **Notifications:** the 11 types in FR-14, all to users/collectors. Admins get queue counts on the dashboard, not notification rows.
+- **Notifications:** the 12 types in FR-14, all to users/collectors. Admins get queue counts on the dashboard, not notification rows.
 - **Validation:** password ≥ 8 chars; `preferred_at` strictly in the future; login limit 5 failed / 15 min.
 - **Security:** parameterized SQL only; insert user text with `textContent`; check ownership on every request. `JWT_SECRET` must be ≥ 32 characters (the server refuses the example value).
 - **Frontend and CSP:** the Content-Security-Policy blocks inline code. Use separate `.js`/`.css` files, `addEventListener` and CSS classes — never inline `<script>`, `onclick="..."` or `style="..."`.
@@ -44,7 +44,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 
 ## 5. Current code status — complete
 
-**Built, tested and audited** (`prompt.md` A1–A3, B1–B21) — all 45 endpoints of `api-spec.md` §2 (the 45th, the pickup photo, came with PRD v1.4.0). `npm run perf` checks NFR-02 (latest: slowest core call ~150 ms, slowest report ~110 ms with 50 concurrent users), matching `api-spec.md`:
+**Built, tested and audited** (`prompt.md` A1–A3, B1–B21) — all 50 endpoints of `api-spec.md` §2 (the photo endpoint came with PRD v1.4.0, the five support endpoints with v1.5.0). `npm run perf` checks NFR-02 (latest: slowest core call ~150 ms, slowest report ~110 ms with 50 concurrent users), matching `api-spec.md`:
 
 | Area | Endpoints (prefix `/api/v1`) |
 |---|---|
@@ -61,6 +61,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 | Admin rules | `GET /admin/redemption-rules` (active + archived), `POST /admin/redemption-rules` (lock, deactivate all, insert) |
 | Admin accounts | `GET /admin/users` (role, status, zone_id), `POST /admin/collectors`, `PATCH /admin/users/:id/status`, `PATCH /admin/users/:id/zone` |
 | Admin records | `GET /admin/collection-records` (from, to, zone_id), `PUT /admin/collection-records/:id` (weight correction + ADJUST, balance guard) |
+| Support (v1.5.0) | `POST /support-tickets`, `GET /support-tickets/mine`, `PATCH /support-tickets/:id/close` (owner or admin), `GET /admin/support-tickets` (status), `PUT /admin/support-tickets/:id/reply` (+ `SUPPORT_ANSWERED`) |
 | Admin reports | `GET /admin/reports/:type` — `weight-by-category`, `request-volume-by-status`, `collector-performance`, `point-liability`, `redemption-summary` (SQL = database.md §6) |
 
 **Shared pieces — reuse them, never write a second version:**
@@ -77,13 +78,15 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 
 D1 done: browser checklist run in Chrome (18/18; two layout/UX fixes). Edge responsive check: 200/200 page views at 8 sizes (320–1920 px). Firefox and CSV-in-Excel are left to check by hand.
 
-D2 done: `docs/test-cases.md` (50 test cases covering FR-01–FR-21, EC-01–EC-06 and NFRs; 47 pass, 3 not run).
+D2 done: `docs/test-cases.md` (50 test cases covering FR-01–FR-22, EC-01–EC-06 and NFRs; 47 pass, 3 not run).
 
 D3 done: `docs/er-diagram.md` (Mermaid ER from `database/schema.sql`), `docs/viva-notes.md` (architecture, transitions, double-spending, snapshots, cookie, 20 questions).
 
 **The project is complete** (prompt.md A1–D3). Left to do by hand: open the site in Firefox, open an exported CSV in Excel (`docs/e2e-walkthrough.md`).
 
 **Waste photo (PRD v1.4.0):** every new pickup request needs a photo (`photo` data URL in `POST /pickup-requests`); `user/new-request.html` shrinks it in the browser (canvas, ≤ 1280 px JPEG); details, job cards, the collector's next job and the admin view show it with `ui.requestPhoto()`. An existing database needs `database/migrations/001_add_pickup_photo.sql` once.
+
+**Help & support (PRD v1.5.0, FR-22):** public `help.html` (FAQ in `<details>`, admin contact); `support.html` for users and collectors (new ticket with optional related request / cash-out, `?request_id=` pre-selects; my tickets with answers; close); `admin/support.html` (tabs, reply via `ui.formDialog`, close); "Support" in every sidebar; open tickets are a queue on the admin dashboard. Max 5 open tickets per person. An existing database needs `database/migrations/002_add_support_tickets.sql` once.
 
 **Tests:** `npm test` = unit tests (no database). `npm run test:api` = API tests; they rebuild a separate database `wrr_test` (override with `TEST_DB_NAME`) from `database/*.sql` and refuse to run on `wrr_db`. Add tests for each new module.
 

@@ -14,7 +14,7 @@ A web platform that connects households with local waste collectors for recyclab
 |---|---|
 | Requirements & design (PRD, API spec, database, architecture, DFD) | Done |
 | Database schema + seed data | Done |
-| Backend REST API — all 45 endpoints | Done, tested and audited |
+| Backend REST API — all 50 endpoints | Done, tested and audited |
 | Frontend (User, Collector, Admin portals) | Done |
 | End-to-end testing, test cases, ER diagram, viva notes | Done |
 
@@ -45,7 +45,7 @@ Key rules: a strict 8-transition request state machine, a signed points ledger w
 
 ### 2. Database
 1. Start **MySQL** in the XAMPP Control Panel.
-2. In phpMyAdmin (`http://localhost/phpmyadmin`) or the MySQL CLI, import **`database/schema.sql`**, then **`database/seed.sql`**. This creates the `wrr_db` database with 10 tables and test data.
+2. In phpMyAdmin (`http://localhost/phpmyadmin`) or the MySQL CLI, import **`database/schema.sql`**, then **`database/seed.sql`**. This creates the `wrr_db` database with 11 tables and test data.
 
    CLI alternative (Git Bash):
    ```
@@ -125,7 +125,7 @@ Run from `backend/`:
 
 The API and performance tests rebuild a **separate** database, `wrr_test`, from `database/*.sql`. They refuse to run against `wrr_db`, so your data is never touched.
 
-Latest results: 22 unit + 106 API tests passing; slowest core call ~150 ms (limit 2 s) and slowest report ~110 ms (limit 5 s) with 50 concurrent users.
+Latest results: 22 unit + 114 API tests passing; slowest core call ~150 ms (limit 2 s) and slowest report ~110 ms (limit 5 s) with 50 concurrent users.
 
 ## Project structure
 
@@ -153,7 +153,7 @@ Waste_Resource_Recycle/
 
 | Document | Contents |
 |---|---|
-| [`WRR_PRD.md`](WRR_PRD.md) | Requirements (FR-01–FR-21, NFR-01–NFR-08), business rules, state machine — **source of truth** |
+| [`WRR_PRD.md`](WRR_PRD.md) | Requirements (FR-01–FR-22, NFR-01–NFR-08), business rules, state machine — **source of truth** |
 | [`api-spec.md`](api-spec.md) | Every REST endpoint: paths, bodies, responses, validation, status codes |
 | [`database.md`](database.md) | Tables, constraints, report SQL, transactions, seed data |
 | [`architecture.md`](architecture.md) | Layers, security, folder structure, integration snippets |

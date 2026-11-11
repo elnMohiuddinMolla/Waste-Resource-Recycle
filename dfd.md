@@ -54,7 +54,7 @@ Level 1 decomposes the main system (0.0) into eight core logical processes, ten 
 - **4.0 Waste Collection & Physical Weighing:** Handles on-site certified scale weight inputs, applies rate snapshotting, manages on-site cancellations, completes jobs, and processes admin weight corrections (FR-18).
 - **5.0 Reward Points Ledger & Balance Service:** Manages the signed points ledger (`EARN`, `ADJUST` here; `REDEEM`, `REFUND` written by 6.0), ensures non-negative balances, and calculates active points.
 - **6.0 Cash Redemption & Disbursement Processing:** Manages atomic balance holds, admin approvals, MFS/Bank payouts (`payout_trx_id`), and rejection refunds.
-- **7.0 In-Website Notification Dispatching:** Creates the 11 notification types of PRD FR-14, maintains unread counter badges, and handles read confirmations.
+- **7.0 In-Website Notification Dispatching:** Creates the 12 notification types of PRD FR-14, maintains unread counter badges, and handles read confirmations.
 - **8.0 Analytical Reporting & Audit Logging:** Compiles 5 query-based administrative reports and tracks chronological status changes in `request_status_logs`.
 
 ---
@@ -171,7 +171,7 @@ Level 1 decomposes the main system (0.0) into eight core logical processes, ten 
 | **4.0** | Field Weighing & Pickup | Records certified scale measurements, freezes applied rates, handles on-site aborts, closes jobs, and applies admin weight corrections. | DF-14, DF-15, DF-38 | DF-16, DF-17, DF-26, DF-39, DF-40, DF-41 | Waste Collector, Administrator |
 | **5.0** | Rewards Ledger Engine | Writes signed `EARN` and `ADJUST` rows, enforces the non-negative balance rule, and computes balances. | DF-17, DF-19, DF-39 | DF-18 | System Internal Service |
 | **6.0** | Cash Redemption Engine | Locks points on withdrawal, handles admin approval and payout with TrxID, and executes refunds on rejection. | DF-19, DF-20, DF-21, DF-24, DF-43, DF-44 | DF-22, DF-23, DF-25, DF-26, DF-42 | General User, Administrator |
-| **7.0** | Notification Dispatcher | Persists the 11 notification types of FR-14 and feeds unread badges to web clients via 30-second polling. | DF-26 | DF-27, DF-28 | System Internal Service |
+| **7.0** | Notification Dispatcher | Persists the 12 notification types of FR-14 and feeds unread badges to web clients via 30-second polling. | DF-26 | DF-27, DF-28 | System Internal Service |
 | **8.0** | Reporting & Audit Engine | Aggregates collection tonnage, financial liabilities, and collector KPIs into 5 management query reports. | DF-29, DF-30, DF-33 | DF-31 | Administrator |
 
 ---
@@ -571,5 +571,5 @@ The DFD was checked against the usual Structured Analysis rules (Gane & Sarson, 
 | **Data Store Independence & No Sinks** | Data stores cannot communicate directly with each other or directly with external entities. All stores must have both write and read flows. | **PASS** | All stores are accessed only through processes. Every store has a write and a read flow: e.g. `D5` is written by P3/P4 and read by P3 (`DF-32`) and P8 (`DF-33`); `D8` is written by P2 (`DF-37`) and read by P6 (`DF-21`); `D2` is written by P1/P2 and read by P1/P6. |
 | **Leveling Balance Consistency** | Net data inflows and outflows at Level 0 must balance at Level 1 and Level 2. | **PASS** | Entity inputs (Registration, Pickup, Cancellation, Redemption, Decisions, Weight, Weight Corrections, Accounts, Rules, Payouts) and outputs (Tokens, Status, Balance, Alerts, Queues, Reports) appear at every level. Level 2 is drawn for processes 3.0 and 6.0 only. |
 | **Synchronous Process Triggers** | Event flows directly between processes (e.g. P4 $\to$ P5, P3/P4/P6 $\to$ P7). | **Accepted deviation** | Modeled per Real-Time DFD standards (Ward & Mellor notation) reflecting synchronous multi-table database transactions in the Express backend. Classic DeMarco DFDs avoid process-to-process flows; mention this in the viva. |
-| **Naming Consistency** | Processes must be named with active verb-phrases; data stores with nouns matching database tables. | **PASS** | Stores D1–D10 map to the 10 tables defined in [`database.md`](database.md). |
+| **Naming Consistency** | Processes must be named with active verb-phrases; data stores with nouns matching database tables. | **PASS** | Stores D1–D10 map to the 11 tables defined in [`database.md`](database.md). |
 

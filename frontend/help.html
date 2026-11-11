@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Help &amp; FAQ — WRR</title>
+  <meta name="description" content="Answers to common questions about pickups, photos, points and cash-outs, and how to contact WRR support.">
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/help.js"></script>
+</head>
+<body>
+  <!-- Logged-in visitors get their normal menu; everyone else a simple header (js/pages/help.js) -->
+  <header id="app-header" class="site-header">
+    <div class="container">
+      <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">♻</span>WRR</a>
+      <div class="row">
+        <a class="btn btn-light btn-small" href="/login.html">Log in</a>
+        <a class="btn btn-light btn-small" href="/register.html">Register</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container help">
+    <section class="help-hero">
+      <span class="help-hero-icon" data-icon="help"></span>
+      <h1>How can we help?</h1>
+      <p class="muted">Quick answers to the questions people ask most. Still stuck? Open a support ticket and an admin will answer.</p>
+      <div class="help-actions">
+        <a class="btn btn-primary" href="/support.html" id="ticket-link"><span data-icon="chat"></span>Open a support ticket</a>
+        <a class="btn btn-secondary" href="#contact">Contact details</a>
+      </div>
+    </section>
+
+    <div class="help-grid">
+      <div>
+        <section class="help-group" aria-labelledby="faq-pickups">
+          <h2 id="faq-pickups">Pickups</h2>
+          <details class="faq">
+            <summary>How do I request a pickup?</summary>
+            <p>Log in, press <strong>New pickup request</strong>, choose the waste type, take a photo of it, enter an estimated weight and a time in the future, then press <strong>Submit request</strong>. An admin assigns a collector from your zone.</p>
+          </details>
+          <details class="faq">
+            <summary>Why do I have to add a photo?</summary>
+            <p>The photo shows the collector how much waste there is, so they bring the right bag or vehicle. Only you, the assigned collector and the admin can see it. Big photos are made smaller on your phone before they are sent.</p>
+          </details>
+          <details class="faq">
+            <summary>Can I cancel a request?</summary>
+            <p>Yes, while it is still <strong>Pending</strong> (before a collector is assigned). Open <strong>My requests</strong>, choose the request and press <strong>Cancel request</strong>. After that, open a support ticket.</p>
+          </details>
+          <details class="faq">
+            <summary>The collector did not come. What should I do?</summary>
+            <p>Check the request's timeline in <strong>My requests</strong>. If the time has passed, open a support ticket and choose that request; the admin will contact the collector or assign another one.</p>
+          </details>
+          <details class="faq">
+            <summary>What can I recycle?</summary>
+            <p>Plastic, paper and cardboard, e-waste, metal, glass and other recyclable waste. See today's rates on the <a href="/#rates">home page</a>. For "Other", describe what it is.</p>
+          </details>
+        </section>
+
+        <section class="help-group" aria-labelledby="faq-points">
+          <h2 id="faq-points">Points and cash</h2>
+          <details class="faq">
+            <summary>How are my points calculated?</summary>
+            <p>Points = the <strong>actual</strong> weight the collector records × the category's rate on that day. They are added when the collector marks the pickup completed. Later rate changes do not change points you already earned.</p>
+          </details>
+          <details class="faq">
+            <summary>How do I get money for my points?</summary>
+            <p>Open <strong>Redeem</strong>, enter the points (at least the minimum shown there), and choose bKash, Nagad or a bank account. The points are held at once; an admin approves and sends the money, and you see the transaction ID when it is paid.</p>
+          </details>
+          <details class="faq">
+            <summary>My redemption was rejected. Did I lose my points?</summary>
+            <p>No. A rejected redemption gives all its points back to your balance, and the reason is shown under <strong>Redeem</strong>.</p>
+          </details>
+          <details class="faq">
+            <summary>My points went down without a redemption. Why?</summary>
+            <p>If the weight was recorded wrongly, an admin can correct it; the difference appears in <strong>Points</strong> as a "Weight correction". If you think it is wrong, open a support ticket.</p>
+          </details>
+        </section>
+
+        <section class="help-group" aria-labelledby="faq-account">
+          <h2 id="faq-account">Account</h2>
+          <details class="faq">
+            <summary>I forgot my password.</summary>
+            <p>There is no self-service reset yet. Contact the admin by phone or email (below) from the number or email you registered with.</p>
+          </details>
+          <details class="faq">
+            <summary>The login page says my account has been deactivated.</summary>
+            <p>An admin has paused your account. Contact the admin (below) to find out why and to reactivate it.</p>
+          </details>
+          <details class="faq">
+            <summary>I am a collector. How do I get an account?</summary>
+            <p>Collector accounts are created by the admin, who also sets your zone. Contact the admin.</p>
+          </details>
+        </section>
+      </div>
+
+      <aside class="help-side">
+        <section class="card help-card" id="contact">
+          <h2>Contact the admin</h2>
+          <p class="muted small">For login problems, or anything urgent. Office hours 8 am – 10 pm.</p>
+          <!-- The seeded admin account's phone and email (database/seed.sql) -->
+          <ul class="help-contact">
+            <li><span data-icon="phone"></span><a href="tel:01711000001">01711000001</a></li>
+            <li><span data-icon="chat"></span><a href="mailto:admin@wrr.com">admin@wrr.com</a></li>
+          </ul>
+        </section>
+        <section class="card help-card">
+          <h2>Support tickets</h2>
+          <p class="muted small">Logged in? Describe the problem once, link the request or redemption, and follow the answer in one place. You get a notification when the admin replies.</p>
+          <a class="btn btn-primary btn-block" href="/support.html" id="ticket-link-2">Open a support ticket</a>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

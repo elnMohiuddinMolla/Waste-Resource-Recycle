@@ -14,7 +14,8 @@ await startDashboard('admin', [
   ['Categories', 'Waste types and points per kg.', '/admin/categories.html', 'tag'],
   ['Redemption rules', 'Taka per point and the minimum.', '/admin/rules.html', 'sliders'],
   ['Collection records', 'Review and correct weights.', '/admin/records.html', 'clipboard'],
-  ['Reports', 'Five reports, print and CSV.', '/admin/reports.html', 'chart']
+  ['Reports', 'Five reports, print and CSV.', '/admin/reports.html', 'chart'],
+  ['Support tickets', 'Answer questions from users and collectors.', '/admin/support.html', 'help']
 ]);
 
 // The "total" of a paged list, asking for just one row
@@ -29,14 +30,15 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`;
 // ---------- Queues ----------
 
 async function loadQueues() {
-  const [pending, rejected, redPending, redApproved, collectors] = await Promise.all([
+  const [pending, rejected, redPending, redApproved, collectors, tickets] = await Promise.all([
     total('/admin/pickup-requests', { status: 'Pending' }),
     total('/admin/pickup-requests', { status: 'Rejected' }),
     total('/admin/redemptions', { status: 'Pending' }),
     total('/admin/redemptions', { status: 'Approved' }),
-    total('/admin/users', { role: 'collector', status: 'active' })
+    total('/admin/users', { role: 'collector', status: 'active' }),
+    total('/admin/support-tickets', { status: 'Open' })
   ]);
-  const queues = [['#kpi-pending', pending], ['#kpi-rejected', rejected], ['#kpi-red-pending', redPending], ['#kpi-red-approved', redApproved]];
+  const queues = [['#kpi-pending', pending], ['#kpi-rejected', rejected], ['#kpi-red-pending', redPending], ['#kpi-red-approved', redApproved], ['#kpi-tickets', tickets]];
   for (const [id, n] of queues) {
     set(id, n ?? '—');
     const card = $(id).closest('.db-queue');
@@ -52,9 +54,10 @@ async function loadQueues() {
   const cashOuts = (redPending || 0) + (redApproved || 0);
   if (requests) parts.push(plural(requests, 'request'));
   if (cashOuts) parts.push(plural(cashOuts, 'redemption'));
+  if (tickets) parts.push(plural(tickets, 'support ticket'));
   set('#attention', waiting === 0
     ? 'All clear — nothing is waiting for you right now.'
-    : `${parts.join(' and ')} ${waiting === 1 ? 'is' : 'are'} waiting for you.`);
+    : `${parts.length > 1 ? `${parts.slice(0, -1).join(', ')} and ${parts.at(-1)}` : parts[0]} ${waiting === 1 ? 'is' : 'are'} waiting for you.`);
 }
 
 // ---------- Bar charts (native <progress>, no chart library) ----------

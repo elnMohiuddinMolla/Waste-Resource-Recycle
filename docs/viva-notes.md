@@ -105,7 +105,7 @@ When the collector records the weight, the category's current `points_per_kg` is
 
 11. **Why does a collector who rejects lose the job?** T5 clears `collector_id`, so the request returns to the admin queue and can be reassigned (T2). The rejection reason is stored in the log for the admin and the user.
 
-12. **How does a user know what happened?** Each of the 11 events in FR-14 creates a notification row. The header badge polls the unread count every 30 seconds, and the timeline shows every status change.
+12. **How does a user know what happened?** Each of the 12 events in FR-14 creates a notification row. The header badge polls the unread count every 30 seconds, and the timeline shows every status change.
 
 13. **Why don't admins get notifications?** Admins work from queues. The dashboard shows live counts of Pending/Rejected requests and Pending/Approved redemptions, which is more useful than one message per event.
 
@@ -116,7 +116,7 @@ When the collector records the weight, the category's current `points_per_kg` is
 16. **What happens when the admin corrects a weight?** In one transaction: the new weight is saved, an ADJUST row of `ROUND(new kg × rate, 2) − points already posted` is written, and the status log gets "Weight corrected from X kg to Y kg" with the admin's id.
 
 17. **How did you test it?**
-    - 22 unit tests and 106 API tests on a separate `wrr_test` database, all passing.
+    - 22 unit tests and 114 API tests on a separate `wrr_test` database, all passing.
     - A 45-check end-to-end story.
     - 352 static page checks.
     - A real Chrome run of the browser checklist at 360 px and 1280 px.
@@ -138,15 +138,17 @@ After implementation the team decided collectors should see the waste before tra
 - **Why it is safe:** the server checks the first bytes (JPG/PNG/WebP "magic numbers"), not the file name, so a renamed HTML or program file is refused; it allows at most 2 MB; it saves the file under a random name outside `frontend/`; the photo is served only through `GET /pickup-requests/:id/photo` to the owner, the assigned collector and admins.
 - **Consistency:** the file is written first and deleted again if the database transaction fails, so there is never a request pointing at a missing file.
 
+**Second change request — help & support (PRD v1.5.0, G15, FR-22):** a public FAQ page and support tickets. One new table (`support_tickets`), five endpoints, one new notification type (`SUPPORT_ANSWERED`, written in the same transaction as the reply), and the same ownership rule as everywhere else: you can link only a request or redemption you can already see, and someone else's ticket is a 404. A limit of 5 open tickets per person stops one account flooding the admin.
+
 ## 8. Numbers to remember
 
 | Item | Value |
 |---|---|
-| Tables | 10 |
-| API endpoints | 45 under `/api/v1` |
-| Pages | 23 (3 public, 6 user, 4 collector, 10 admin) |
+| Tables | 11 |
+| API endpoints | 50 under `/api/v1` |
+| Pages | 26 (4 public incl. Help, 1 shared Support page, 6 user, 4 collector, 11 admin) |
 | Request statuses / transitions | 7 / 8 |
-| Notification types | 11 |
+| Notification types | 12 |
 | Reports | 5 |
-| Tests | 22 unit + 106 API (100 % pass), 45 e2e checks |
+| Tests | 22 unit + 114 API (100 % pass), 45 e2e checks |
 | Seed rates | Plastic 10, Paper 6, E-waste 25, Metal 15, Glass 4, Other 5 points/kg; ৳0.50 per point, minimum 100 points |

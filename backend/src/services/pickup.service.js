@@ -100,6 +100,12 @@ function canView(viewer, request) {
   return false;
 }
 
+// True when the viewer may see this request (used when a support ticket links a request)
+async function canViewRequest(viewer, requestId) {
+  const r = await pickupModel.findPhoto(requestId); // user_id and collector_id are all we need
+  return Boolean(r && canView(viewer, r));
+}
+
 async function getRequestDetails(viewer, requestId) {
   const r = await pickupModel.findDetails(requestId);
   if (!r || !canView(viewer, r)) {
@@ -168,6 +174,7 @@ async function getPhoto(viewer, requestId) {
 
 module.exports = {
   createRequest,
+  canViewRequest,
   getPhoto,
   listMyRequests,
   getRequestDetails,

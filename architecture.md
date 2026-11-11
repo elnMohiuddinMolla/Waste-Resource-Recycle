@@ -34,7 +34,7 @@ graph TD
     end
 
     subgraph Data Tier [XAMPP]
-        DB[(MySQL / MariaDB - InnoDB<br/>10 tables, ACID transactions)]
+        DB[(MySQL / MariaDB - InnoDB<br/>11 tables, ACID transactions)]
     end
 
     Pages -- "GET /user/dashboard.html" --> Static
@@ -200,7 +200,7 @@ SELECT user_id FROM users WHERE user_id = ? FOR UPDATE;   -- serialize this user
 Admin actions (rules in `services/redemptionStateMachine.js`): `approve` (Pending → Approved), `paid` (Approved → Paid, TrxID required), `reject` (Pending/Approved → Rejected + REFUND).
 
 ### 6.4 Notifications (`services/notification.service.js`)
-Creates the 11 notification types listed in PRD FR-14, always inside the same transaction as the event that causes them. Admins get no notification rows; their dashboard shows queue counts instead.
+Creates the 12 notification types listed in PRD FR-14, always inside the same transaction as the event that causes them. Admins get no notification rows; their dashboard shows queue counts instead.
 
 ---
 
@@ -262,7 +262,7 @@ Waste_Resource_Recycle/
 │       └── pages/                  # one script per page, e.g. admin-reports.js
 │
 ├── database/
-│   ├── schema.sql                  # 10-table DDL (same as database.md §9)
+│   ├── schema.sql                  # 11-table DDL (same as database.md §9)
 │   ├── seed.sql                    # Zones, categories, users, rule, sample data
 │   └── migrations/                 # changes for an existing database (001: pickup photo)
 │

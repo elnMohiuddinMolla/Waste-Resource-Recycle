@@ -28,6 +28,12 @@ async function findById(connection, redemptionId) {
   return rows[0] || null;
 }
 
+// The owner's user_id, or null when the redemption does not exist
+async function findOwner(redemptionId) {
+  const [rows] = await pool.execute('SELECT user_id FROM cash_redemptions WHERE redemption_id = ?', [redemptionId]);
+  return rows[0] ? rows[0].user_id : null;
+}
+
 // Locks the row so two admins can't process the same redemption at once
 async function findByIdForUpdate(connection, redemptionId) {
   const [rows] = await connection.execute(
@@ -88,6 +94,7 @@ async function listForAdmin({ status, limit, offset }) {
 }
 
 module.exports = {
+  findOwner,
   insert,
   findById,
   findByIdForUpdate,

@@ -11,6 +11,7 @@ const ruleController = require('../controllers/rule.controller');
 const userController = require('../controllers/user.controller');
 const recordController = require('../controllers/record.controller');
 const reportController = require('../controllers/report.controller');
+const supportController = require('../controllers/support.controller');
 const { authenticateToken } = require('../middleware/auth');
 const { requireRole } = require('../middleware/role');
 
@@ -44,5 +45,8 @@ router.get('/collection-records', recordController.list);
 router.put('/collection-records/:id', recordController.correctWeight);
 
 router.get('/reports/:type', reportController.getReport);
+
+router.get('/support-tickets', supportController.listForAdmin);
+router.put('/support-tickets/:id/reply', supportController.reply);
 
 module.exports = router;

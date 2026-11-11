@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support — WRR</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/support.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <!-- Users and collectors (PRD v1.5.0, FR-22) -->
+  <main class="container">
+    <div class="page-title">
+      <div>
+        <h1>Help &amp; support</h1>
+        <p class="muted mb-0">Tell us what went wrong; an admin answers here and you get a notification.</p>
+      </div>
+      <a class="btn btn-secondary btn-small" href="/help.html">Read the FAQ</a>
+    </div>
+
+    <div class="support-grid">
+      <section class="card">
+        <h2>New ticket</h2>
+        <form id="ticket-form" class="form" novalidate>
+          <div class="form-alert alert" role="alert"></div>
+
+          <div class="field">
+            <label for="category">What is it about?</label>
+            <select id="category" name="category" required>
+              <option value="Pickup">A pickup</option>
+              <option value="Points">My points</option>
+              <option value="Redemption">A cash-out</option>
+              <option value="Account">My account</option>
+              <option value="Other">Something else</option>
+            </select>
+            <div class="field-error"></div>
+          </div>
+
+          <div class="field" id="request-field">
+            <label for="request_id">Which pickup? <span class="muted">(optional)</span></label>
+            <select id="request_id" name="request_id">
+              <option value="">— None —</option>
+            </select>
+            <div class="field-error"></div>
+          </div>
+
+          <div class="field hidden" id="redemption-field">
+            <label for="redemption_id">Which cash-out? <span class="muted">(optional)</span></label>
+            <select id="redemption_id" name="redemption_id">
+              <option value="">— None —</option>
+            </select>
+            <div class="field-error"></div>
+          </div>
+
+          <div class="field">
+            <label for="subject">Subject</label>
+            <input id="subject" name="subject" maxlength="120" placeholder="e.g. The collector did not come" required>
+            <div class="field-error"></div>
+          </div>
+
+          <div class="field">
+            <label for="message">Describe the problem</label>
+            <textarea id="message" name="message" maxlength="2000" placeholder="What happened, and when?" required></textarea>
+            <div class="hint"><span id="message-count">0</span> / 2000 characters (at least 10)</div>
+            <div class="field-error"></div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Send ticket</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="db-card-head">
+          <h2>My tickets</h2>
+          <span class="muted small" id="count"></span>
+        </div>
+        <div id="tickets"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

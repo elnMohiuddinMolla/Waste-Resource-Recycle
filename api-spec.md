@@ -1,8 +1,8 @@
 # REST API Specification
 ## Waste Resource Recycle (WRR) Management System
 
-**Document Version:** 1.1.0  
-**Date:** November 11, 2026  
+**Document Version:** 1.3.0 (PRD v1.5.0: waste photo §3.1/§3.5, support tickets Module 9)  
+**Date:** November 12, 2026  
 **Base URL:** `/api/v1`  
 **Protocol:** HTTPS in deployment; HTTP on `http://localhost:5000` during development. Express serves both the frontend pages and this API from the same origin.  
 **Data Format:** `application/json`  
@@ -138,6 +138,12 @@ List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is g
 | 43 | `PATCH` | `/api/v1/admin/users/:id/status` | Required | `admin` | Activates or deactivates a user/collector account. |
 | 44 | `PATCH` | `/api/v1/admin/users/:id/zone` | Required | `admin` | Updates assigned operational zone for a collector. |
 | 45 | `GET` | `/api/v1/admin/reports/:type` | Required | `admin` | Computes 5 SQL analytical and operational KPI reports. |
+| **Help & Support (FR-22, v1.5.0)** | | | | | |
+| 46 | `POST` | `/api/v1/support-tickets` | Required | `user`, `collector` | Opens a support ticket (optionally about own request / redemption). |
+| 47 | `GET` | `/api/v1/support-tickets/mine` | Required | `user`, `collector` | Lists my tickets with the admin's answers. |
+| 48 | `PATCH` | `/api/v1/support-tickets/:id/close` | Required | `user`, `collector`, `admin` | Closes a ticket (owner or any admin). |
+| 49 | `GET` | `/api/v1/admin/support-tickets` | Required | `admin` | Lists tickets by status with the opener's contact details. |
+| 50 | `PUT` | `/api/v1/admin/support-tickets/:id/reply` | Required | `admin` | Answers a ticket and notifies the opener (`SUPPORT_ANSWERED`). |
 
 ---
 
@@ -1329,6 +1335,43 @@ All endpoints: `Required (Role: admin)`. Responses never include `password_hash`
     ]
   }
   ```
+
+---
+
+### Module 9: Help & Support Tickets (PRD v1.5.0, FR-22)
+
+Lifecycle: `Open` → `Answered` (an admin replies; may reply again) → `Closed` (the owner or an admin; final). The public FAQ page `/help.html` needs no API.
+
+#### 9.1 Open a Ticket
+- **Endpoint:** `POST /api/v1/support-tickets`
+- **Authentication:** `Required (Roles: user, collector)`. Admins → 403.
+- **Request Body:**
+  ```json
+  { "category": "Pickup", "subject": "Collector did not come", "message": "Nobody came at 10 am.", "request_id": 12, "redemption_id": null }
+  ```
+- **Validation Rules:** `category` one of `Pickup`, `Points`, `Redemption`, `Account`, `Other`; `subject` 5–120 characters; `message` 10–2000 characters; `request_id` / `redemption_id` optional positive numbers → 400 per field. A `request_id` must be a request the opener may see (owner, or the assigned collector) and a `redemption_id` the opener's own, otherwise **400** on that field. More than 5 tickets that are not closed → **422**.
+- **Response `201 Created`:** `{ "success": true, "message": "Support ticket sent. An admin will answer soon.", "data": { "ticket_id": 7, "status": "Open", ... } }`
+
+#### 9.2 List My Tickets
+- **Endpoint:** `GET /api/v1/support-tickets/mine?page=&limit=` (default 10)
+- **Authentication:** `Required (Roles: user, collector)`
+- **Response `200 OK`:** `{ "total": 2, "page": 1, "limit": 10, "tickets": [ { "ticket_id": 7, "category": "Pickup", "subject": "...", "message": "...", "request_id": 12, "redemption_id": null, "status": "Answered", "admin_reply": "...", "created_at": "...", "replied_at": "...", "closed_at": null } ] }` — newest first, only the caller's tickets.
+
+#### 9.3 Close a Ticket
+- **Endpoint:** `PATCH /api/v1/support-tickets/:id/close`
+- **Authentication:** `Required (Roles: user, collector, admin)`. Users and collectors may close only their own (others → **404**); admins any.
+- **Errors:** already closed → **409**.
+
+#### 9.4 Admin: List Tickets
+- **Endpoint:** `GET /api/v1/admin/support-tickets?status=Open|Answered|Closed&page=&limit=` (default 20; no status = all; any other status → 400)
+- **Authentication:** `Required (Role: admin)`
+- **Response:** as §9.2, each ticket also with `user_name`, `user_role`, `user_email`, `user_phone` and `admin_name`.
+
+#### 9.5 Admin: Reply
+- **Endpoint:** `PUT /api/v1/admin/support-tickets/:id/reply`  **Body:** `{ "reply": "We will send another collector tomorrow." }` (2–2000 characters → else 400)
+- **Authentication:** `Required (Role: admin)`
+- **Transaction:** locks the ticket row, sets `status = 'Answered'`, `admin_reply`, `admin_id`, `replied_at = NOW()`, and inserts a `SUPPORT_ANSWERED` notification for the opener.
+- **Errors:** unknown ticket → **404**; closed ticket → **409**.
 
 ---
 

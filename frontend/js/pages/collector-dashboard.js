@@ -108,7 +108,9 @@ async function loadNotifications() {
       ])
     ];
     list.append(el('li', { className: n.is_read ? '' : 'unread' }, [
-      n.request_id
+      n.type === 'SUPPORT_ANSWERED'
+        ? el('a', { attrs: { href: '/support.html' } }, inner)
+        : n.request_id
         ? el('a', { attrs: { href: `/collector/requests.html?status=Assigned,Accepted,Collected#job-${n.request_id}` } }, inner)
         : el('div', { className: 'db-list-row' }, inner)
     ]));

@@ -14,7 +14,7 @@
 
 ## 1. Table List
 
-The WRR database contains **10 normalized relational tables** (`3NF`), mapping directly to Data Stores `D1` through `D10` defined in the Level 1 DFD:
+The WRR database contains **11 normalized relational tables** (`3NF`). Tables 1–10 map to Data Stores `D1` through `D10` of the Level 1 DFD; `support_tickets` (PRD v1.5.0) is store `D11`:
 
 | Table # | Table Name | DFD Store | Storage Engine | Purpose & Business Domain |
 |:---:|---|:---:|:---:|---|
@@ -28,6 +28,7 @@ The WRR database contains **10 normalized relational tables** (`3NF`), mapping d
 | **8** | `cash_redemptions` | `D9` | InnoDB | Cash withdrawal requests, MFS payout channels, disbursement TrxIDs, and review states. |
 | **9** | `reward_transactions` | `D7` | InnoDB | Signed points ledger (`EARN`, `REDEEM`, `REFUND`, `ADJUST`) ensuring zero drift. |
 | **10** | `notifications` | `D10` | InnoDB | In-website user notifications with read/unread tracking and milestone alerts. |
+| **11** | `support_tickets` | `D11` | InnoDB | Help requests from users and collectors and the admin's answer (`Open` → `Answered` → `Closed`). |
 
 ---
 
@@ -161,6 +162,23 @@ The WRR database contains **10 normalized relational tables** (`3NF`), mapping d
 | `is_read` | `BOOLEAN` | No | `FALSE` | Read confirmation flag. |
 | `created_at` | `DATETIME` | No | `CURRENT_TIMESTAMP` | Dispatch timestamp. |
 
+#### 11. `support_tickets` (DFD Store: D11, PRD v1.5.0)
+| Column Name | Data Type | Nullable | Key / Default | Business Description |
+|---|---|:---:|:---:|---|
+| `ticket_id` | `INT` | No | PK, Auto Inc | Ticket number. |
+| `user_id` | `INT` | No | FK $\to$ `users` | Who opened it (user or collector). |
+| `category` | `ENUM` | No | - | `Pickup`, `Points`, `Redemption`, `Account`, `Other`. |
+| `subject` | `VARCHAR(120)` | No | - | Short title (5–120 characters). |
+| `message` | `TEXT` | No | - | The problem (10–2000 characters). |
+| `request_id` | `INT` | Yes | FK $\to$ `pickup_requests`, NULL | Related request the opener can see. |
+| `redemption_id` | `INT` | Yes | FK $\to$ `cash_redemptions`, NULL | Related redemption of the opener. |
+| `status` | `ENUM` | No | `'Open'` | `Open`, `Answered`, `Closed`. |
+| `admin_reply` | `TEXT` | Yes | NULL | The admin's answer. |
+| `admin_id` | `INT` | Yes | FK $\to$ `users`, NULL | Admin who answered. |
+| `created_at` | `DATETIME` | No | `CURRENT_TIMESTAMP` | Opened at. |
+| `replied_at` | `DATETIME` | Yes | NULL | Last answer. |
+| `closed_at` | `DATETIME` | Yes | NULL | Closed at. |
+
 ---
 
 ## 3. Foreign Key Relationships
@@ -181,7 +199,9 @@ All foreign keys use `InnoDB` referential integrity rules to prevent orphan reco
     ├── 1 ──< N [ cash_redemptions (as Admin) ] (ON DELETE SET NULL ON UPDATE CASCADE)
     ├── 1 ──< N [ request_status_logs (changed_by) ] (ON DELETE RESTRICT ON UPDATE CASCADE)
     ├── 1 ──< N [ redemption_rules ] (ON DELETE RESTRICT ON UPDATE CASCADE)
-    └── 1 ──< N [ notifications ] (ON DELETE CASCADE ON UPDATE CASCADE)
+    ├── 1 ──< N [ notifications ] (ON DELETE CASCADE ON UPDATE CASCADE)
+    ├── 1 ──< N [ support_tickets (opener) ] (ON DELETE RESTRICT ON UPDATE CASCADE)
+    └── 1 ──< N [ support_tickets (answering admin) ] (ON DELETE SET NULL ON UPDATE CASCADE)
 
 [ waste_categories ] 1 ──< N [ pickup_requests ] (ON DELETE RESTRICT ON UPDATE CASCADE)
 
@@ -196,6 +216,7 @@ All foreign keys use `InnoDB` referential integrity rules to prevent orphan reco
 
 [ cash_redemptions ] 1 ──< N [ reward_transactions ] (ON DELETE RESTRICT ON UPDATE CASCADE)
 [ cash_redemptions ] 1 ──< N [ notifications ] (ON DELETE SET NULL ON UPDATE CASCADE)
+[ pickup_requests ] / [ cash_redemptions ] 1 ──< N [ support_tickets ] (ON DELETE SET NULL ON UPDATE CASCADE)
 ```
 
 ---
@@ -214,6 +235,8 @@ To meet the response-time targets of NFR-02 (2 s for core operations, 5 s for re
 | `idx_log_timeline` | `request_status_logs` | `request_id, changed_at` | Composite | Accelerates chronological timeline retrieval. |
 | `idx_rt_user` | `reward_transactions` | `user_id` | Non-Unique | User point balance summation (`SUM(points)`). |
 | `idx_notif_user` | `notifications` | `user_id, is_read` | Composite | Fast retrieval of unread notifications and badge counts. |
+| `idx_ticket_user` | `support_tickets` | `user_id, status` | Composite | "My tickets" and the 5-open-tickets check. |
+| `idx_ticket_status` | `support_tickets` | `status, created_at` | Composite | Admin queue by status, newest first. |
 | `request_id` (auto-named) | `collection_records` | `request_id` | UNIQUE | Enforces strictly one collection record per pickup. |
 | `uq_rt_one_earn` | `reward_transactions` | `earn_record_id` (generated) | UNIQUE | At most one `EARN` row per collection record. |
 | `uq_rule_single_active` | `redemption_rules` | `active_key` (generated) | UNIQUE | Only one active redemption rule. |
@@ -592,6 +615,7 @@ CREATE DATABASE IF NOT EXISTS wrr_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unico
 USE wrr_db;
 
 -- Drop tables in reverse order of foreign key dependencies if re-running
+DROP TABLE IF EXISTS support_tickets;
 DROP TABLE IF EXISTS notifications;
 DROP TABLE IF EXISTS reward_transactions;
 DROP TABLE IF EXISTS cash_redemptions;
@@ -777,6 +801,32 @@ CREATE TABLE notifications (
   FOREIGN KEY (redemption_id) REFERENCES cash_redemptions(redemption_id) ON DELETE SET NULL ON UPDATE CASCADE,
   INDEX idx_notif_user (user_id, is_read)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ------------------------------------------------------------------------------
+-- 11. Table: support_tickets (PRD v1.5.0, FR-22)
+-- A user or collector asks for help; an admin answers. Open -> Answered -> Closed.
+-- ------------------------------------------------------------------------------
+CREATE TABLE support_tickets (
+  ticket_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  category ENUM('Pickup','Points','Redemption','Account','Other') NOT NULL,
+  subject VARCHAR(120) NOT NULL,
+  message TEXT NOT NULL,
+  request_id INT NULL,
+  redemption_id INT NULL,
+  status ENUM('Open','Answered','Closed') NOT NULL DEFAULT 'Open',
+  admin_reply TEXT NULL,
+  admin_id INT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  replied_at DATETIME NULL,
+  closed_at DATETIME NULL,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (request_id) REFERENCES pickup_requests(request_id) ON DELETE SET NULL ON UPDATE CASCADE,
+  FOREIGN KEY (redemption_id) REFERENCES cash_redemptions(redemption_id) ON DELETE SET NULL ON UPDATE CASCADE,
+  FOREIGN KEY (admin_id) REFERENCES users(user_id) ON DELETE SET NULL ON UPDATE CASCADE,
+  INDEX idx_ticket_user (user_id, status),
+  INDEX idx_ticket_status (status, created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
 ---
@@ -806,6 +856,10 @@ erDiagram
     USERS ||--o{ NOTIFICATIONS : "receives"
     PICKUP_REQUESTS |o--o{ NOTIFICATIONS : "about"
     CASH_REDEMPTIONS |o--o{ NOTIFICATIONS : "about"
+    USERS ||--o{ SUPPORT_TICKETS : "asks for help"
+    USERS |o--o{ SUPPORT_TICKETS : "answers (admin)"
+    PICKUP_REQUESTS |o--o{ SUPPORT_TICKETS : "about"
+    CASH_REDEMPTIONS |o--o{ SUPPORT_TICKETS : "about"
 
     ZONES {
         int zone_id PK
@@ -906,10 +960,25 @@ erDiagram
         int user_id FK
         int request_id FK
         int redemption_id FK
-        varchar type "11 types"
+        varchar type "12 types"
         varchar message "255"
         boolean is_read
         datetime created_at
+    }
+    SUPPORT_TICKETS {
+        int ticket_id PK
+        int user_id FK "user or collector"
+        enum category "Pickup, Points, Redemption, Account, Other"
+        varchar subject "120"
+        text message
+        int request_id FK "optional"
+        int redemption_id FK "optional"
+        enum status "Open, Answered, Closed"
+        text admin_reply
+        int admin_id FK
+        datetime created_at
+        datetime replied_at
+        datetime closed_at
     }
 ```
 

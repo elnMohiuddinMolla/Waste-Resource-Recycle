@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support tickets — WRR admin</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/admin-support.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <!-- PRD v1.5.0, FR-22 -->
+  <main class="container">
+    <div class="page-title">
+      <h1>Support tickets</h1>
+      <div class="row">
+        <a class="btn btn-secondary btn-small" href="/help.html">FAQ page</a>
+        <button type="button" class="btn btn-secondary btn-small" id="refresh">Refresh</button>
+      </div>
+    </div>
+
+    <section class="card mb-2">
+      <div class="tabs" role="tablist" aria-label="Status">
+        <button type="button" class="tab" role="tab" data-status="Open">Open</button>
+        <button type="button" class="tab" role="tab" data-status="Answered">Answered</button>
+        <button type="button" class="tab" role="tab" data-status="Closed">Closed</button>
+        <button type="button" class="tab" role="tab" data-status="">All</button>
+      </div>
+      <p class="muted small mt-1 mb-0" id="help"></p>
+    </section>
+
+    <section class="card">
+      <p class="muted small" id="count"></p>
+      <div id="list"></div>
+      <div class="pager hidden" id="pager">
+        <button type="button" class="btn btn-secondary btn-small" id="prev">Previous</button>
+        <span class="muted small" id="page-info"></span>
+        <button type="button" class="btn btn-secondary btn-small" id="next">Next</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

@@ -193,6 +193,11 @@ function renderDetail(req) {
   }
 
   detailBox.append(el('h3', { text: 'Timeline', className: 'mt-3' }), renderTimeline(req.timeline));
+  // FR-22: a support ticket about this request, with the request already chosen
+  detailBox.append(el('p', { className: 'small mt-2 mb-0' }, [
+    'Problem with this pickup? ',
+    el('a', { text: 'Ask support', attrs: { href: `/support.html?request_id=${req.request_id}` } })
+  ]));
 }
 
 async function selectRequest(id, scroll) {

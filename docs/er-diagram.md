@@ -1,6 +1,6 @@
 # ER Diagram — Waste Resource Recycle (WRR)
 
-Drawn from `database/schema.sql` (10 tables, InnoDB, utf8mb4). It replaces the old report images `WRR_ER_Diagram_A4.svg` and `WRR_ER_Diagram_Revised.mmd`, which showed the original columns.
+Drawn from `database/schema.sql` (11 tables, InnoDB, utf8mb4). It replaces the old report images `WRR_ER_Diagram_A4.svg` and `WRR_ER_Diagram_Revised.mmd`, which showed the original columns.
 
 GitHub and VS Code (with a Mermaid extension) draw the diagram below. For the printed report, paste the code block into https://mermaid.live and export it as SVG or PNG.
 
@@ -27,6 +27,10 @@ erDiagram
     USERS ||--o{ NOTIFICATIONS : "receives"
     PICKUP_REQUESTS |o--o{ NOTIFICATIONS : "about"
     CASH_REDEMPTIONS |o--o{ NOTIFICATIONS : "about"
+    USERS ||--o{ SUPPORT_TICKETS : "asks for help"
+    USERS |o--o{ SUPPORT_TICKETS : "answers (admin)"
+    PICKUP_REQUESTS |o--o{ SUPPORT_TICKETS : "about"
+    CASH_REDEMPTIONS |o--o{ SUPPORT_TICKETS : "about"
 
     ZONES {
         int zone_id PK
@@ -127,10 +131,25 @@ erDiagram
         int user_id FK
         int request_id FK
         int redemption_id FK
-        varchar type "11 types"
+        varchar type "12 types"
         varchar message "255"
         boolean is_read
         datetime created_at
+    }
+    SUPPORT_TICKETS {
+        int ticket_id PK
+        int user_id FK "user or collector"
+        enum category "Pickup, Points, Redemption, Account, Other"
+        varchar subject "120"
+        text message
+        int request_id FK "optional"
+        int redemption_id FK "optional"
+        enum status "Open, Answered, Closed"
+        text admin_reply
+        int admin_id FK
+        datetime created_at
+        datetime replied_at
+        datetime closed_at
     }
 ```
 
@@ -144,4 +163,5 @@ erDiagram
 | Weights and rates are positive | `CHECK (actual_weight_kg > 0)`, `CHECK (estimated_weight_kg > 0)`, `CHECK (points_per_kg >= 0)`, `CHECK (taka_per_point > 0)`, `CHECK (points_redeemed > 0)` |
 | Balance never below zero | Not a column: balance = `SUM(reward_transactions.points)`; checked inside the transaction while the user row is locked (`SELECT … FOR UPDATE`) |
 | Audit rows are kept | `request_status_logs` → `pickup_requests` is `ON DELETE RESTRICT` |
+| At most 5 tickets that are not closed per person | Checked by the service (`support.service`, 422), not by a constraint |
 | Rejecting clears the collector | Done by the service (T5), not by a foreign key; `collector_id` becomes NULL |

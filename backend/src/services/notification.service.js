@@ -5,7 +5,7 @@
 const AppError = require('../utils/AppError');
 const notificationModel = require('../models/notification.model');
 
-// The 11 notification types from PRD FR-14 (recipient in brackets)
+// The 12 notification types from PRD FR-14 (recipient in brackets)
 const NOTIFICATION_TYPES = Object.freeze({
   PICKUP_SUBMITTED: 'PICKUP_SUBMITTED',         // user
   PICKUP_ASSIGNED: 'PICKUP_ASSIGNED',           // collector
@@ -17,7 +17,8 @@ const NOTIFICATION_TYPES = Object.freeze({
   REDEMPTION_REQUESTED: 'REDEMPTION_REQUESTED', // user
   REDEMPTION_APPROVED: 'REDEMPTION_APPROVED',   // user
   REDEMPTION_REJECTED: 'REDEMPTION_REJECTED',   // user (points refunded)
-  REDEMPTION_PAID: 'REDEMPTION_PAID'            // user (with TrxID)
+  REDEMPTION_PAID: 'REDEMPTION_PAID',           // user (with TrxID)
+  SUPPORT_ANSWERED: 'SUPPORT_ANSWERED'          // user or collector (PRD v1.5.0, FR-22)
 });
 
 /**

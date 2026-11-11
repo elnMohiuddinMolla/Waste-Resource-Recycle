@@ -36,6 +36,7 @@ app.use('/api/v1/collector', require('./routes/collector.routes'));
 app.use('/api/v1/rewards', require('./routes/reward.routes'));
 app.use('/api/v1/redemptions', require('./routes/redemption.routes'));
 app.use('/api/v1/notifications', require('./routes/notification.routes'));
+app.use('/api/v1/support-tickets', require('./routes/support.routes'));
 app.use('/api/v1/admin', require('./routes/admin.routes'));
 
 app.use('/api', notFoundHandler); // unknown API paths return JSON 404

@@ -74,6 +74,7 @@ The prompts work in two situations:
 - [x] D2 — Test-case table for the lab report
 - [x] D3 — Documentation sync + viva preparation
 - [x] E1 — Change request: waste photo on pickup requests (PRD v1.4.0, G14): schema + migration, `POST /pickup-requests` `photo`, `GET /pickup-requests/:id/photo`, browser shrink + preview, photo in details / job cards / admin view, tests
+- [x] E2 — Change request: Help & FAQ page + support tickets (PRD v1.5.0, G15, FR-22): `support_tickets` + migration 002, 5 endpoints, `SUPPORT_ANSWERED`, `help.html`, `support.html`, `admin/support.html`, sidebar links, admin dashboard queue, tests
 
 ---
 
@@ -82,7 +83,7 @@ The prompts work in two situations:
 The agent must follow all of these in every step:
 
 1. **Read first:** `AGENTS.md`, then the documents named in the step. Sources of truth:
-   - `WRR_PRD.md` → requirements and business rules (FR-01–FR-21, NFR-01–NFR-08, §5 rules).
+   - `WRR_PRD.md` → requirements and business rules (FR-01–FR-22, NFR-01–NFR-08, §5 rules).
    - `api-spec.md` → exact paths, bodies, responses, validation, status codes.
    - `database.md` → tables, constraints, report SQL (§6), transactions (§7), seed data. `database/schema.sql` and `database/seed.sql` must stay identical to it.
    - `architecture.md` → layers, folders, frontend rules.
@@ -139,7 +140,7 @@ Follow the Common Rules in prompt.md. Read database.md completely and WRR_PRD.md
 Goal: database/schema.sql and database/seed.sql that are identical to database.md §8 and §9.
 If they exist, compare them line by line with database.md and report any difference before changing.
 
-Check in particular: 10 tables; utf8mb4; CHECK constraints; estimated_weight_kg NOT NULL;
+Check in particular: 11 tables; utf8mb4; CHECK constraints; estimated_weight_kg NOT NULL;
 request_status_logs FK ON DELETE RESTRICT; generated columns + UNIQUE uq_rt_one_earn and
 uq_rule_single_active; record_id FK ON UPDATE RESTRICT; seed users (password123), 4 zones,
 6 categories, rule 0.50 BDT/point min 100, requests 1–3 with full status logs, Tanvir balance 55.00.

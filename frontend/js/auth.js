@@ -21,14 +21,16 @@ const NAV = {
     ['My Requests', '/user/requests.html'],
     ['Points', '/user/history.html'],
     ['Redeem', '/user/redeem.html'],
-    ['Notifications', '/user/notifications.html', 'badge']
+    ['Notifications', '/user/notifications.html', 'badge'],
+    ['Support', '/support.html']
   ],
   collector: [
     ['Dashboard', '/collector/dashboard.html'],
     ['My Jobs', '/collector/requests.html'],
     ['History', '/collector/records.html'],
     // Collectors read notifications on their dashboard; the link jumps to that section
-    ['Notifications', '/collector/dashboard.html#notifications', 'badge']
+    ['Notifications', '/collector/dashboard.html#notifications', 'badge'],
+    ['Support', '/support.html']
   ],
   admin: [
     ['Dashboard', '/admin/dashboard.html'],
@@ -40,7 +42,8 @@ const NAV = {
     ['Categories', '/admin/categories.html'],
     ['Rules', '/admin/rules.html'],
     ['Records', '/admin/records.html'],
-    ['Reports', '/admin/reports.html']
+    ['Reports', '/admin/reports.html'],
+    ['Support', '/admin/support.html']
   ]
 };
 
@@ -49,7 +52,7 @@ const MENU_ICONS = {
   Dashboard: 'home', 'New Request': 'plus', 'My Requests': 'list', Points: 'star', Redeem: 'cash', Notifications: 'bell',
   'My Jobs': 'truck', History: 'history',
   Requests: 'list', Redemptions: 'cash', Users: 'users', Collectors: 'truck',
-  Zones: 'map', Categories: 'tag', Rules: 'sliders', Records: 'clipboard', Reports: 'chart'
+  Zones: 'map', Categories: 'tag', Rules: 'sliders', Records: 'clipboard', Reports: 'chart', Support: 'help'
 };
 
 // The logged-in user, or null (never redirects)

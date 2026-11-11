@@ -23,14 +23,14 @@ This report checks `WRR_PRD.md` v1.3.0 across 8 dimensions. Each item is marked:
 | 3. Error Handling | Covered | Status codes fixed in PRD §10 and `api-spec.md` §1.4. |
 | 4. Security | Covered | NFR-03. |
 | 5. Validation | Covered | Field rules below match `api-spec.md`. |
-| 6. Permissions (RBAC) | Covered | 45 endpoints in `api-spec.md` §2. |
-| 7. Notifications | Covered | 11 types in FR-14. |
+| 6. Permissions (RBAC) | Covered | 50 endpoints in `api-spec.md` §2. |
+| 7. Notifications | Covered | 12 types in FR-14. |
 | 8. Exception Resilience | Covered | 6 fail-safes. |
 
 ---
 
 ## 1. Missing Flow Analysis
-*Cross-referenced with PRD §4 (User Flows), §5.1 (State Lifecycle) and §6 (FR-01 to FR-21).*
+*Cross-referenced with PRD §4 (User Flows), §5.1 (State Lifecycle) and §6 (FR-01 to FR-22).*
 
 | ID | Workflow | Gap | Decision |
 |---|---|---|---|
@@ -217,7 +217,7 @@ sequenceDiagram
 4. **Security:** parameterized SQL, `HttpOnly` cookie, XSS escaping, ownership checks, rate limiting.
 5. **Validation:** field rules match the API spec.
 6. **Permissions:** every `api-spec.md` endpoint has a role.
-7. **Notifications:** 11 types, one recipient each.
+7. **Notifications:** 12 types, one recipient each.
 8. **Exceptions:** six fail-safes defined.
 
 **Status:** Ready for implementation.

@@ -551,6 +551,55 @@ html { scroll-behavior: smooth; }
 .request-photo-link { display: block; margin: 0.75rem 0; }
 .request-photo-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); flex: none; }
 .no-photo { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.85rem; color: var(--muted); }
+
+/* ---------- Help & support (PRD v1.5.0, FR-22) ---------- */
+
+.help { padding-top: 1.5rem; padding-bottom: 2.5rem; }
+.help-hero { text-align: center; max-width: 640px; margin: 0 auto 2rem; }
+.help-hero h1 { font-size: 1.7rem; margin: 0.5rem 0; }
+.help-hero-icon { display: inline-block; width: 52px; height: 52px; padding: 12px; border-radius: 50%; background: var(--green-50); color: var(--green-700); }
+.help-hero-icon svg, .help-actions [data-icon] svg, .help-contact svg { width: 100%; height: 100%; }
+.help-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; margin-top: 1rem; }
+.help-actions [data-icon] { display: inline-flex; width: 17px; height: 17px; }
+.help-grid { display: grid; gap: 1.5rem; align-items: start; }
+@media (min-width: 900px) { .help-grid { grid-template-columns: 1fr 300px; } }
+.help-group + .help-group { margin-top: 1.75rem; }
+.help-group h2 { font-size: 1.05rem; margin-bottom: 0.6rem; }
+.faq { background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+.faq + .faq { margin-top: 0.5rem; }
+.faq summary {
+  cursor: pointer; list-style: none;
+  padding: 0.85rem 2.4rem 0.85rem 1rem;
+  font-weight: 600; position: relative;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); font-size: 1.2rem; color: var(--muted); }
+.faq[open] summary::after { content: "−"; }
+.faq summary:hover { color: var(--green-900); }
+.faq summary:focus-visible { outline: 3px solid var(--green-100); border-radius: 10px; }
+.faq p { margin: 0; padding: 0 1rem 1rem; color: #374151; }
+.help-side { display: grid; gap: 1rem; }
+.help-card h2 { font-size: 1rem; }
+.help-contact { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+.help-contact li { display: flex; align-items: center; gap: 0.6rem; }
+.help-contact [data-icon] { width: 18px; height: 18px; color: var(--green-700); flex: none; }
+@media (min-width: 900px) { .help-side { position: sticky; top: 72px; } }
+
+.support-grid { display: grid; gap: 1rem; align-items: start; }
+.support-grid > .card { margin-top: 0; }
+@media (min-width: 960px) { .support-grid { grid-template-columns: 360px 1fr; } }
+
+.ticket { padding: 0.9rem 0; }
+.ticket + .ticket { border-top: 1px solid var(--border); }
+.ticket-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.75rem; }
+.ticket-head strong { display: block; overflow-wrap: anywhere; }
+.ticket-head small { color: var(--muted); }
+.ticket-who { margin: 0.35rem 0 0; color: var(--muted); overflow-wrap: anywhere; }
+.ticket-message { margin: 0.5rem 0; white-space: pre-line; overflow-wrap: anywhere; }
+.ticket-reply { margin-top: 0.6rem; padding: 0.7rem 0.85rem; border-left: 3px solid var(--green-600); background: var(--green-50); border-radius: 0 8px 8px 0; }
+.ticket-reply small { color: var(--green-900); font-weight: 600; }
+.ticket-reply p { white-space: pre-line; overflow-wrap: anywhere; }
+.ticket-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.7rem; }
 .field .hint { font-size: 0.8rem; color: var(--muted); }
 
 input, select, textarea {
@@ -695,6 +744,10 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .status-cancelled { background: #f3f4f6; color: #4b5563; }
 .status-approved  { background: #dbeafe; color: #1e40af; }
 .status-paid      { background: var(--green-100); color: var(--green-900); }
+/* Support tickets (FR-22) */
+.status-open      { background: var(--amber-50); color: var(--amber-700); }
+.status-answered  { background: var(--blue-50); color: var(--blue-700); }
+.status-closed    { background: #f3f4f6; color: #4b5563; }
 .status-active    { background: var(--green-100); color: var(--green-900); }
 .status-inactive  { background: #f3f4f6; color: #4b5563; }
 
@@ -1113,7 +1166,7 @@ a.list-item.selected { background: var(--green-50); box-shadow: inset 4px 0 0 va
 .db-queue.is-busy .db-queue-value { color: #b45309; }
 .db-queue.is-clear .db-queue-value { color: #9ca3af; }
 @media (max-width: 380px) { .db-queue { grid-template-columns: 1fr; grid-template-areas: "icon" "value" "title" "hint"; } }
-@media (min-width: 960px) { .db-queues { grid-template-columns: repeat(4, 1fr); gap: 1rem; } }
+@media (min-width: 960px) { .db-queues { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; } }
 
 /* Admin: small bar charts made from <progress> */
 .db-bars { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.65rem; }
