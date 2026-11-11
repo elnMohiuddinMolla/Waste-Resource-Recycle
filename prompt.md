@@ -44,7 +44,7 @@ The prompts work in two situations:
 - [x] B11 — Rewards: balance + ledger history
 - [x] B12 — Redemption: active rule, submit, my redemptions
 - [x] B13 — Admin: redemption queue + approve / paid / reject
-- [ ] B14 — Notifications: list, mark one, mark all
+- [x] B14 — Notifications: list, mark one, mark all
 - [ ] B15 — Admin: waste categories
 - [ ] B16 — Admin: zones
 - [ ] B17 — Admin: redemption rules
@@ -391,7 +391,7 @@ paid cannot be rejected (no refund); reject from Pending and from Approved refun
 final; unknown id 404; non-admin 403.
 ```
 
-### B14 — Notifications  `[ ]`
+### B14 — Notifications  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read api-spec.md Module 7, WRR_PRD.md FR-14.

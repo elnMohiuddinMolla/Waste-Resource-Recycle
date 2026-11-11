@@ -841,8 +841,9 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 
 #### 7.1 List User Notifications
 - **Endpoint:** `GET /api/v1/notifications`
-- **Authentication:** `Required (All Roles)`
-- **Query Parameters:** `?unread_only=false`
+- **Authentication:** `Required (All Roles)` — always only the caller's own notifications.
+- **Query Parameters:** `?unread_only=true|false` (default `false`; anything else → 400) and `?limit=` (default 20, max 50). Newest first.
+- **`unread_count`** counts every unread notification of the user, not only those on this page (used for the badge).
 - **Response `200 OK`:**
   ```json
   {
@@ -855,6 +856,8 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
           "type": "REDEMPTION_PAID",
           "message": "Your redemption of 50.00 BDT via bKash has been paid! TrxID: BK99X8877A",
           "is_read": false,
+          "request_id": null,
+          "redemption_id": 1,
           "created_at": "2026-11-10T15:30:00.000Z"
         },
         {
@@ -862,6 +865,8 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
           "type": "PICKUP_COMPLETED",
           "message": "Pickup #1 completed! 15.50 kg Plastic earned you 155.00 points.",
           "is_read": true,
+          "request_id": 1,
+          "redemption_id": null,
           "created_at": "2026-11-10T11:05:00.000Z"
         }
       ]
@@ -874,6 +879,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 #### 7.2 Mark Single Notification As Read
 - **Endpoint:** `PATCH /api/v1/notifications/:id/read`
 - **Authentication:** `Required (All Roles)`
+- **Rules:** someone else's or an unknown id → 404 (same answer, so ids can't be probed). Marking an already-read notification again is still 200.
 - **Response `200 OK`:**
   ```json
   {
@@ -891,9 +897,11 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
   ```json
   {
     "success": true,
-    "message": "All notifications marked as read."
+    "message": "All notifications marked as read.",
+    "data": { "updated": 3 }
   }
   ```
+  *(`updated` = how many were unread before the call.)*
 
 ---
 
