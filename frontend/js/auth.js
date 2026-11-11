@@ -73,9 +73,13 @@ export async function redirectIfLoggedIn() {
   if (user) location.href = DASHBOARDS[user.role] || '/';
 }
 
-// Only accept a same-site path for ?next= (never an outside site)
-export function safeNext(next) {
-  return next && next.startsWith('/') && !next.startsWith('//') ? next : null;
+// Only accept a same-site path for ?next= (never an outside site).
+// Let the browser's own URL parser decide: tricks such as '//evil.com' or '/\evil.com'
+// resolve to another origin and are refused.
+export function safeNext(next, origin = location.origin) {
+  if (!next || !next.startsWith('/')) return null;
+  const url = new URL(next, origin);
+  return url.origin === origin ? url.pathname + url.search + url.hash : null;
 }
 
 export async function logout() {

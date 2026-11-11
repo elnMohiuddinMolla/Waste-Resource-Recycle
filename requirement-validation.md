@@ -35,7 +35,7 @@ This report checks `WRR_PRD.md` v1.3.0 across 8 dimensions. Each item is marked:
 | ID | Workflow | Gap | Decision |
 |---|---|---|---|
 | **MF-01** | Repeated rejections | A request rejected by several collectors can wait in `Rejected`. | **Future work:** show an "Escalated" badge when a request has ≥ 2 `Rejected` log rows. In v1 the admin sees all `Rejected` requests in the assignment queue. |
-| **MF-02** | Collector deactivated with active jobs | Jobs in `Assigned`/`Accepted` would be stuck. | **Future work:** auto-return such jobs to `Pending`. In v1 the admin must reassign the collector's open jobs before deactivating them (shown as a warning in the admin UI). |
+| **MF-02** | Collector deactivated with active jobs | Jobs in `Assigned`/`Accepted`/`Collected` would be stuck: reassignment only works from `Pending`/`Rejected`, and an inactive collector gets 403. | **In v1:** deactivation is refused with 409 while the collector has open jobs; they must complete or reject them first. **Future work:** an admin "unassign" that returns such jobs to `Pending`, so a collector who has left can be deactivated at once. |
 | **MF-03** | User cancels a pending redemption | No path to withdraw a redemption. | **Future work:** would need a new `Cancelled` redemption status. In v1 the user asks the admin, who rejects it (points are refunded). |
 | **MF-04** | Password recovery | No reset flow. | **Future work:** admin-assisted reset endpoint. Not in v1. |
 | **MF-05** | Collector on-site abort | Resident absent, unreachable, or waste contaminated. | **In scope:** `Accepted → Cancelled` with mandatory reason (PRD §5.1 T7, `PUT /api/v1/collector/requests/:id/abort`). |

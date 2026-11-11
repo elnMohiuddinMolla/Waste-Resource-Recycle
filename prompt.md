@@ -481,8 +481,8 @@ Build (role admin), add the missing GET /admin/users details to api-spec.md §8.
 - POST /api/v1/admin/collectors {full_name, email, phone, password ≥ 8, zone_id (active,
   required)} → 201, role collector. Reuse the register validators; duplicate email 409.
 - PATCH /api/v1/admin/users/:id/status {status active|inactive} → 200. An admin cannot
-  deactivate their own account (409). Deactivating a collector with open jobs is allowed but
-  the response includes open_jobs so the UI can warn (do NOT auto-reassign — that is future work).
+  deactivate their own account (409). Deactivating a collector with open jobs is refused (409)
+  — nobody else could move those jobs on (MF-02). Do NOT auto-reassign — that is future work.
 - PATCH /api/v1/admin/users/:id/zone {zone_id} → only for collectors (else 409), zone active.
 
 Tests: list filters; create collector can log in; duplicate 409; deactivate user → their login
@@ -741,8 +741,8 @@ Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.3 steps 2 and 4, FR-16
 api-spec.md §8.6–§8.9.
 
 Build:
-- admin/users.html — filter by role/status/zone, activate/deactivate (warn when a collector has
-  open jobs: "Reassign their N open jobs first"), cannot deactivate yourself (button hidden).
+- admin/users.html — filter by role/status/zone, activate/deactivate (a collector with open jobs
+  cannot be deactivated: say "Ask them to complete or reject their N open jobs first"), cannot deactivate yourself (button hidden).
 - admin/collectors.html — create collector form + list with zone change.
 - admin/zones.html, admin/categories.html — list (incl. inactive), add, edit inline, toggle active.
   Category form explains that rate changes do not affect past rewards.

@@ -95,11 +95,17 @@ test('deactivating a user blocks login and the session they already have', async
   assert.equal(r.status, 200);
 });
 
-test('a collector with open jobs can be deactivated; the response shows how many', async () => {
-  const r = await setStatus(2, 'inactive');
+test('a collector with open jobs cannot be deactivated (MF-02); one without can', async () => {
+  let r = await setStatus(2, 'inactive'); // Rafiqul has accepted job #2
+  assert.equal(r.status, 409);
+  assert.match(r.body.message, /1 open job/);
+  const [[row]] = await pool.query('SELECT status FROM users WHERE user_id = 2');
+  assert.equal(row.status, 'active');
+
+  r = await setStatus(3, 'inactive'); // Kamal has no open jobs
   assert.equal(r.status, 200);
-  assert.equal(r.body.data.open_jobs, 1);
-  await setStatus(2, 'active');
+  assert.equal(r.body.data.open_jobs, 0);
+  await setStatus(3, 'active');
 });
 
 test('an admin cannot deactivate their own account', async () => {

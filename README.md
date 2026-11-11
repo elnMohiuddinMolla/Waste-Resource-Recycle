@@ -16,7 +16,7 @@ A web platform that connects households with local waste collectors for recyclab
 | Database schema + seed data | Done |
 | Backend REST API — all 44 endpoints | Done, tested and audited |
 | Frontend (User, Collector, Admin portals) | Done |
-| End-to-end testing & lab report | Next |
+| End-to-end testing, test cases, ER diagram, viva notes | Done |
 
 Progress is tracked step by step in [`prompt.md`](prompt.md).
 
@@ -138,11 +138,11 @@ Waste_Resource_Recycle/
 │   │   ├── utils/         AppError, transaction helper, validators, money
 │   │   └── app.js
 │   ├── test/              unit/ and api/
-│   ├── scripts/           perf-check.js
+│   ├── scripts/           perf-check.js, e2e-walkthrough.js, frontend-check.js
 │   └── .env.example
 ├── database/              schema.sql, seed.sql
 ├── frontend/              HTML pages per role, css/style.css, js/ (api, ui, auth, notifications, pages/)
-└── docs/archive/          superseded documents
+└── docs/                 test results, test cases, ER diagram, viva notes; archive/ = superseded documents
 ```
 
 ## Documentation
@@ -159,3 +159,7 @@ Waste_Resource_Recycle/
 | [`AGENTS.md`](AGENTS.md) | Project rules for AI coding agents and new teammates |
 | [`prompt.md`](prompt.md) | Step-by-step build plan with progress tracker |
 | [`WRR_Project_Idea.md`](WRR_Project_Idea.md) | Original project proposal |
+| [`docs/e2e-walkthrough.md`](docs/e2e-walkthrough.md) | End-to-end walkthrough and browser checklist results |
+| [`docs/test-cases.md`](docs/test-cases.md) | Test-case table for the lab report (FR, EC, NFR) |
+| [`docs/er-diagram.md`](docs/er-diagram.md) | Up-to-date ER diagram from `database/schema.sql` |
+| [`docs/viva-notes.md`](docs/viva-notes.md) | Viva preparation: key design points and 20 likely questions |

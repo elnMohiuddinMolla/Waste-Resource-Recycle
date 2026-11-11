@@ -72,14 +72,19 @@ async function getAdminViewOr404(userId) {
 
 /**
  * Activate or deactivate an account. A deactivated user is blocked on their next
- * request (auth middleware re-reads the status). A collector with open jobs may be
- * deactivated; the response shows open_jobs so the admin reassigns them
- * (automatic reassignment is future work, requirement-validation MF-02).
+ * request (auth middleware re-reads the status). A collector with open jobs
+ * (Assigned, Accepted or Collected) cannot be deactivated: nobody else could move
+ * those jobs on, because reassignment is only possible from Pending or Rejected
+ * (requirement-validation MF-02).
  */
 async function setStatus(admin, userId, status) {
-  await getAdminViewOr404(userId);
+  const user = await getAdminViewOr404(userId);
   if (userId === admin.user_id && status === 'inactive') {
     throw new AppError(409, 'You cannot deactivate your own account.');
+  }
+  if (status === 'inactive' && user.role === 'collector' && user.open_jobs > 0) {
+    const jobs = `${user.open_jobs} open job${user.open_jobs === 1 ? '' : 's'}`;
+    throw new AppError(409, `This collector still has ${jobs}. Ask them to complete or reject ${user.open_jobs === 1 ? 'it' : 'them'} first.`);
   }
   await userModel.updateStatus(userId, status);
   return userModel.findAdminView(userId);

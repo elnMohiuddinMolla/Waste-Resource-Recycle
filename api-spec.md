@@ -1272,7 +1272,7 @@ All endpoints: `Required (Role: admin)`. Responses never include `password_hash`
   - **Response `201 Created`:** `{ "success": true, "message": "Collector account created.", "data": <admin user view with role "collector"> }`. The collector can log in at once.
 - **Endpoint:** `PATCH /api/v1/admin/users/:id/status`
   - **Request Body:** `{ "status": "inactive" }` (`active` or `inactive`)
-  - **Rules:** a deactivated account is refused at login and on its very next request (403). An admin cannot deactivate their own account → 409. A collector with open jobs **can** be deactivated; the response's `open_jobs` tells the admin how many jobs to reassign (automatic reassignment is future work, requirement-validation MF-02). Unknown id → 404.
+  - **Rules:** a deactivated account is refused at login and on its very next request (403). An admin cannot deactivate their own account → 409. A collector with open jobs (`Assigned`, `Accepted` or `Collected`) **cannot** be deactivated → 409 "This collector still has N open jobs…", because nobody else could move those jobs on (reassignment works only from `Pending`/`Rejected`; requirement-validation MF-02). Unknown id → 404.
   - **Response `200 OK`:** `{ "success": true, "message": "Account is now inactive.", "data": <admin user view> }`
 - **Endpoint:** `PATCH /api/v1/admin/users/:id/zone`
   - **Request Body:** `{ "zone_id": 2 }`

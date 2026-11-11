@@ -1,6 +1,6 @@
 // Admin users (prompt.md C12, FR-20, api-spec.md §8.9): filter accounts, activate or
-// deactivate them. An admin cannot deactivate themselves; deactivating a collector
-// with open jobs warns that those jobs need reassigning (automatic reassign is future work).
+// deactivate them. An admin cannot deactivate themselves, and a collector with open jobs
+// cannot be deactivated until those jobs are finished or rejected (MF-02).
 import { api, query } from '../api.js';
 import { requireRole, renderHeader } from '../auth.js';
 import { el, $, clear, getParam, statusBadge, confirmDialog, toast, setLoading } from '../ui.js';
@@ -25,12 +25,14 @@ function messageRow(text) {
 
 async function setStatus(u, button) {
   const deactivate = u.status === 'active';
-  let message = deactivate
+  // The server refuses this too (409): nobody else could finish the collector's open jobs
+  if (deactivate && u.role === 'collector' && u.open_jobs > 0) {
+    const jobs = `${u.open_jobs} open job${u.open_jobs === 1 ? '' : 's'}`;
+    return toast(`${u.full_name} still has ${jobs}. Ask them to complete or reject ${u.open_jobs === 1 ? 'it' : 'them'} first.`, 'error', 7000);
+  }
+  const message = deactivate
     ? `Deactivate ${u.full_name}? They are logged out on their next action and cannot log in.`
     : `Reactivate ${u.full_name}? They can log in again.`;
-  if (deactivate && u.role === 'collector' && u.open_jobs > 0) {
-    message += ` They still have ${u.open_jobs} open job${u.open_jobs === 1 ? '' : 's'} — reassign ${u.open_jobs === 1 ? 'it' : 'them'} on the Requests page.`;
-  }
   const ok = await confirmDialog(message, {
     title: deactivate ? 'Deactivate account' : 'Reactivate account',
     confirmText: deactivate ? 'Deactivate' : 'Reactivate',
