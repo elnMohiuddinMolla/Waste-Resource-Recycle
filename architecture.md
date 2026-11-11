@@ -58,6 +58,12 @@ graph TD
   - `user/` — dashboard, new request, my requests, history, redeem, notifications.
   - `collector/` — dashboard, assigned requests, record weight, history.
   - `admin/` — dashboard, users, collectors, requests, zones, categories, redemption rules, redemptions, collection records, reports.
+- **Frontend helpers** (plain ES modules in `frontend/js/`, loaded with `<script type="module" src=...>`):
+  - `api.js` — `api(path, { method, body })` returns `{ ok, status, body }`; on 401 for a protected call it sends the user to `/login.html?next=<this page>`. `query(obj)` builds a query string.
+  - `ui.js` — `el()` element builder (text only via `textContent`), `clear`, `$`, `getParam`, `formatDateTime` / `formatDate` (shows the server's Bangladesh time as `10 Nov 2026, 02:05 pm`), `formatPoints`, `formatTaka`, `statusBadge`, `showFieldErrors` / `showApiError` / `showFormAlert` / `clearErrors`, `setLoading`, `toast`, `confirmDialog`, `loadingNode`, `emptyNode`.
+  - `auth.js` — `requireRole(...roles)`, `currentUser`, `redirectIfLoggedIn`, `renderHeader(user)` (role menu that folds behind a button on phones, name, logout), `safeNext`, `DASHBOARDS`.
+  - `notifications.js` — unread badge polling every 30 s (users and collectors), `notificationsChanged()`.
+  - `pages/<page>.js` — one script per page.
 - **Page guard:** each portal page calls `GET /api/v1/auth/me` on load. If the user is not logged in, or has the wrong role, the page redirects to `login.html`. This is only for convenience; the real protection is on the server.
 
 ### 2.2 Application Tier (Express.js)

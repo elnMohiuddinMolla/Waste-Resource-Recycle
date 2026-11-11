@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create an account — WRR</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/register.js"></script>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="card auth-card">
+      <div class="brand-big">
+        <a href="/" class="brand-mark" aria-label="WRR home">♻</a>
+        <h1 class="mt-1">Create an account</h1>
+        <p class="muted small mb-0">For households. Collector accounts are created by the administrator.</p>
+      </div>
+
+      <form id="register-form" class="form" novalidate>
+        <div class="form-alert alert" role="alert"></div>
+
+        <div class="field">
+          <label for="full_name">Full name</label>
+          <input id="full_name" name="full_name" autocomplete="name" maxlength="100" required>
+          <div class="field-error"></div>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" maxlength="100" required>
+          <div class="field-error"></div>
+        </div>
+
+        <div class="field">
+          <label for="phone">Mobile number</label>
+          <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="01711000000" maxlength="14" required>
+          <div class="hint">Bangladeshi mobile, e.g. 01711000000 or +8801711000000</div>
+          <div class="field-error"></div>
+        </div>
+
+        <div class="field">
+          <label for="zone_id">Zone</label>
+          <select id="zone_id" name="zone_id" required>
+            <option value="">Loading zones…</option>
+          </select>
+          <div class="field-error"></div>
+        </div>
+
+        <div class="field">
+          <label for="address">Pickup address <span class="muted">(optional)</span></label>
+          <input id="address" name="address" autocomplete="street-address" maxlength="255" placeholder="House, road, area">
+          <div class="hint">Used as the default address for your pickup requests.</div>
+          <div class="field-error"></div>
+        </div>
+
+        <div class="form-row">
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+            <div class="hint">At least 8 characters</div>
+            <div class="field-error"></div>
+          </div>
+          <div class="field">
+            <label for="confirm_password">Confirm password</label>
+            <input id="confirm_password" name="confirm_password" type="password" autocomplete="new-password" required>
+            <div class="field-error"></div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Create account</button>
+      </form>
+
+      <p class="center small mt-2 mb-0">Already registered? <a href="/login.html">Log in</a></p>
+    </div>
+  </div>
+</body>
+</html>

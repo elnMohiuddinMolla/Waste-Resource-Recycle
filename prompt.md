@@ -54,8 +54,8 @@ The prompts work in two situations:
 - [x] B21 — Backend audit (every endpoint vs api-spec, security, performance)
 
 **Phase C — Frontend** (plain HTML/CSS/JS, served by Express)
-- [ ] C1 — Shared frontend core (styles, api.js, auth guard, layout, UI helpers)
-- [ ] C2 — Public pages: landing, login, register
+- [x] C1 — Shared frontend core (styles, api.js, auth guard, layout, UI helpers)
+- [x] C2 — Public pages: landing, login, register
 - [ ] C3 — User: dashboard + notifications page
 - [ ] C4 — User: new pickup request
 - [ ] C5 — User: my requests, details timeline, cancel
@@ -561,7 +561,7 @@ so use separate `.js`/`.css` files, `addEventListener` and CSS classes ·
 show `errors[]` next to the matching field · disable the submit button while waiting ·
 dates shown as `DD MMM YYYY, hh:mm a` in Bangladesh time · every portal page checks the role on load.
 
-### C1 — Shared frontend core  `[ ]`
+### C1 — Shared frontend core  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read architecture.md §2.1, §7, §9.3, WRR_PRD.md NFR-01,
@@ -587,7 +587,7 @@ Done when: a test page can call api('/auth/me') and render the header for each r
 Manually check at 360 px and desktop widths.
 ```
 
-### C2 — Public pages  `[ ]`
+### C2 — Public pages  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.1 step 1, api-spec.md Module 1–2.

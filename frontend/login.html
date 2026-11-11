@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in — WRR</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/login.js"></script>
+</head>
+<body>
+  <div class="auth-wrap">
+    <div class="card auth-card">
+      <div class="brand-big">
+        <a href="/" class="brand-mark" aria-label="WRR home">♻</a>
+        <h1 class="mt-1">Log in to WRR</h1>
+        <p class="muted small mb-0">Users, collectors and administrators all log in here.</p>
+      </div>
+
+      <form id="login-form" class="form" novalidate>
+        <div class="form-alert alert" role="alert"></div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" autocomplete="email" required>
+          <div class="field-error"></div>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" autocomplete="current-password" required>
+          <div class="field-error"></div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Log in</button>
+      </form>
+
+      <p class="center small mt-2 mb-0">New here? <a href="/register.html">Create an account</a></p>
+    </div>
+  </div>
+</body>
+</html>
