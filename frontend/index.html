@@ -3,55 +3,228 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Waste Resource Recycle (WRR)</title>
+  <title>Waste Resource Recycle (WRR) — recycle at your door, earn rewards</title>
+  <meta name="description" content="Request a doorstep pickup for recyclable waste in Faridpur. A collector weighs it at your door and you earn points you can cash out through bKash, Nagad or your bank.">
   <link rel="icon" href="data:,">
   <link rel="stylesheet" href="/css/style.css">
   <script type="module" src="/js/pages/index.js"></script>
 </head>
-<body>
-  <header class="site-header">
+<body class="landing">
+  <header class="site-header lp-header">
     <div class="container">
       <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">♻</span>WRR</a>
+      <nav class="lp-nav" aria-label="Page sections">
+        <a href="#how">How it works</a>
+        <a href="#rates">Rates</a>
+        <a href="#who">Who it's for</a>
+      </nav>
       <div class="row" id="landing-actions">
         <a class="btn btn-light btn-small" href="/login.html">Log in</a>
-        <a class="btn btn-light btn-small" href="/register.html">Register</a>
+        <a class="btn btn-accent btn-small" href="/register.html">Register</a>
       </div>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="container">
-      <h1>Turn household recyclables into rewards</h1>
-      <p>Request a doorstep pickup for plastic, paper, e-waste, metal or glass. A local collector weighs it on site, and you earn points you can cash out through bKash, Nagad or your bank.</p>
-      <div class="row mt-2" id="hero-actions">
-        <a class="btn btn-primary" href="/register.html">Create an account</a>
-        <a class="btn btn-light" href="/login.html">I already have an account</a>
+  <!-- ---------- Hero ---------- -->
+  <section class="lp-hero">
+    <div class="container lp-hero-grid">
+      <div class="lp-hero-text">
+        <span class="lp-eyebrow">♻ Doorstep recycling pickup · Faridpur</span>
+        <h1>Your recyclables are worth <span class="lp-highlight">money</span>.</h1>
+        <p class="lp-lead">Book a pickup for plastic, paper, e-waste, metal or glass. A collector from your area weighs it at your door, and every kilogram turns into points you can cash out through bKash, Nagad or your bank.</p>
+        <div class="lp-cta-row" id="hero-actions">
+          <a class="btn btn-accent btn-lg" href="/register.html">Get started — it's free</a>
+          <a class="btn btn-ghost btn-lg" href="/login.html">Log in</a>
+        </div>
+        <ul class="lp-trust">
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Weighed on a real scale</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Track every step</li>
+          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Cash out any time</li>
+        </ul>
+      </div>
+
+      <!-- Example of what a user sees after a pickup (illustration only) -->
+      <div class="lp-hero-visual" aria-hidden="true">
+        <div class="lp-phone">
+          <div class="lp-phone-top">
+            <span class="lp-dot"></span><span>WRR · My points</span>
+          </div>
+          <div class="lp-balance">
+            <span class="lp-balance-label">Available balance</span>
+            <span class="lp-balance-value">1,250<small> pts</small></span>
+            <span class="lp-balance-cash">≈ ৳ 625.00</span>
+          </div>
+          <ul class="lp-feed">
+            <li><span class="lp-feed-icon lp-i-plastic">🧴</span><span><strong>Plastic · 12.5 kg</strong><small>Pickup completed</small></span><b class="lp-plus">+125</b></li>
+            <li><span class="lp-feed-icon lp-i-ewaste">🔌</span><span><strong>E-waste · 4 kg</strong><small>Pickup completed</small></span><b class="lp-plus">+100</b></li>
+            <li><span class="lp-feed-icon lp-i-cash">৳</span><span><strong>bKash cash-out</strong><small>Paid · TrxID BK7Q…</small></span><b class="lp-minus">−500</b></li>
+          </ul>
+        </div>
+        <div class="lp-float lp-float-a"><span class="lp-float-icon">🚚</span><span><strong>Collector on the way</strong><small>Rafiqul · Zone 1</small></span></div>
+        <div class="lp-float lp-float-b"><span class="lp-float-icon">⚖️</span><span><strong>15.50 kg weighed</strong><small>+155 points</small></span></div>
       </div>
     </div>
   </section>
 
-  <main class="container">
-    <div class="grid grid-2">
-      <section class="card">
-        <h2>How it works</h2>
-        <ol class="steps">
-          <li><strong>Request a pickup</strong> — choose the waste type, estimated weight and a time that suits you.</li>
-          <li><strong>A collector is assigned</strong> — someone from your zone accepts the job.</li>
-          <li><strong>Weighed at your door</strong> — the actual weight is recorded on a scale.</li>
-          <li><strong>Earn points</strong> — points = kg × the category's rate, credited when the pickup is completed.</li>
-          <li><strong>Cash out</strong> — redeem your points for money via bKash, Nagad or bank transfer.</li>
+  <!-- ---------- Live numbers ---------- -->
+  <section class="container lp-stats" aria-label="WRR in numbers">
+    <div class="lp-stat"><span class="lp-stat-value" id="stat-categories">6</span><span class="lp-stat-label">types of waste accepted</span></div>
+    <div class="lp-stat"><span class="lp-stat-value" id="stat-zones">4</span><span class="lp-stat-label">zones with local collectors</span></div>
+    <div class="lp-stat"><span class="lp-stat-value" id="stat-top">25</span><span class="lp-stat-label">points per kg at the top rate</span></div>
+    <div class="lp-stat"><span class="lp-stat-value">3</span><span class="lp-stat-label">ways to cash out</span></div>
+  </section>
+
+  <main>
+    <!-- ---------- How it works ---------- -->
+    <section class="lp-section" id="how">
+      <div class="container">
+        <div class="lp-section-head">
+          <span class="lp-kicker">How it works</span>
+          <h2>From your doorstep to your wallet in four steps</h2>
+        </div>
+        <ol class="lp-steps">
+          <li>
+            <span class="lp-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h8l1 4H7l1-4zM6 7h12l-1 13H7L6 7z M10 11v5M14 11v5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3>Request a pickup</h3>
+            <p>Pick the waste type, an estimated weight and a time that suits you. It takes under a minute.</p>
+          </li>
+          <li>
+            <span class="lp-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7M7 19a2 2 0 100-4 2 2 0 000 4zM17 19a2 2 0 100-4 2 2 0 000 4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3>A local collector comes</h3>
+            <p>A collector from your zone accepts the job and calls before arriving. You follow every step online.</p>
+          </li>
+          <li>
+            <span class="lp-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M5 21h14M6 7h12M6 7l-3 7a3 3 0 006 0L6 7zM18 7l-3 7a3 3 0 006 0l-3-7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3>Weighed at your door</h3>
+            <p>The actual weight goes on record. Points = kg × the category rate, credited the moment the pickup is completed.</p>
+          </li>
+          <li>
+            <span class="lp-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v12H3zM3 11h18M7 15h3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+            <h3>Cash out</h3>
+            <p>Redeem your points for money through bKash, Nagad or a bank transfer, and see the transaction ID when it is paid.</p>
+          </li>
         </ol>
-      </section>
-      <section class="card">
-        <h2>Why WRR?</h2>
-        <p>Valuable recyclables often end up in open dumps. WRR gives households a simple, trackable way to hand them over and gives collectors organised, zone-based work.</p>
-        <p class="muted small mb-0">CSE-3112 Software Engineering Lab project, Faridpur Engineering College.</p>
-      </section>
-    </div>
+      </div>
+    </section>
+
+    <!-- ---------- Rates + calculator ---------- -->
+    <section class="lp-section lp-section-tint" id="rates">
+      <div class="container">
+        <div class="lp-section-head">
+          <span class="lp-kicker">What we collect</span>
+          <h2>Today's rates</h2>
+          <p class="muted">Rates are set by the WRR team. The rate on the day your waste is weighed is the one you get.</p>
+        </div>
+        <div class="lp-rates-grid">
+          <ul class="lp-rates" id="rates-list">
+            <li class="lp-rate"><span class="lp-rate-icon">🧴</span><span class="lp-rate-name">Plastic</span><span class="lp-rate-value">10 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon">📦</span><span class="lp-rate-name">Paper &amp; Cardboard</span><span class="lp-rate-value">6 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon">🔌</span><span class="lp-rate-name">E-waste</span><span class="lp-rate-value">25 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon">🥫</span><span class="lp-rate-name">Metal</span><span class="lp-rate-value">15 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon">🍾</span><span class="lp-rate-name">Glass</span><span class="lp-rate-value">4 <small>pts/kg</small></span></li>
+            <li class="lp-rate"><span class="lp-rate-icon">♻️</span><span class="lp-rate-name">Other Recyclable Waste</span><span class="lp-rate-value">5 <small>pts/kg</small></span></li>
+          </ul>
+
+          <form class="lp-calc" id="calc" novalidate>
+            <h3>How much could you earn?</h3>
+            <div class="field">
+              <label for="calc-category">Waste type</label>
+              <select id="calc-category" name="category"></select>
+            </div>
+            <div class="field">
+              <label for="calc-kg">Weight (kg)</label>
+              <input id="calc-kg" name="kg" type="number" inputmode="decimal" min="0" step="0.5" value="10">
+            </div>
+            <div class="lp-calc-result" aria-live="polite">
+              <span class="lp-calc-label">You would earn about</span>
+              <span class="lp-calc-value"><span id="calc-points">100</span> points</span>
+            </div>
+            <a class="btn btn-primary btn-block" href="/register.html" id="calc-cta">Book a pickup</a>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- Who it's for ---------- -->
+    <section class="lp-section" id="who">
+      <div class="container">
+        <div class="lp-section-head">
+          <span class="lp-kicker">One system, three roles</span>
+          <h2>Built for everyone in the chain</h2>
+        </div>
+        <div class="lp-roles">
+          <article class="lp-role">
+            <span class="lp-role-icon">🏠</span>
+            <h3>Households</h3>
+            <ul>
+              <li>Book pickups in a few taps</li>
+              <li>See the status and full timeline</li>
+              <li>Earn points and cash them out</li>
+            </ul>
+          </article>
+          <article class="lp-role">
+            <span class="lp-role-icon">🚚</span>
+            <h3>Collectors</h3>
+            <ul>
+              <li>Organised jobs in your own zone</li>
+              <li>Tap-to-call the household</li>
+              <li>Record the weight on site</li>
+            </ul>
+          </article>
+          <article class="lp-role">
+            <span class="lp-role-icon">📊</span>
+            <h3>Administrators</h3>
+            <ul>
+              <li>Assign jobs and manage zones</li>
+              <li>Approve and pay redemptions</li>
+              <li>Five reports, print and CSV</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- Payouts + CTA ---------- -->
+    <section class="lp-section lp-section-tint">
+      <div class="container">
+        <div class="lp-cta-band">
+          <div>
+            <h2>Ready to clear the clutter and get paid?</h2>
+            <p>Create a free account, book your first pickup, and cash out through the channel you already use.</p>
+            <div class="lp-pay">
+              <span class="lp-pay-chip lp-bkash">bKash</span>
+              <span class="lp-pay-chip lp-nagad">Nagad</span>
+              <span class="lp-pay-chip lp-bank">Bank transfer</span>
+            </div>
+          </div>
+          <div class="lp-cta-row" id="band-actions">
+            <a class="btn btn-accent btn-lg" href="/register.html">Create an account</a>
+            <a class="btn btn-ghost btn-lg" href="/login.html">Log in</a>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab, Faridpur Engineering College</div>
+  <footer class="lp-footer">
+    <div class="container lp-footer-grid">
+      <div>
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true">♻</span>WRR</a>
+        <p class="small">Waste Resource Recycle — doorstep recycling with rewards for households in Faridpur.</p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <a href="#how">How it works</a>
+        <a href="#rates">Rates</a>
+        <a href="#who">Who it's for</a>
+      </div>
+      <div>
+        <h4>Account</h4>
+        <a href="/register.html">Create an account</a>
+        <a href="/login.html">Log in</a>
+      </div>
+    </div>
+    <div class="container lp-footer-bottom small">CSE-3112 Software Engineering Lab · Faridpur Engineering College</div>
   </footer>
 </body>
 </html>
