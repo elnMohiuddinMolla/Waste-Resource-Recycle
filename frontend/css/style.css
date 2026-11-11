@@ -844,6 +844,8 @@ a.list-item.selected { background: var(--green-50); box-shadow: inset 4px 0 0 va
 .db-chip svg { width: 15px; height: 15px; color: var(--green-700); }
 .db-hero-summary { color: var(--text); margin: 0 0 0.9rem; }
 .db-hero-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+/* Phones: equal full-width buttons */
+@media (max-width: 479px) { .db-hero-actions .btn { flex: 1 1 100%; } }
 
 /* Balance / today box inside the banner */
 .db-balance {
