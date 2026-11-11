@@ -61,7 +61,7 @@ The prompts work in two situations:
 - [x] C5 — User: my requests, details timeline, cancel
 - [x] C6 — User: points history + cash redemption
 - [x] C7 — Collector: dashboard + job actions (accept / reject / abort)
-- [ ] C8 — Collector: record weight, complete, history
+- [x] C8 — Collector: record weight, complete, history
 - [ ] C9 — Admin: dashboard KPIs
 - [ ] C10 — Admin: request queue + assignment
 - [ ] C11 — Admin: redemptions
@@ -679,7 +679,7 @@ C8 page) / Abort (reason modal); Collected → Mark as completed. Reason must be
 Done when: accept, reject and abort work on mobile width and the job list refreshes.
 ```
 
-### C8 — Collector: weigh, complete, history  `[ ]`
+### C8 — Collector: weigh, complete, history  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.2 steps 4–6, FR-09, FR-10, FR-12,
