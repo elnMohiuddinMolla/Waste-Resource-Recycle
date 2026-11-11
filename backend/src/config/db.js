@@ -2,10 +2,12 @@
 // Waste Resource Recycle (WRR) - Database Configuration & Connection Pool
 // ==============================================================================
 
+const path = require('path');
 const mysql = require('mysql2/promise');
 const dotenv = require('dotenv');
 
-dotenv.config();
+// Always read backend/.env, whichever folder the server is started from
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',

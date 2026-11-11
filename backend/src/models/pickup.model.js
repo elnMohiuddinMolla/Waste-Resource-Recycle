@@ -117,13 +117,14 @@ async function listForCollector(collectorId, { statuses, zoneId }) {
   return rows;
 }
 
-async function listByUser(userId, { status, limit, offset }) {
+// FR-12 filters: status, date range (on created_at, whole days) and category
+async function listByUser(userId, { status, from, to, categoryId, limit, offset }) {
   const where = ['pr.user_id = ?'];
   const params = [userId];
-  if (status) {
-    where.push('pr.status = ?');
-    params.push(status);
-  }
+  if (status) { where.push('pr.status = ?'); params.push(status); }
+  if (from) { where.push('pr.created_at >= ?'); params.push(from); }
+  if (to) { where.push('pr.created_at < DATE_ADD(?, INTERVAL 1 DAY)'); params.push(to); }
+  if (categoryId) { where.push('pr.category_id = ?'); params.push(categoryId); }
   const whereSql = where.join(' AND ');
 
   const [[{ total }]] = await pool.execute(

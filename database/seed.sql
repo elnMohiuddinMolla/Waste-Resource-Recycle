@@ -1,7 +1,7 @@
 -- ==============================================================================
 -- Waste Resource Recycle (WRR) Management System
 -- Database Seed Data: seed.sql
--- Target DBMS: MySQL 8.0+ or MariaDB 10.6+ (XAMPP)
+-- Target DBMS: MySQL 8.0+ or MariaDB 10.4+ (XAMPP)
 -- Course: CSE-3112 Software Engineering Lab, Faridpur Engineering College
 -- Team: MD Mohiuddin Molla (2022254878), Abdul Al Noman (935)
 -- ==============================================================================

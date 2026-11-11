@@ -70,7 +70,7 @@ The backend keeps a strict four-layer separation (NFR-07):
 - **DBMS:** XAMPP ships **MariaDB 10.4** (shown as "MySQL" in the XAMPP Control Panel). The schema also runs on MySQL 8.0+.
 - **Engine:** `InnoDB` (foreign keys and transaction rollback).
 - **Charset / Collation:** `utf8mb4` / `utf8mb4_unicode_ci`.
-- **Timezone:** Bangladesh Standard Time (`+06:00`). The pool sets `timezone: '+06:00'` so `preferred_at` comparisons are correct.
+- **Timezone:** Bangladesh Standard Time (`+06:00`). `config/db.js` runs `SET time_zone = '+06:00'` on every new connection, so `NOW()`, `CURRENT_TIMESTAMP` and `preferred_at` comparisons all use Bangladesh time.
 
 ---
 
@@ -158,15 +158,16 @@ sequenceDiagram
 
 ## 6. Core Business Logic Services
 
-### 6.1 Request State Machine (`services/pickup.service.js`)
+### 6.1 Request State Machine (`services/requestStateMachine.js`)
 Allowed transitions (PRD §5.1, T1–T8):
 $$\text{Pending} \to \text{Assigned} \to \text{Accepted} \to \text{Collected} \to \text{Completed}$$
 - `Pending → Cancelled` (user)
 - `Assigned → Rejected` (collector, reason required) and `Rejected → Assigned` (admin reassigns)
 - `Accepted → Cancelled` (collector on-site abort, reason required)
 - Any other transition → HTTP 409. Every transition writes a `request_status_logs` row in the same transaction.
+- Used by `pickup.service.js` (cancel), `assignment.service.js` (assign) and `collector.service.js` (accept, reject, abort, weigh, complete).
 
-### 6.2 Signed Points Ledger (`services/ledger.service.js`)
+### 6.2 Signed Points Ledger (`models/ledger.model.js`, `services/reward.service.js`)
 $$\text{Points} = \text{ROUND}(\text{actual\_weight\_kg} \times \text{points\_per\_kg\_applied}, 2)$$
 $$\text{User Balance} = \sum \text{reward\_transactions.points} \ge 0$$
 - **`EARN`:** credit when a request is completed (one per collection record, enforced by a UNIQUE index).
@@ -183,7 +184,7 @@ SELECT user_id FROM users WHERE user_id = ? FOR UPDATE;   -- serialize this user
 -- INSERT reward_transactions (REDEEM, -points)
 -- INSERT notifications (REDEMPTION_REQUESTED)
 ```
-Admin actions: `approve` (Pending → Approved), `paid` (Approved → Paid, TrxID required), `reject` (Pending/Approved → Rejected + REFUND).
+Admin actions (rules in `services/redemptionStateMachine.js`): `approve` (Pending → Approved), `paid` (Approved → Paid, TrxID required), `reject` (Pending/Approved → Rejected + REFUND).
 
 ### 6.4 Notifications (`services/notification.service.js`)
 Creates the 11 notification types listed in PRD FR-14, always inside the same transaction as the event that causes them. Admins get no notification rows; their dashboard shows queue counts instead.
@@ -215,7 +216,11 @@ Waste_Resource_Recycle/
 │   │   ├── controllers/
 │   │   ├── services/
 │   │   ├── models/
+│   │   ├── utils/                  # AppError, transaction helper, validators, money
 │   │   └── app.js                  # Middleware, /api/v1 routes, express.static('../frontend')
+│   ├── test/
+│   │   ├── unit/                   # no database needed (npm test)
+│   │   └── api/                    # rebuilds the wrr_test database (npm run test:api)
 │   ├── package.json
 │   └── .env.example
 │
@@ -290,17 +295,20 @@ res.json({ success: true, message: 'Login successful.', data: { user } });
 
 ### 9.3 Frontend Fetch Wrapper (`frontend/js/api.js`)
 ```javascript
-async function api(path, options = {}) {
+// Returns { ok, status, body } so every page can show the server's message and field errors.
+async function api(path, { method = 'GET', body } = {}) {
   const res = await fetch('/api/v1' + path, {
+    method,
     credentials: 'same-origin',
     headers: { 'Content-Type': 'application/json' },
-    ...options
+    body: body === undefined ? undefined : JSON.stringify(body)
   });
-  if (res.status === 401) {
-    window.location.href = '/login.html';
-    return;
+  if (res.status === 401 && !path.startsWith('/auth/')) {
+    const next = encodeURIComponent(location.pathname + location.search);
+    location.href = '/login.html?next=' + next;
   }
-  return res.json();
+  const json = await res.json().catch(() => null);
+  return { ok: res.ok, status: res.status, body: json };
 }
 ```
 

@@ -70,6 +70,14 @@ test('logout clears the cookie', async () => {
   assert.match(r.setCookie, /token=;/);
 });
 
+test('logout works without a valid session and still clears the cookie', async () => {
+  let r = await api.call('POST', '/auth/logout');
+  assert.equal(r.status, 200);
+  assert.match(r.setCookie, /token=;/);
+  r = await api.call('POST', '/auth/logout', { cookie: 'token=expired-or-broken' });
+  assert.equal(r.status, 200);
+});
+
 test('unknown API paths return JSON 404', async () => {
   const r = await api.call('GET', '/does-not-exist');
   assert.equal(r.status, 404);

@@ -159,7 +159,8 @@ Goal: the shared building blocks every feature reuses. Verify or create:
 - src/utils/transaction.js: withTransaction(work) with commit / rollback / release.
 - src/utils/money.js: toCents, centsToString.
 - src/controllers/common.js: parseRequestId (bad id → 404), parsePaging (limit ≤ 50),
-  parseStatusList, parseDate (YYYY-MM-DD), parseOptionalId, parseReason (5–200 chars).
+  parseStatusList, isRealDate / parseDate / parseDateRange (real YYYY-MM-DD dates, to ≥ from),
+  parseOptionalId, parseReason (5–200 chars).
 - src/services/requestStateMachine.js: the 7 statuses and exactly the 8 transitions T1–T8 of
   PRD §5.1 with their roles; assertTransition throws 409.
 - src/services/redemptionStateMachine.js: approve Pending→Approved, paid Approved→Paid,
@@ -182,8 +183,8 @@ Done when: npm test passes and every transition in PRD §5.1 has a unit test.
 ```
 Follow the Common Rules in prompt.md. Read api-spec.md Module 1, WRR_PRD.md FR-01, FR-02, NFR-03.
 
-Build: POST /api/v1/auth/register, POST /api/v1/auth/login, POST /api/v1/auth/logout,
-GET /api/v1/auth/me, plus middleware/auth.js (JWT from the "token" cookie, re-reads the user
+Build: POST /api/v1/auth/register, POST /api/v1/auth/login, POST /api/v1/auth/logout
+(no login needed, always clears the cookie), GET /api/v1/auth/me, plus middleware/auth.js (JWT from the "token" cookie, re-reads the user
 every request, inactive → 403), middleware/role.js requireRole(...roles),
 middleware/rateLimiter.js (5 failed logins / 15 min / IP, then 429; successful logins not counted).
 
@@ -194,7 +195,7 @@ unknown email and wrong password.
 
 Tests (auth.api.test.js): validation errors per field, duplicate email 409, register 201 without
 hash, cookie flags, /me with and without cookie, inactive login 403, deactivated mid-session 403,
-logout clears cookie, 6th failed login → 429.
+logout clears the cookie even without a session, 6th failed login → 429.
 
 Done when: all auth tests pass.
 ```
@@ -233,13 +234,14 @@ without description; inactive category/zone; collector 403; no cookie 401.
 Follow the Common Rules in prompt.md. Read api-spec.md §3.2, §3.3, WRR_PRD.md FR-05.
 
 Build:
-- GET /api/v1/pickup-requests/mine?status=&page=&limit= (user): own requests newest first with
-  category, zone, collector name, actual weight; {total, page, limit, requests}.
+- GET /api/v1/pickup-requests/mine?status=&from=&to=&category_id=&page=&limit= (user, FR-12):
+  own requests newest first with category, zone, collector name, actual weight;
+  {total, page, limit, requests}. from/to are whole days on created_at.
 - GET /api/v1/pickup-requests/:id (user owner, assigned collector, admin): details, collector
   {id, name, phone} or null, points_earned, timeline from request_status_logs with changed_by name.
   Anyone else gets 404 (not 403).
 
-Tests: only own rows; paging; status filter; bad status 400; seed request 1 shows 155.00 points
+Tests: only own rows; paging; status, date and category filters; bad status or 2026-02-31 → 400; seed request 1 shows 155.00 points
 and 5 timeline rows; other user 404; unassigned collector 404; admin 200; bad id 404.
 ```
 
@@ -329,11 +331,11 @@ same moment credit once; 1.33 kg × 4.00 = 5.32.
 ```
 Follow the Common Rules in prompt.md. Read api-spec.md §4.7, WRR_PRD.md FR-12.
 
-Build: GET /api/v1/collector/history?from=&to=&page=&limit= (dates YYYY-MM-DD, inclusive, on
-completed_at): {summary: {total_completed_pickups, total_kg_collected}, records, page, limit}.
+Build: GET /api/v1/collector/history?from=&to=&category_id=&page=&limit= (FR-12; dates YYYY-MM-DD,
+inclusive, on completed_at): {summary: {total_completed_pickups, total_kg_collected}, records, page, limit}.
 Only completed records of this collector.
 
-Tests: summary totals; date filter; bad date 400; another collector sees 0.
+Tests: summary totals; date and category filters; bad or impossible date 400; another collector sees 0.
 ```
 
 ### B11 — Rewards  `[x]`
@@ -632,7 +634,7 @@ message under the date field.
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.1 steps 4–5, FR-05, FR-06,
 api-spec.md §3.2–§3.4.
 
-Build: user/requests.html — table/cards with status filter and paging; clicking a row opens a
+Build: user/requests.html — table/cards with status, date-range and category filters and paging; clicking a row opens a
 details panel (GET /pickup-requests/:id): all fields, collector name/phone when assigned,
 actual weight and points when available, and a vertical timeline (status, time, by whom, note).
 "Cancel request" button only when Pending, with a confirm dialog; refresh after success; show 409
@@ -682,7 +684,7 @@ api-spec.md §4.5–§4.7, requirement-validation.md E-04, E-05.
 Build: collector/record-weight.html?id= — job summary, actual weight (step 0.01) and remarks;
 keep unsent input in localStorage until the server answers 201 (E-04); after saving show
 "X kg × rate = points" and a "Mark as completed" button (confirm dialog) that shows the credited
-points. collector/records.html — history with from/to filter and the summary totals.
+points. collector/records.html — history with from/to and category filters and the summary totals.
 
 Done when: a job goes Accepted → Collected → Completed from the UI and the user's balance grows by
 the shown points.

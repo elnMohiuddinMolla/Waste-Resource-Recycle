@@ -41,17 +41,19 @@ async function markCompleted(connection, recordId) {
 }
 
 // Collector history (api-spec §4.7): completed records only
-async function listCompletedByCollector(collectorId, { from, to, limit, offset }) {
+async function listCompletedByCollector(collectorId, { from, to, categoryId, limit, offset }) {
   const where = ['cr.collector_id = ?', 'cr.completed_at IS NOT NULL'];
   const params = [collectorId];
   if (from) { where.push('cr.completed_at >= ?'); params.push(from); }
   if (to) { where.push('cr.completed_at < DATE_ADD(?, INTERVAL 1 DAY)'); params.push(to); }
+  if (categoryId) { where.push('pr.category_id = ?'); params.push(categoryId); }
   const whereSql = where.join(' AND ');
 
   const [[summary]] = await pool.execute(
     `SELECT COUNT(*) AS total_completed_pickups,
             COALESCE(SUM(cr.actual_weight_kg), 0.00) AS total_kg_collected
      FROM collection_records cr
+     JOIN pickup_requests pr ON pr.request_id = cr.request_id
      WHERE ${whereSql}`,
     params
   );

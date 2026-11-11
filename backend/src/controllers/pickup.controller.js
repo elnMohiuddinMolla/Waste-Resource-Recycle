@@ -5,7 +5,9 @@
 
 const AppError = require('../utils/AppError');
 const pickupService = require('../services/pickup.service');
-const { parseRequestId, parsePaging, parseStatusList } = require('./common');
+const {
+  parseRequestId, parsePaging, parseStatusList, parseDateRange, parseOptionalId
+} = require('./common');
 const {
   isValidPhone, toPositiveInt, toPositiveAmount, cleanText, parseBdDateTime
 } = require('../utils/validators');
@@ -72,9 +74,11 @@ async function listMine(req, res, next) {
       throw new AppError(400, 'Validation failed.', [{ field: 'status', message: 'Filter by one status at a time.' }]);
     }
     const status = statuses ? statuses[0] : null;
+    const { from, to } = parseDateRange(req.query);
+    const categoryId = parseOptionalId(req.query.category_id, 'category_id');
     const { page, limit } = parsePaging(req.query);
 
-    const data = await pickupService.listMyRequests(req.user, { status, page, limit });
+    const data = await pickupService.listMyRequests(req.user, { status, from, to, categoryId, page, limit });
     res.json({ success: true, data });
   } catch (err) {
     next(err);

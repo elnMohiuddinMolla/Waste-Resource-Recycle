@@ -11,7 +11,8 @@ const router = express.Router();
 
 router.post('/register', authController.register);
 router.post('/login', loginLimiter, authController.login);
-router.post('/logout', authenticateToken, authController.logout);
+// No login needed: logout must also clear an expired or broken cookie
+router.post('/logout', authController.logout);
 router.get('/me', authenticateToken, authController.getProfile);
 
 module.exports = router;

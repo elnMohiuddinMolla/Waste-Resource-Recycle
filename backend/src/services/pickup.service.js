@@ -68,9 +68,12 @@ async function createRequest(user, data) {
   return pickupModel.findById(requestId);
 }
 
-async function listMyRequests(user, { status, page, limit }) {
+async function listMyRequests(user, { status, from, to, categoryId, page, limit }) {
   const { total, rows } = await pickupModel.listByUser(user.user_id, {
     status,
+    from,
+    to,
+    categoryId,
     limit,
     offset: (page - 1) * limit
   });

@@ -302,7 +302,15 @@ test('collector history lists completed records with a summary', async () => {
   r = await api.call('GET', '/collector/history?from=2026-11-10&to=2026-11-10', { cookie: rafiqul });
   assert.equal(r.body.data.summary.total_completed_pickups, 1); // only the seed record
 
+  // Category filter (FR-12): only the 18.75 kg Paper & Cardboard job
+  r = await api.call('GET', '/collector/history?category_id=2', { cookie: rafiqul });
+  assert.equal(r.body.data.summary.total_completed_pickups, 1);
+  assert.equal(r.body.data.summary.total_kg_collected, '18.75');
+  assert.ok(r.body.data.records.every((x) => x.category_name === 'Paper & Cardboard'));
+
   r = await api.call('GET', '/collector/history?from=10-11-2026', { cookie: rafiqul });
+  assert.equal(r.status, 400);
+  r = await api.call('GET', '/collector/history?to=2026-02-31', { cookie: rafiqul });
   assert.equal(r.status, 400);
 
   r = await api.call('GET', '/collector/history', { cookie: kamal });

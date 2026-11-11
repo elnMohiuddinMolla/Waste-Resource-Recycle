@@ -6,7 +6,7 @@ const AppError = require('../utils/AppError');
 const collectorService = require('../services/collector.service');
 const { toPositiveInt, toPositiveAmount, cleanText } = require('../utils/validators');
 const {
-  parseRequestId, parsePaging, parseStatusList, parseDate, parseOptionalId, parseReason
+  parseRequestId, parsePaging, parseStatusList, parseDateRange, parseOptionalId, parseReason
 } = require('./common');
 
 // Jobs a collector still has to work on
@@ -84,13 +84,10 @@ async function complete(req, res, next) {
 
 async function history(req, res, next) {
   try {
-    const from = parseDate(req.query.from, 'from');
-    const to = parseDate(req.query.to, 'to');
-    if (from && to && from > to) {
-      throw new AppError(400, 'Validation failed.', [{ field: 'to', message: "'to' must not be before 'from'." }]);
-    }
+    const { from, to } = parseDateRange(req.query);
+    const categoryId = parseOptionalId(req.query.category_id, 'category_id');
     const { page, limit } = parsePaging(req.query);
-    const data = await collectorService.history(req.user, { from, to, page, limit });
+    const data = await collectorService.history(req.user, { from, to, categoryId, page, limit });
     res.json({ success: true, data });
   } catch (err) {
     next(err);

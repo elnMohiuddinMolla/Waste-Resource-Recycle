@@ -179,10 +179,11 @@ async function completeRequest(collector, requestId) {
   });
 }
 
-async function history(collector, { from, to, page, limit }) {
+async function history(collector, { from, to, categoryId, page, limit }) {
   const data = await collectionModel.listCompletedByCollector(collector.user_id, {
     from,
     to,
+    categoryId,
     limit,
     offset: (page - 1) * limit
   });

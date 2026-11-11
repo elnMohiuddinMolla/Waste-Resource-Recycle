@@ -24,14 +24,12 @@
   ```json
   {
     "user_id": 4,
-    "email": "tanvir@gmail.com",
     "role": "user",
-    "zone_id": 1,
     "iat": 1731326400,
     "exp": 1731931200
   }
   ```
-- **RBAC Enforcement:** Access is strictly controlled via `auth.middleware.js` and `role.middleware.js`. On every request the middleware re-reads the user's `status`; deactivated accounts (`status = 'inactive'`) are denied with HTTP 403 Forbidden. The `zone_id` claim is informational only — the server always uses the zone stored in `users`.
+- **RBAC Enforcement:** Access is strictly controlled via `middleware/auth.js` and `middleware/role.js`. On every request the middleware re-reads the user's `status`; deactivated accounts (`status = 'inactive'`) are denied with HTTP 403 Forbidden. The token carries only `user_id` and `role`; status, role and zone are always re-read from `users`.
 
 ### 1.2 Standard Response Envelopes
 
@@ -84,7 +82,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 | **Auth & Profile** | | | | | |
 | 1 | `POST` | `/api/v1/auth/register` | None (Public) | Anyone | General User self-registration. |
 | 2 | `POST` | `/api/v1/auth/login` | None (Public) | Anyone | Credentials validation; issues HTTP-Only cookie. |
-| 3 | `POST` | `/api/v1/auth/logout` | Required | All Roles | Clears auth cookie and invalidates session. |
+| 3 | `POST` | `/api/v1/auth/logout` | None | Anyone | Clears the auth cookie (works even if the session has expired). |
 | 4 | `GET` | `/api/v1/auth/me` | Required | All Roles | Returns authenticated user profile and role claims. |
 | **Catalog & Zones** | | | | | |
 | 5 | `GET` | `/api/v1/categories` | None (Public) | Anyone | Lists active waste categories and reward rates. |
@@ -254,7 +252,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 
 #### 1.3 User Logout
 - **Endpoint:** `POST /api/v1/auth/logout`
-- **Authentication:** `Required (All Roles)`
+- **Authentication:** `None` — always succeeds, so an expired or broken cookie can still be cleared.
 - **Request Body:** `None`
 - **Response `200 OK`:**
   *(Clears `token` cookie with `Max-Age=0`)*
@@ -388,7 +386,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 #### 3.2 List Logged-In User's Requests
 - **Endpoint:** `GET /api/v1/pickup-requests/mine`
 - **Authentication:** `Required (Role: user)`
-- **Query Parameters:** `?status=Pending&page=1&limit=10`
+- **Query Parameters:** `?status=Pending&from=2026-11-01&to=2026-11-30&category_id=1&page=1&limit=10` — all optional (FR-12). One status at a time; `from`/`to` are whole days on `created_at`; an impossible date such as `2026-02-31` → 400.
 - **Response `200 OK`:**
   ```json
   {
@@ -504,7 +502,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 
 #### 4.1 Get Assigned Requests
 - **Endpoint:** `GET /api/v1/collector/requests`
-- **Authentication:** `Required (Role: collector)`. A job assigned to another collector returns 404.
+- **Authentication:** `Required (Role: collector)`
 - **Query Parameters:** `?status=Assigned,Accepted,Collected&zone_id=1` (only requests where `collector_id` = the logged-in collector)
 - **Response `200 OK`:**
   ```json
@@ -554,7 +552,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
     "reason": "Collector vehicle breakdown; unable to reach Baitul Aman today."
   }
   ```
-- **Validation Rules:** `reason` is mandatory (min 5 chars).
+- **Validation Rules:** `reason` is mandatory (5–200 characters).
 - **Business Rule:** Status must be `Assigned` and the request must belong to this collector.
 - **Business Effect:** Status transitions to `Rejected` and `collector_id` is set to `NULL`, so the request returns to the Admin queue. The status log row (with `changed_by_id` = this collector and the reason in `note`) keeps the record for the collector-performance report. A `PICKUP_REJECTED` notification tells the user the request is being reassigned.
 - **Response `200 OK`:**
@@ -580,7 +578,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
     "reason": "Resident absent and phone unreachable after 3 consecutive attempts."
   }
   ```
-- **Validation Rules:** `reason` is mandatory (min 5 chars).
+- **Validation Rules:** `reason` is mandatory (5–200 characters).
 - **Business Rule:** Status must be `Accepted` and the request must belong to this collector. Transitions to `Cancelled` with the reason in the status log, and a `PICKUP_ABORTED` notification goes to the user.
 - **Response `200 OK`:**
   ```json
@@ -662,8 +660,8 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 
 #### 4.7 Collector Completed History & Metrics
 - **Endpoint:** `GET /api/v1/collector/history`
-- **Authentication:** `Required (Role: collector)`. A job assigned to another collector returns 404.
-- **Query Parameters:** `?from=2026-11-01&to=2026-11-30&page=1&limit=10`
+- **Authentication:** `Required (Role: collector)`
+- **Query Parameters:** `?from=2026-11-01&to=2026-11-30&category_id=2&page=1&limit=10` — all optional (FR-12); `from`/`to` are whole days on `completed_at`.
 - **Response `200 OK`:**
   ```json
   {
@@ -816,6 +814,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 #### 6.3 Get User's Redemption History
 - **Endpoint:** `GET /api/v1/redemptions/mine`
 - **Authentication:** `Required (Role: user)`
+- **Query Parameters:** `?status=Paid` (optional: `Pending`, `Approved`, `Rejected`, `Paid`)
 - **Response `200 OK`:**
   ```json
   {

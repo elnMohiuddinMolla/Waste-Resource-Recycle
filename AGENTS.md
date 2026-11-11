@@ -21,7 +21,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 - **What:** households (General Users) request pickup of recyclable waste; collectors weigh it; users earn points (actual kg × category rate) and can redeem them for cash (bKash, Nagad, Bank).
 - **Course:** CSE-3112 Software Engineering Lab, Faridpur Engineering College. Supervisor: Mohammad Shamsul Islam.
 - **Team:** MD Mohiuddin Molla (Reg: 2022254878), Abdul Al Noman (Reg: 935). The spelling "Noman" is not yet confirmed (older docs say "Roman").
-- **SDLC:** Waterfall. Requirements and design are done; implementation is next.
+- **SDLC:** Waterfall. Requirements and design are done; implementation is in progress (see §5 and `prompt.md`).
 
 ## 3. Tech stack (fixed by the proposal — do not change)
 
@@ -42,22 +42,24 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 
 ## 5. Current code status
 
-Done and matching `api-spec.md`:
-- `src/app.js` (API under `/api/v1`, serves `../frontend` statically, JSON 404 and error handler).
-- Auth module: `POST /auth/register`, `/auth/login`, `/auth/logout`, `GET /auth/me` — cookie-based JWT, validation, 409 duplicate email, 403 inactive, login limiter 5 failed / 15 min.
-- Middleware: `auth.js` (cookie), `role.js` (`requireRole(...)`), `rateLimiter.js`, `error.js`. `utils/AppError.js` for throwing `(statusCode, message, errors)`.
-- `services/notification.service.js` with the 11 `NOTIFICATION_TYPES`.
-- Catalog: `GET /categories`, `GET /zones` (public).
-- Pickup requests (user side): `POST /pickup-requests`, `GET /pickup-requests/mine`, `GET /pickup-requests/:id`, `PUT /pickup-requests/:id/cancel`.
-- Shared pieces to reuse: `services/requestStateMachine.js` (T1–T8, `assertTransition`), `utils/transaction.js` (`withTransaction`), `utils/validators.js`, `models/statusLog.model.js` (`insert` must get the transaction connection), `pickup.model.findByIdForUpdate` (row lock).
+**Built and tested** (`prompt.md` A1–A3, B1–B13), matching `api-spec.md`:
 
-- Admin assignment: `GET /admin/pickup-requests`, `PUT /admin/pickup-requests/:id/assign` (T1/T2, notifies the collector).
-- Collector workflow: `GET /collector/requests`, `PUT /collector/requests/:id/accept|reject|abort|complete`, `POST /collector/collection-records`, `GET /collector/history`. Rate snapshot and EARN points are computed in SQL (`ROUND(... , 2)`); a job of another collector returns 404.
-- More shared pieces: `controllers/common.js` (id, paging, status list, date, reason parsing), `models/collection.model.js`, `models/ledger.model.js` (`insertEarn`).
+| Area | Endpoints (prefix `/api/v1`) |
+|---|---|
+| Auth | `POST /auth/register`, `POST /auth/login`, `POST /auth/logout` (no login needed), `GET /auth/me` |
+| Catalog (public) | `GET /categories`, `GET /zones` |
+| Pickup (user) | `POST /pickup-requests`, `GET /pickup-requests/mine` (status, from, to, category_id), `GET /pickup-requests/:id`, `PUT /pickup-requests/:id/cancel` |
+| Admin requests | `GET /admin/pickup-requests`, `PUT /admin/pickup-requests/:id/assign` |
+| Collector | `GET /collector/requests`, `PUT /collector/requests/:id/accept\|reject\|abort\|complete`, `POST /collector/collection-records`, `GET /collector/history` (from, to, category_id) |
+| Rewards | `GET /rewards/balance`, `GET /rewards/history` |
+| Redemptions | `GET /redemptions/rules/active`, `POST /redemptions`, `GET /redemptions/mine`, `GET /admin/redemptions`, `PATCH /admin/redemptions/:id` |
 
-- Rewards: `GET /rewards/balance`, `GET /rewards/history`.
-- Redemptions: `GET /redemptions/rules/active`, `POST /redemptions` (user row locked `FOR UPDATE`, REDEEM row holds points), `GET /redemptions/mine`; admin `GET /admin/redemptions`, `PATCH /admin/redemptions/:id` (approve / paid / reject + REFUND).
-- More shared pieces: `services/redemptionStateMachine.js` (`nextStatus`, `PAYOUT_METHODS`), `utils/money.js` (compare DECIMAL strings as integer cents), `models/rule.model.js`, `models/redemption.model.js`, `ledger.model.getBalance(userId, connection)`.
+**Shared pieces — reuse them, never write a second version:**
+- `utils/AppError.js` (throw `new AppError(status, message, errors)`), `utils/transaction.js` (`withTransaction`), `utils/validators.js`, `utils/money.js` (compare DECIMAL strings as integer cents).
+- `controllers/common.js`: `parseRequestId`, `parsePaging`, `parseStatusList`, `isRealDate`, `parseDate`, `parseDateRange`, `parseOptionalId`, `parseReason`.
+- `services/requestStateMachine.js` (T1–T8, `assertTransition`), `services/redemptionStateMachine.js` (`nextStatus`, `PAYOUT_METHODS`), `services/notification.service.js` (`NOTIFICATION_TYPES`, `createNotification`).
+- Models: `statusLog.model.insert(connection, ...)` (always inside the transaction), `pickup.model.findByIdForUpdate` (row lock), `ledger.model.insertEarn` / `insertRedemptionRow` / `getBalance(userId, connection)`, `rule.model.findActive`.
+- Points and money are computed in SQL with `ROUND(..., 2)`. A job or request that is not yours returns 404.
 
 Not built yet: notifications (prompt.md B14), admin governance + weight correction + reports (B15–B20), backend audit (B21), `frontend/` (C1–C14), testing and lab-report docs (D1–D3).
 

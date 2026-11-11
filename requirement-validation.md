@@ -117,10 +117,11 @@ try {
 | `users.phone`, `pickup_requests.contact_phone` | `^(?:\+8801\|01)[3-9]\d{8}$` (Bangladeshi mobile) |
 | `users.email` | Valid email, stored lowercase, unique (409 if taken) |
 | `password` | At least **8** characters |
+| `from` / `to` filters | Real calendar date `YYYY-MM-DD` (e.g. `2026-02-31` → 400); `to` not before `from` |
 | `pickup_requests.preferred_at` | Strictly in the future (`> NOW()`) |
 | `pickup_requests.estimated_weight_kg` | Required, `> 0` |
 | `pickup_requests.other_description` | Required (≥ 5 chars) when the category has `is_other = TRUE` |
-| Reject / abort `reason` | Required, ≥ 5 characters |
+| Reject / abort `reason` | Required, 5–200 characters |
 | `collection_records.actual_weight_kg` | `> 0` (also a database `CHECK`) |
 | `cash_redemptions.points_redeemed` | `≥ min_points` and `≤ balance` (422 otherwise) |
 | `cash_redemptions.payout_method` | One of `bKash`, `Nagad`, `Bank` |
@@ -136,7 +137,8 @@ try {
 | Endpoint | Method | Public | User | Collector | Admin |
 |---|:---:|:---:|:---:|:---:|:---:|
 | `/auth/register`, `/auth/login` | `POST` | ✅ | — | — | — |
-| `/auth/logout`, `/auth/me` | `POST`/`GET` | ❌ | ✅ | ✅ | ✅ |
+| `/auth/logout` | `POST` | ✅ (always clears the cookie) | ✅ | ✅ | ✅ |
+| `/auth/me` | `GET` | ❌ | ✅ | ✅ | ✅ |
 | `/categories`, `/zones` (active only) | `GET` | ✅ | ✅ | ✅ | ✅ |
 | `/pickup-requests` (submit), `/pickup-requests/mine` | `POST`/`GET` | ❌ | ✅ (own) | ❌ | ❌ |
 | `/pickup-requests/:id` | `GET` | ❌ | ✅ (own) | ✅ (assigned) | ✅ |

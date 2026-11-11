@@ -231,6 +231,7 @@ To meet the response-time targets of NFR-02 (2 s for core operations, 5 s for re
 | `cash_redemptions` | `CHECK` | `CHECK (points_redeemed > 0)` | Cash withdrawals must deduct positive points. |
 | `users` | `UNIQUE` | `UNIQUE (email)` | Guarantees account uniqueness across the platform. |
 | `zones` | `UNIQUE` | `UNIQUE (name)` | Prevents duplicate zone creation. |
+| `waste_categories` | `UNIQUE` | `UNIQUE (name)` | Prevents duplicate category names. |
 | `collection_records`| `UNIQUE` | `UNIQUE (request_id)` | Prevents duplicate physical receipts for the same job. |
 | `reward_transactions` | `UNIQUE` on generated column | `UNIQUE KEY uq_rt_one_earn (earn_record_id)` | Exactly one `EARN` per collection record (PRD §5.3). |
 | `redemption_rules` | `UNIQUE` on generated column | `UNIQUE KEY uq_rule_single_active (active_key)` | Only one active rule (FR-16). To switch rules: `UPDATE ... SET is_active = FALSE` first, then `INSERT` the new rule, in one transaction. |
@@ -241,6 +242,8 @@ To meet the response-time targets of NFR-02 (2 s for core operations, 5 s for re
 ## 6. SQL Aggregate Queries
 
 All report queries take `from`/`to` (and optional `zone_id`/`category_id`) as `?` parameters. In the application, `(? IS NULL OR col = ?)` receives the same value twice. Queries 2–6 implement the five FR-17 reports and were tested on MariaDB 10.4 (XAMPP).
+
+**Whole days:** the API receives dates as `YYYY-MM-DD`. Pass `from` as `YYYY-MM-DD 00:00:00` and `to` as `YYYY-MM-DD 23:59:59` so the last day is included in `BETWEEN`. Report 4 (points liability) is all-time and ignores the dates.
 
 ### Query 1: Real-Time User Point Balance Calculation
 Calculates the current spendable balance by summing the signed ledger rows:
@@ -456,7 +459,7 @@ VALUES (4, 'ADJUST', 5, -35.00, CURRENT_TIMESTAMP);
 
 -- Step 4: Log audit trail
 INSERT INTO request_status_logs (request_id, changed_by_id, old_status, new_status, note, changed_at)
-VALUES (12, 1, 'Completed', 'Completed', 'Weight corrected from 15.5 kg to 12.0 kg by Admin', CURRENT_TIMESTAMP);
+VALUES (12, 1, 'Completed', 'Completed', 'Weight corrected from 15.50 kg to 12.00 kg', CURRENT_TIMESTAMP);
 
 COMMIT;
 ```
@@ -471,7 +474,7 @@ Same content as `database/seed.sql` (all seed passwords: `password123`).
 -- ==============================================================================
 -- Waste Resource Recycle (WRR) Management System
 -- Database Seed Data: seed.sql
--- Target DBMS: MySQL 8.0+ or MariaDB 10.6+ (XAMPP)
+-- Target DBMS: MySQL 8.0+ or MariaDB 10.4+ (XAMPP)
 -- Course: CSE-3112 Software Engineering Lab, Faridpur Engineering College
 -- Team: MD Mohiuddin Molla (2022254878), Abdul Al Noman (935)
 -- ==============================================================================
@@ -579,7 +582,7 @@ Same content as `database/schema.sql`. Tested on MariaDB 10.4.32 (XAMPP); it use
 -- ==============================================================================
 -- Waste Resource Recycle (WRR) Management System
 -- Database Schema: schema.sql
--- Target DBMS: MySQL 8.0+ or MariaDB 10.6+ (XAMPP)
+-- Target DBMS: MySQL 8.0+ or MariaDB 10.4+ (XAMPP)
 -- Course: CSE-3112 Software Engineering Lab, Faridpur Engineering College
 -- Team: MD Mohiuddin Molla (2022254878), Abdul Al Noman (935)
 -- ==============================================================================

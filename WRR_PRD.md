@@ -87,7 +87,7 @@ graph TD
 | Record Actual Scale Weight (`actual_weight_kg`) | No | Yes | Yes (Weight Correction only) |
 | Abort Accepted Request On-Site (with reason) | No | Yes | No |
 | Mark Request as Completed | No | Yes | No |
-| View Own Collection History & Ledger | Yes | Yes (Collections completed) | Yes (All users) |
+| View Own Collection History & Ledger | Yes | Yes (Collections completed) | Yes (all collection records + points-liability report) |
 | Request Cash Redemption | Yes | No | No |
 | Approve / Reject / Mark Paid Redemptions | No | No | Yes |
 | Manage Zones, Categories, and Conversion Rules | No | No | Yes |
@@ -401,7 +401,7 @@ $$\text{Points Earned} = \text{ROUND}(\text{actual\_weight\_kg} \times \text{poi
 | **FR-09** | Collection | **Collection & Weight Recording:** Collector marks request `Collected` and records `actual_weight_kg` ($> 0.00$). The active category point rate is snapshotted into `points_per_kg_applied`. |
 | **FR-10** | Rewards | **Request Completion & Reward Trigger:** Collector marks request `Completed`. In a single database transaction the system updates the request status, sets `completed_at` on the collection record (created in FR-09), adds the `EARN` ledger entry, writes the status log, and creates a user notification. |
 | **FR-11** | Rewards | **Reward Point Calculation:** $\text{Points} = \text{ROUND}(\text{actual\_weight\_kg} \times \text{points\_per\_kg\_applied}, 2)$. Enforced ledger consistency prevents retroactive rate alterations. |
-| **FR-12** | History | **Collection History:** Users and collectors can inspect paginated historical records filtered by date range and waste category. |
+| **FR-12** | History | **Collection History:** Paginated history with filters. Users filter their requests by status, date range and waste category (`GET /pickup-requests/mine`) and see their full points ledger; collectors filter their completed collections by date range and waste category (`GET /collector/history`). |
 | **FR-13** | Audit | **Status Audit Logging:** Every status change is captured in `request_status_logs` recording `old_status`, `new_status`, `changed_by_id`, `note`, and `changed_at`. |
 | **FR-14** | Notifications | **In-Website Notifications:** A `notifications` row is created for these 11 events (`type` code → recipient):<br>`PICKUP_SUBMITTED` → user · `PICKUP_ASSIGNED` → collector · `PICKUP_ACCEPTED` → user · `PICKUP_REJECTED` → user · `PICKUP_ABORTED` → user · `PICKUP_COLLECTED` → user · `PICKUP_COMPLETED` (with points) → user · `REDEMPTION_REQUESTED` → user · `REDEMPTION_APPROVED` → user · `REDEMPTION_REJECTED` (points refunded) → user · `REDEMPTION_PAID` (with TrxID) → user.<br>Admins do not receive notification rows; their dashboard shows live queue counts (Pending/Rejected requests, Pending/Approved redemptions). Includes unread count badge, mark-one-read and mark-all-read. |
 | **FR-15** | Redemptions | **Cash Redemption Request:** User requests redemption specifying points ($\ge \text{min\_points}$, $\le \text{balance}$), payout channel (`bKash`, `Nagad`, `Bank`), and account number. Points are held immediately via a `REDEEM` ledger entry. |
@@ -444,13 +444,13 @@ The project adheres to a strict Three-Tier Architecture, as specified in the pro
                            (Layered: routes -> controllers -> services -> models)
                            (Middleware: JWT cookie auth, Role RBAC, Rate Limiting, Error Handling)
          ▼ Parameterized SQL (mysql2)
-[Data Persistence Tier]    MySQL 8.0+ or MariaDB 10.6+ (XAMPP) — 10 Normalized Tables, InnoDB
+[Data Persistence Tier]    MySQL 8.0+ or MariaDB 10.4+ (XAMPP) — 10 Normalized Tables, InnoDB
 ```
 
 ### 8.1 Technology Stack Specifications
 - **Frontend Layer:** Plain HTML5, CSS3 (responsive grid and flexbox), and Vanilla ES6+ JavaScript. **No external frontend frameworks** (such as React, Next.js, Vue, or Angular), as fixed by the project proposal and for viva explainability. Express serves the `frontend/` folder with `express.static`, so pages and API share one origin.
 - **Backend Layer:** Node.js (v18+ LTS) with Express.js for REST routing and middleware architecture.
-- **Database Layer:** MySQL 8.0+ or MariaDB 10.6+ (the database bundled with XAMPP), leveraging strict foreign key constraints, `DECIMAL(10,2)` for financial/point figures, `CHECK` constraints, and transactional storage engine (`InnoDB`). The schema uses only features both support.
+- **Database Layer:** MySQL 8.0+ or MariaDB 10.4+ (the database bundled with XAMPP), leveraging strict foreign key constraints, `DECIMAL(10,2)` for financial/point figures, `CHECK` constraints, and transactional storage engine (`InnoDB`). The schema uses only features both support.
 - **Security & Utilities:** `bcryptjs` for password hashing, `jsonwebtoken` for auth tokens, `cookie-parser`, `dotenv`, and `express-rate-limit`. (`cors` is not needed because frontend and API share one origin.)
 
 ---
@@ -609,7 +609,7 @@ In-website user notifications.
 The complete REST contract (request/response bodies, validation, status codes) lives in **[`api-spec.md`](api-spec.md)**, which is the single source for endpoint names. This section only lists the modules.
 
 - **Base URL:** `/api/v1` (same origin as the frontend).
-- **Auth:** JWT in an `HttpOnly` cookie named `token`, set by `POST /api/v1/auth/login` and cleared by `POST /api/v1/auth/logout`.
+- **Auth:** JWT in an `HttpOnly` cookie named `token`, set by `POST /api/v1/auth/login` and cleared by `POST /api/v1/auth/logout` (logout works even without a valid session).
 - **Status codes:** `400` validation error · `401` not logged in · `403` wrong role or inactive account · `404` not found · `409` invalid state transition or duplicate (e.g. email) · `422` business rule broken (e.g. insufficient balance, negative-balance weight correction) · `429` too many login attempts · `500` server error.
 
 | Module | Endpoints (prefix `/api/v1`) | FRs |
@@ -663,11 +663,13 @@ Waste_Resource_Recycle/
 │   ├── src/
 │   │   ├── config/          # db.js (mysql2 connection pool)
 │   │   ├── middleware/      # auth.js (JWT cookie), role.js (RBAC), error.js, rateLimiter.js
-│   │   ├── routes/          # auth, requests, collector, rewards, redemptions, admin, notif
+│   │   ├── routes/          # auth, catalog, pickup, collector, reward, redemption, notification, admin
 │   │   ├── controllers/     # Controller handlers per route
 │   │   ├── services/        # Business logic (ledger calculation, state machine validation)
 │   │   ├── models/          # Data queries / prepared SQL statements
+│   │   ├── utils/           # AppError, transaction helper, validators, money
 │   │   └── app.js           # Express app: middleware, /api/v1 routes, express.static('../frontend')
+│   ├── test/                # unit/ (npm test) and api/ (npm run test:api, uses wrr_test)
 │   ├── package.json
 │   ├── .env.example
 │   └── .env                 # Local credentials (never committed)
@@ -718,7 +720,7 @@ Waste_Resource_Recycle/
 
 ### 12.2 Acceptance Criteria for Lab Defense
 - [x] Complete PRD and System Design tracing back to client survey priorities.
-- [ ] Database initialized with all 10 tables and verified foreign keys.
+- [x] Database initialized with all 10 tables and verified foreign keys.
 - [ ] End-to-end user request submission $\to$ admin assignment $\to$ collector acceptance and weighing $\to$ automated points crediting.
 - [ ] Cash redemption workflow demonstrating point lock on request, refund on rejection, and paid completion.
 - [ ] In-website notification delivery across all primary milestones.

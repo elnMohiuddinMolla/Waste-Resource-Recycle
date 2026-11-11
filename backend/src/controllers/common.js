@@ -36,10 +36,18 @@ function parseStatusList(value, defaults) {
   return list;
 }
 
+// A real calendar date in YYYY-MM-DD form. Date.parse alone is not enough:
+// it silently turns 2026-02-31 into 3 March.
+function isRealDate(value) {
+  if (!DATE_REGEX.test(value)) return false;
+  const d = new Date(`${value}T00:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) === value;
+}
+
 // Optional ?from= / ?to= dates (YYYY-MM-DD)
 function parseDate(value, field) {
   if (!value) return null;
-  if (!DATE_REGEX.test(String(value)) || Number.isNaN(Date.parse(value))) {
+  if (!isRealDate(String(value))) {
     throw new AppError(400, 'Validation failed.', [
       { field, message: 'Use the date format YYYY-MM-DD.' }
     ]);
@@ -57,6 +65,16 @@ function parseOptionalId(value, field) {
   return id;
 }
 
+// Optional ?from=&to= pair; 'to' must not be before 'from'
+function parseDateRange(query) {
+  const from = parseDate(query.from, 'from');
+  const to = parseDate(query.to, 'to');
+  if (from && to && from > to) {
+    throw new AppError(400, 'Validation failed.', [{ field: 'to', message: "'to' must not be before 'from'." }]);
+  }
+  return { from, to };
+}
+
 // Mandatory reason for reject / abort: 5–200 characters (fits the 255-char log note)
 function parseReason(body) {
   const reason = cleanText(body && body.reason);
@@ -72,7 +90,9 @@ module.exports = {
   parseRequestId,
   parsePaging,
   parseStatusList,
+  isRealDate,
   parseDate,
+  parseDateRange,
   parseOptionalId,
   parseReason
 };

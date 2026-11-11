@@ -140,6 +140,24 @@ test('GET /mine lists only my requests, newest first, with paging and status fil
   assert.equal(r.status, 400);
 });
 
+test('GET /mine filters by category and date range (FR-12)', async () => {
+  let r = await api.call('GET', '/pickup-requests/mine?category_id=2', { cookie: tanvir });
+  assert.equal(r.status, 200);
+  assert.ok(r.body.data.total >= 1);
+  assert.ok(r.body.data.requests.every((x) => x.category_id === 2));
+
+  // Seed request 1 was created on 2026-11-10, request 2 on 2026-11-11
+  r = await api.call('GET', '/pickup-requests/mine?from=2026-11-10&to=2026-11-10', { cookie: tanvir });
+  assert.deepEqual(r.body.data.requests.map((x) => x.request_id), [1]);
+
+  r = await api.call('GET', '/pickup-requests/mine?from=2026-02-31', { cookie: tanvir });
+  assert.equal(r.status, 400);
+  r = await api.call('GET', '/pickup-requests/mine?from=2026-11-12&to=2026-11-10', { cookie: tanvir });
+  assert.equal(r.status, 400);
+  r = await api.call('GET', '/pickup-requests/mine?category_id=abc', { cookie: tanvir });
+  assert.equal(r.status, 400);
+});
+
 test('details of the completed seed request show points and full timeline', async () => {
   const r = await api.call('GET', '/pickup-requests/1', { cookie: tanvir });
   assert.equal(r.status, 200);
