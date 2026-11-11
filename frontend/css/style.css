@@ -405,6 +405,66 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .status-approved  { background: #dbeafe; color: #1e40af; }
 .status-paid      { background: var(--green-100); color: var(--green-900); }
 
+/* ---------- Lists (latest requests, notifications) ---------- */
+
+.list { list-style: none; margin: 0; padding: 0; }
+.list-item {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.list-item:last-child { border-bottom: 0; }
+.list-item .main { flex: 1 1 220px; min-width: 0; }
+.list-item .title { font-weight: 600; }
+.list-item .meta { color: var(--muted); font-size: 0.85rem; }
+a.list-item { color: inherit; text-decoration: none; }
+a.list-item:hover .title { color: var(--green-700); }
+
+.notif {
+  border-left: 4px solid transparent;
+  padding-left: 0.75rem;
+}
+.notif.unread {
+  border-left-color: var(--green-600);
+  background: var(--green-50);
+}
+.notif.unread .title::after {
+  content: "New";
+  margin-left: 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--green-600);
+  border-radius: 999px;
+  padding: 0.05rem 0.45rem;
+  vertical-align: 2px;
+}
+
+.cta-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: var(--green-50);
+  border-color: #bbf7d0;
+}
+
+.tabs { display: flex; gap: 0.25rem; flex-wrap: wrap; }
+.tab {
+  font: inherit;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  cursor: pointer;
+}
+.tab[aria-selected="true"] { background: var(--green-700); border-color: var(--green-700); color: #fff; }
+
 /* ---------- Loading ---------- */
 
 .loading { color: var(--muted); padding: 1rem 0; }

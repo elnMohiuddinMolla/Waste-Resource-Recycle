@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Notifications — WRR</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/user-notifications.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Notifications</h1>
+      <button type="button" class="btn btn-secondary btn-small" id="mark-all" disabled>Mark all as read</button>
+    </div>
+
+    <div class="tabs mb-2" role="tablist" aria-label="Show">
+      <button type="button" class="tab" role="tab" aria-selected="true" data-filter="all">All</button>
+      <button type="button" class="tab" role="tab" aria-selected="false" data-filter="unread">Unread</button>
+    </div>
+
+    <section class="card">
+      <p class="muted small" id="summary"></p>
+      <div id="list"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

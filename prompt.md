@@ -56,7 +56,7 @@ The prompts work in two situations:
 **Phase C — Frontend** (plain HTML/CSS/JS, served by Express)
 - [x] C1 — Shared frontend core (styles, api.js, auth guard, layout, UI helpers)
 - [x] C2 — Public pages: landing, login, register
-- [ ] C3 — User: dashboard + notifications page
+- [x] C3 — User: dashboard + notifications page
 - [ ] C4 — User: new pickup request
 - [ ] C5 — User: my requests, details timeline, cancel
 - [ ] C6 — User: points history + cash redemption
@@ -602,7 +602,7 @@ Done when: I can register a new user, log in as each seed account, and see a fie
 each wrong input.
 ```
 
-### C3 — User: dashboard + notifications  `[ ]`
+### C3 — User: dashboard + notifications  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.1 steps 2, 6, FR-14.

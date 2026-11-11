@@ -71,9 +71,9 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 - Models: `statusLog.model.insert(connection, ...)` (always inside the transaction), `pickup.model.findByIdForUpdate` (row lock), `ledger.model.insertEarn` / `insertRedemptionRow` / `insertAdjust` / `getBalance(userId, connection)`, `collection.model.adjustmentFor` (ADJUST = target − points posted, in SQL), `rule.model.findActive` / `deactivateAll` (locks all rules first) / `insert`.
 - Points and money are computed in SQL with `ROUND(..., 2)`. A job or request that is not yours returns 404.
 
-**Frontend built** (C1–C2): shared `css/style.css`, `js/api.js`, `js/ui.js`, `js/auth.js`, `js/notifications.js` (see architecture.md §2.1); `index.html`, `login.html`, `register.html`; a basic dashboard per role (`user/`, `collector/`, `admin/` `dashboard.html`, shared `js/pages/dashboard-shell.js`). Links to pages from later steps return 404 until those steps are done.
+**Frontend built** (C1–C3): shared `css/style.css`, `js/api.js`, `js/ui.js`, `js/auth.js`, `js/notifications.js` (see architecture.md §2.1); `index.html`, `login.html`, `register.html`; a basic dashboard per role (`user/`, `collector/`, `admin/` `dashboard.html`, shared `js/pages/dashboard-shell.js`); the user dashboard has live stats (balance, active and completed requests, unread) and the latest 5 requests; `user/notifications.html` (all/unread, mark one or all as read, links to the request or redemption). Links to pages from later steps return 404 until those steps are done.
 
-Not built yet: rest of `frontend/` (C3–C14), testing and lab-report docs (D1–D3).
+Not built yet: rest of `frontend/` (C4–C14), testing and lab-report docs (D1–D3).
 
 **Tests:** `npm test` = unit tests (no database). `npm run test:api` = API tests; they rebuild a separate database `wrr_test` (override with `TEST_DB_NAME`) from `database/*.sql` and refuse to run on `wrr_db`. Add tests for each new module.
 
