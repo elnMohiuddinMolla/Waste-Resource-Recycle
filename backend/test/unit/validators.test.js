@@ -33,6 +33,21 @@ test('positive amounts are rounded to 2 decimals', () => {
   assert.equal(v.toPositiveAmount(100000000), null); // too big for DECIMAL(10,2)
 });
 
+test('non-negative amounts allow 0 (a category rate may be 0)', () => {
+  assert.equal(v.toNonNegativeAmount(0), 0);
+  assert.equal(v.toNonNegativeAmount('0'), 0);
+  assert.equal(v.toNonNegativeAmount('12.345'), 12.35);
+  assert.equal(v.toNonNegativeAmount(-0.01), null);
+  assert.equal(v.toNonNegativeAmount('abc'), null);
+});
+
+test('booleans must be real JSON booleans', () => {
+  assert.equal(v.toBoolean(true), true);
+  assert.equal(v.toBoolean(false), false);
+  assert.equal(v.toBoolean('true'), null);
+  assert.equal(v.toBoolean(1), null);
+});
+
 test('date-times are read as Bangladesh time', () => {
   const p = v.parseBdDateTime('2026-11-15T10:00');
   assert.equal(p.sql, '2026-11-15 10:00:00');

@@ -45,7 +45,7 @@ The prompts work in two situations:
 - [x] B12 — Redemption: active rule, submit, my redemptions
 - [x] B13 — Admin: redemption queue + approve / paid / reject
 - [x] B14 — Notifications: list, mark one, mark all
-- [ ] B15 — Admin: waste categories
+- [x] B15 — Admin: waste categories
 - [ ] B16 — Admin: zones
 - [ ] B17 — Admin: redemption rules
 - [ ] B18 — Admin: users + collector accounts
@@ -412,7 +412,7 @@ PICKUP_ASSIGNED notification after an assignment; no cookie 401.
 Done when: all tests pass and api-spec Module 7 shows request_id/redemption_id in the list.
 ```
 
-### B15 — Admin: waste categories  `[ ]`
+### B15 — Admin: waste categories  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read api-spec.md §8.6, WRR_PRD.md FR-04, FR-16 (catalog

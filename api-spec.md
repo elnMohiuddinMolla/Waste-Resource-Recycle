@@ -1090,9 +1090,22 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 
 ---
 
-#### 8.6 Category Governance (Create & Update)
+#### 8.6 Category Governance (List, Create & Update)
+All three endpoints: `Required (Role: admin)`. Categories are never deleted; deactivate them instead.
+Changing `points_per_kg` never changes past rewards: each collection record keeps the rate it was weighed with (`points_per_kg_applied`, PRD §5.2).
+
+- **Endpoint:** `GET /api/v1/admin/categories` — every category, active and inactive, ordered by id.
+  - **Response `200 OK`:**
+    ```json
+    {
+      "success": true,
+      "data": [
+        { "category_id": 1, "name": "Plastic", "points_per_kg": "10.00", "is_other": false, "is_active": true },
+        { "category_id": 5, "name": "Glass", "points_per_kg": "4.00", "is_other": false, "is_active": false }
+      ]
+    }
+    ```
 - **Endpoint:** `POST /api/v1/admin/categories`
-  - **Authentication:** `Required (Role: admin)`
   - **Request Body:**
     ```json
     {
@@ -1101,18 +1114,20 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
       "is_other": false
     }
     ```
-  - **Response `201 Created`**
-- **Endpoint:** `PUT /api/v1/admin/categories/:id`
-  - **Authentication:** `Required (Role: admin)`
+  - **Validation:** `name` 2–100 characters; `points_per_kg` a number from 0 to 99999999.99 (0 is allowed); `is_other` a JSON boolean, default `false`. New categories start active.
+  - **Response `201 Created`:** `{ "success": true, "message": "Category created.", "data": { "category_id": 7, "name": "Aluminum Cans", "points_per_kg": "18.00", "is_other": false, "is_active": true } }`
+  - **Response `409 Conflict`:** the name already exists (letter case is ignored: `plastic` = `Plastic`).
+- **Endpoint:** `PUT /api/v1/admin/categories/:id` — partial update: send any of `name`, `points_per_kg`, `is_active` (at least one).
   - **Request Body:**
     ```json
     {
-      "name": "Plastic",
       "points_per_kg": 12.00,
       "is_active": true
     }
     ```
-  - **Response `200 OK`**
+  - **Response `200 OK`:** the updated category (same shape as above).
+  - **Errors:** unknown id → 404; name used by another category → 409; bad values or empty body → 400.
+  - **Effect of `is_active: false`:** the category disappears from `GET /categories` and new pickup requests with it get 400, but requests already in progress can still be weighed and completed (requirement-validation EC-03).
 
 ---
 

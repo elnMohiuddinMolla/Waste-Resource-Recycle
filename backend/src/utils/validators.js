@@ -31,6 +31,17 @@ function toPositiveAmount(value) {
   return Math.round(n * 100) / 100;
 }
 
+// Returns a number >= 0 rounded to 2 decimals, or null (e.g. a category rate may be 0)
+function toNonNegativeAmount(value) {
+  if (value === 0 || value === '0') return 0;
+  return toPositiveAmount(value);
+}
+
+// true / false only (JSON booleans); anything else returns null
+function toBoolean(value) {
+  return typeof value === 'boolean' ? value : null;
+}
+
 // Trimmed string, or '' when the value is not a string
 function cleanText(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -63,6 +74,8 @@ module.exports = {
   isValidEmail,
   toPositiveInt,
   toPositiveAmount,
+  toNonNegativeAmount,
+  toBoolean,
   cleanText,
   parseBdDateTime
 };
