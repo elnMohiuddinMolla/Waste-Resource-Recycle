@@ -75,6 +75,9 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 | `429 Too Many Requests` | Rate Limited | More than 5 failed logins in 15 minutes from one IP. |
 | `500 Server Error` | System Exception | Uncaught runtime error (the transaction is rolled back). |
 
+### 1.5 Paging
+List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is given with each endpoint; any value above **50** is reduced to 50. A non-numeric or negative value falls back to the default.
+
 ---
 
 ## 2. API Endpoints Master Routing Matrix
@@ -366,6 +369,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
   - `other_description`: Mandatory if selected category has `is_other = TRUE`.
   - `estimated_weight_kg`: Required, must be positive (`> 0.00`).
   - `contact_phone`: Bangladeshi mobile format; the form pre-fills it from the user's profile.
+  - `pickup_address`: Required, at most 255 characters. `other_description`: at most 1000 characters.
 - **Database Transaction Steps:**
   1. Inserts into `pickup_requests` with `status = 'Pending'`.
   2. Inserts initial audit log into `request_status_logs` (`old_status = NULL`, `new_status = 'Pending'`).
@@ -608,7 +612,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
   }
   ```
 - **Business Rule & Steps:**
-  1. Validates `actual_weight_kg > 0.00`, request status is `Accepted`, and `collector_id = req.user.user_id`.
+  1. Validates `actual_weight_kg > 0.00` (2 decimals) and `remarks` (optional, at most 1000 characters); request status is `Accepted`, and `collector_id = req.user.user_id`.
   2. Queries `waste_categories.points_per_kg` for current tariff rate.
   3. Inserts into `collection_records` with snapshot `points_per_kg_applied`.
   4. Updates `pickup_requests.status = 'Collected'`.
@@ -1011,6 +1015,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
   | `reject` | `Pending` or `Approved` | `Rejected` | `admin_note` | `REFUND` ledger row (+points), `REDEMPTION_REJECTED` notification |
 
   Any other combination returns HTTP 409. Every action sets `admin_id` and `processed_at`.
+  `admin_note` is required for `reject` (5–200 characters) and optional otherwise (at most 200 characters).
 - **Request Body (Scenario A: Approve):**
   ```json
   {

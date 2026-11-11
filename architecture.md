@@ -60,11 +60,11 @@ graph TD
   - `admin/` — dashboard, users, collectors, requests, zones, categories, redemption rules, redemptions, collection records, reports.
 - **Frontend helpers** (plain ES modules in `frontend/js/`, loaded with `<script type="module" src=...>`):
   - `api.js` — `api(path, { method, body })` returns `{ ok, status, body }`; on 401 for a protected call it sends the user to `/login.html?next=<this page>`. `query(obj)` builds a query string.
-  - `ui.js` — `el()` element builder (text only via `textContent`), `clear`, `$`, `getParam`, `formatDateTime` / `formatDate` (shows the server's Bangladesh time as `10 Nov 2026, 02:05 pm`), `formatPoints`, `formatTaka`, `statusBadge`, `showFieldErrors` / `showApiError` / `showFormAlert` / `clearErrors`, `setLoading`, `toast`, `confirmDialog`, `loadingNode`, `emptyNode`.
+  - `ui.js` — `el()` element builder (text only via `textContent`), `clear`, `$`, `getParam`, `formatDateTime` / `formatDate` (shows the server's Bangladesh time as `10 Nov 2026, 02:05 pm`), `formatPoints`, `formatTaka`, `statusBadge`, `showFieldErrors` / `showApiError` / `showFormAlert` / `clearErrors`, `setLoading`, `toast`, `confirmDialog`, `reasonDialog` (asks for a 5–200 character reason), `formDialog` (a small form in a dialog that stays open with the server's errors), `loadingNode`, `emptyNode`.
   - `auth.js` — `requireRole(...roles)`, `currentUser`, `redirectIfLoggedIn`, `renderHeader(user)` (role menu that folds behind a button on phones, name, logout), `safeNext`, `DASHBOARDS`.
   - `notifications.js` — unread badge polling every 30 s (users and collectors), `notificationsChanged()`.
   - `pages/<page>.js` — one script per page.
-- **Page guard:** each portal page calls `GET /api/v1/auth/me` on load. If the user is not logged in, or has the wrong role, the page redirects to `login.html`. This is only for convenience; the real protection is on the server.
+- **Page guard:** each portal page calls `GET /api/v1/auth/me` on load. If the user is not logged in, the page redirects to `login.html`; with the wrong role it goes to the user's own dashboard. If the account was deactivated (`/auth/me` answers 403), the login page says "Your account has been deactivated". This is only for convenience; the real protection is on the server.
 
 ### 2.2 Application Tier (Express.js)
 The backend keeps a strict four-layer separation (NFR-07):
@@ -235,6 +235,10 @@ Waste_Resource_Recycle/
 │   ├── test/
 │   │   ├── unit/                   # no database needed (npm test)
 │   │   └── api/                    # rebuilds the wrr_test database (npm run test:api)
+│   ├── scripts/
+│   │   ├── perf-check.js           # NFR-02 timings, 50 users (npm run perf)
+│   │   ├── e2e-walkthrough.js      # full story through the API (npm run e2e)
+│   │   └── frontend-check.js       # static page checks (npm run check:frontend)
 │   ├── package.json
 │   └── .env.example
 │
@@ -247,15 +251,23 @@ Waste_Resource_Recycle/
 │   ├── admin/                      # dashboard, users, collectors, requests, zones, categories,
 │   │                               # rules, redemptions, records, reports
 │   ├── css/
+│   │   └── style.css               # one shared stylesheet (incl. A4 print rules)
 │   └── js/
 │       ├── api.js                  # fetch wrapper (same-origin cookie, 401 → login)
-│       └── ...                     # one script per page
+│       ├── ui.js                   # element builder, formatting, dialogs, toasts
+│       ├── auth.js                 # page guard, header menu, logout
+│       ├── notifications.js        # unread badge polling
+│       └── pages/                  # one script per page, e.g. admin-reports.js
 │
 ├── database/
 │   ├── schema.sql                  # 10-table DDL (same as database.md §9)
 │   └── seed.sql                    # Zones, categories, users, rule, sample data
 │
 ├── docs/
+│   ├── e2e-walkthrough.md          # D1 walkthrough and browser checklist results
+│   ├── test-cases.md               # D2 test-case table
+│   ├── er-diagram.md               # ER diagram from schema.sql
+│   ├── viva-notes.md               # viva preparation
 │   └── archive/                    # Superseded documents
 └── README.md                       # Overview and setup guide
 ```

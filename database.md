@@ -781,141 +781,130 @@ CREATE TABLE notifications (
 
 ## 10. Entity Relationship Diagram (ERD)
 
+Same diagram as [`docs/er-diagram.md`](docs/er-diagram.md), which also lists the rules the diagram cannot show. `active_key` and `earn_record_id` are generated columns (see §9).
+
 ```mermaid
 erDiagram
-    ZONES ||--o{ USERS : "contains residents & collectors"
-    ZONES ||--o{ PICKUP_REQUESTS : "serves pickup location"
-    
-    USERS ||--o{ PICKUP_REQUESTS : "submits (as User)"
-    USERS |o--o{ PICKUP_REQUESTS : "assigned to (as Collector)"
-    USERS ||--o{ REQUEST_STATUS_LOGS : "executes state change"
-    USERS ||--o{ COLLECTION_RECORDS : "records scale weight"
-    USERS ||--o{ REWARD_TRANSACTIONS : "owns point entries"
-    USERS ||--o{ CASH_REDEMPTIONS : "submits cash out"
-    USERS |o--o{ CASH_REDEMPTIONS : "processes payout (as Admin)"
-    USERS |o--o{ REDEMPTION_RULES : "updates tariff (as Admin)"
-    USERS ||--o{ NOTIFICATIONS : "receives alerts"
-
-    WASTE_CATEGORIES ||--o{ PICKUP_REQUESTS : "categorizes waste"
-
-    PICKUP_REQUESTS ||--o{ REQUEST_STATUS_LOGS : "logs history"
-    PICKUP_REQUESTS ||--o| COLLECTION_RECORDS : "produces certified receipt"
-    PICKUP_REQUESTS |o--o{ NOTIFICATIONS : "triggers job alerts"
-
-    COLLECTION_RECORDS ||--o{ REWARD_TRANSACTIONS : "generates EARN points"
-
-    REDEMPTION_RULES ||--o{ CASH_REDEMPTIONS : "applies conversion rate"
-
-    CASH_REDEMPTIONS ||--o{ REWARD_TRANSACTIONS : "deducts REDEEM or restores REFUND"
-    CASH_REDEMPTIONS |o--o{ NOTIFICATIONS : "triggers payout alerts"
+    ZONES ||--o{ USERS : "home or operating zone"
+    ZONES ||--o{ PICKUP_REQUESTS : "pickup location"
+    WASTE_CATEGORIES ||--o{ PICKUP_REQUESTS : "waste type"
+    USERS ||--o{ PICKUP_REQUESTS : "submits (user)"
+    USERS |o--o{ PICKUP_REQUESTS : "assigned to (collector)"
+    PICKUP_REQUESTS ||--o{ REQUEST_STATUS_LOGS : "history"
+    USERS ||--o{ REQUEST_STATUS_LOGS : "changed by"
+    PICKUP_REQUESTS ||--o| COLLECTION_RECORDS : "weighed as"
+    USERS ||--o{ COLLECTION_RECORDS : "weighed by (collector)"
+    USERS ||--o{ REDEMPTION_RULES : "set by (admin)"
+    REDEMPTION_RULES ||--o{ CASH_REDEMPTIONS : "rate used"
+    USERS ||--o{ CASH_REDEMPTIONS : "requests"
+    USERS |o--o{ CASH_REDEMPTIONS : "processed by (admin)"
+    USERS ||--o{ REWARD_TRANSACTIONS : "owns"
+    COLLECTION_RECORDS |o--o{ REWARD_TRANSACTIONS : "EARN / ADJUST"
+    CASH_REDEMPTIONS |o--o{ REWARD_TRANSACTIONS : "REDEEM / REFUND"
+    USERS ||--o{ NOTIFICATIONS : "receives"
+    PICKUP_REQUESTS |o--o{ NOTIFICATIONS : "about"
+    CASH_REDEMPTIONS |o--o{ NOTIFICATIONS : "about"
 
     ZONES {
         int zone_id PK
-        string name UK
-        string description
+        varchar name UK "100"
+        text description
         boolean is_active
     }
-
     USERS {
         int user_id PK
-        string full_name
-        string email UK
-        string phone
-        string password_hash
-        enum role
-        string address
-        int zone_id FK
-        enum status
+        varchar full_name "100"
+        varchar email UK "100"
+        varchar phone "20"
+        varchar password_hash "bcrypt"
+        enum role "user, collector, admin"
+        varchar address "255"
+        int zone_id FK "NULL for admin"
+        enum status "active, inactive"
         datetime created_at
     }
-
     WASTE_CATEGORIES {
         int category_id PK
-        string name UK
-        decimal points_per_kg
+        varchar name UK "100"
+        decimal points_per_kg ">= 0"
         boolean is_other
         boolean is_active
     }
-
     PICKUP_REQUESTS {
         int request_id PK
         int user_id FK
         int category_id FK
         int zone_id FK
-        int collector_id FK
-        string pickup_address
-        string contact_phone
-        string other_description
-        decimal estimated_weight_kg
+        int collector_id FK "NULL until assigned"
+        varchar pickup_address "255"
+        varchar contact_phone "20"
+        text other_description
+        decimal estimated_weight_kg "> 0"
         datetime preferred_at
-        enum status
+        enum status "7 states"
         datetime created_at
         datetime updated_at
     }
-
     REQUEST_STATUS_LOGS {
         int log_id PK
         int request_id FK
         int changed_by_id FK
-        string old_status
-        string new_status
-        string note
+        varchar old_status
+        varchar new_status
+        varchar note "reason or correction"
         datetime changed_at
     }
-
     COLLECTION_RECORDS {
         int record_id PK
-        int request_id FK,UK
+        int request_id FK,UK "one per request"
         int collector_id FK
-        decimal actual_weight_kg
-        decimal points_per_kg_applied
+        decimal actual_weight_kg "> 0"
+        decimal points_per_kg_applied "rate snapshot"
         datetime collected_at
         datetime completed_at
-        string remarks
+        text remarks
     }
-
     REDEMPTION_RULES {
         int rule_id PK
-        decimal taka_per_point
-        decimal min_points
+        decimal taka_per_point "> 0"
+        decimal min_points ">= 0"
         boolean is_active
         int updated_by FK
         datetime effective_from
+        tinyint active_key UK "generated: 1 if active"
     }
-
     CASH_REDEMPTIONS {
         int redemption_id PK
         int user_id FK
         int rule_id FK
-        decimal points_redeemed
-        decimal cash_amount
-        string payout_method
-        string payout_account
-        string payout_trx_id
-        enum status
+        decimal points_redeemed "> 0"
+        decimal cash_amount "fixed at request"
+        varchar payout_method "bKash, Nagad, Bank"
+        varchar payout_account
+        varchar payout_trx_id "set when Paid"
+        enum status "Pending, Approved, Rejected, Paid"
         int admin_id FK
-        string admin_note
+        varchar admin_note
         datetime requested_at
         datetime processed_at
     }
-
     REWARD_TRANSACTIONS {
         int transaction_id PK
         int user_id FK
-        enum txn_type
+        enum txn_type "EARN, REDEEM, REFUND, ADJUST"
         int record_id FK
         int redemption_id FK
-        decimal points
+        decimal points "signed"
         datetime created_at
+        int earn_record_id UK "generated: record_id if EARN"
     }
-
     NOTIFICATIONS {
         int notification_id PK
         int user_id FK
         int request_id FK
         int redemption_id FK
-        string type
-        string message
+        varchar type "11 types"
+        varchar message "255"
         boolean is_read
         datetime created_at
     }
