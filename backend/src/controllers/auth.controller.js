@@ -3,9 +3,7 @@
 // Contract: api-spec.md Module 1
 // ==============================================================================
 
-const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const userModel = require('../models/user.model');
 const AppError = require('../utils/AppError');
 const accountService = require('../services/account.service');
 const { parseAccountInput } = require('./accountInput');
@@ -58,16 +56,8 @@ async function login(req, res, next) {
       ]);
     }
 
-    const user = await userModel.findByEmail(email.trim().toLowerCase());
-
-    // Same message for unknown email and wrong password, so emails can't be probed
-    if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-      throw new AppError(401, 'Invalid email or password.');
-    }
-
-    if (user.status !== 'active') {
-      throw new AppError(403, 'Your account has been deactivated. Please contact support.');
-    }
+    // 401 for unknown email or wrong password (same message and same time), 403 if inactive
+    const user = await accountService.authenticate(email.trim().toLowerCase(), password);
 
     const token = jwt.sign(
       { user_id: user.user_id, role: user.role },

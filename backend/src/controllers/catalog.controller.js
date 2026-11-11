@@ -2,12 +2,11 @@
 // Waste Resource Recycle (WRR) - Public Catalog Controller (api-spec.md Module 2)
 // ==============================================================================
 
-const categoryModel = require('../models/category.model');
-const zoneModel = require('../models/zone.model');
+const catalogService = require('../services/catalog.service');
 
 async function listCategories(req, res, next) {
   try {
-    res.json({ success: true, data: await categoryModel.listActive() });
+    res.json({ success: true, data: await catalogService.listActiveCategories() });
   } catch (err) {
     next(err);
   }
@@ -15,7 +14,7 @@ async function listCategories(req, res, next) {
 
 async function listZones(req, res, next) {
   try {
-    res.json({ success: true, data: await zoneModel.listActive() });
+    res.json({ success: true, data: await catalogService.listActiveZones() });
   } catch (err) {
     next(err);
   }

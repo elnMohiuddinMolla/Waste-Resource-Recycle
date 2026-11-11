@@ -5,6 +5,17 @@
 
 const { pool } = require('../config/db');
 
+// Pass the transaction connection so the notification commits with the event;
+// without one it is written on its own (pool).
+async function insert(connection = pool, { userId, requestId, redemptionId, type, message }) {
+  const [result] = await connection.execute(
+    `INSERT INTO notifications (user_id, request_id, redemption_id, type, message, is_read)
+     VALUES (?, ?, ?, ?, ?, FALSE)`,
+    [userId, requestId, redemptionId, type, message]
+  );
+  return result.insertId;
+}
+
 // Booleans come back from MySQL/MariaDB as 0/1; convert them for the JSON API
 function toNotification(row) {
   return { ...row, is_read: Boolean(row.is_read) };
@@ -52,6 +63,7 @@ async function markAllRead(userId) {
 }
 
 module.exports = {
+  insert,
   listByUser,
   countUnread,
   markRead,

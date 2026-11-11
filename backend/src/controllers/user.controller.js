@@ -4,7 +4,6 @@
 
 const AppError = require('../utils/AppError');
 const accountService = require('../services/account.service');
-const userModel = require('../models/user.model');
 const { parseAccountInput } = require('./accountInput');
 const { parsePaging, parseOptionalId } = require('./common');
 const { toPositiveInt } = require('../utils/validators');
@@ -45,8 +44,7 @@ async function list(req, res, next) {
 async function createCollector(req, res, next) {
   try {
     const input = await parseAccountInput(req.body);
-    const created = await accountService.createAccount(input, 'collector');
-    const data = await userModel.findAdminView(created.user_id);
+    const data = await accountService.createCollector(input);
     res.status(201).json({ success: true, message: 'Collector account created.', data });
   } catch (err) {
     next(err);

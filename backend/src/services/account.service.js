@@ -10,6 +10,25 @@ const zoneModel = require('../models/zone.model');
 
 const DUPLICATE_EMAIL = 'An account with this email already exists.';
 
+// A real bcrypt hash (cost 10) that matches no password anyone uses. When the email
+// is unknown we still run one bcrypt comparison against it, so the answer takes the
+// same time as for a real account and nobody can tell which emails are registered.
+const DUMMY_HASH = '$2a$10$CwTycUXWue0Thq9StjUM0uJ8DRe9yP5jUI.7zjAWyqP/QEiz0uvHi';
+
+/**
+ * Login check (FR-01). Returns the user, or throws 401 for a wrong email or password
+ * (the same message for both) and 403 for a deactivated account.
+ */
+async function authenticate(email, password) {
+  const user = await userModel.findByEmail(email);
+  const ok = await bcrypt.compare(password, user ? user.password_hash : DUMMY_HASH);
+  if (!user || !ok) throw new AppError(401, 'Invalid email or password.');
+  if (user.status !== 'active') {
+    throw new AppError(403, 'Your account has been deactivated. Please contact support.');
+  }
+  return user;
+}
+
 /**
  * Creates an account with the given role ('user' for registration,
  * 'collector' when an admin creates one). Input was checked by parseAccountInput.
@@ -30,6 +49,12 @@ async function createAccount({ fullName, email, phone, password, address, zoneId
 }
 
 // ---------- Admin (FR-20) ----------
+
+// Admin creates a collector; returns the admin view (with zone name and open_jobs)
+async function createCollector(input) {
+  const created = await createAccount(input, 'collector');
+  return userModel.findAdminView(created.user_id);
+}
 
 async function listUsers(filters) {
   const { total, rows } = await userModel.listForAdmin({
@@ -74,7 +99,9 @@ async function setCollectorZone(userId, zoneId) {
 }
 
 module.exports = {
+  authenticate,
   createAccount,
+  createCollector,
   listUsers,
   setStatus,
   setCollectorZone

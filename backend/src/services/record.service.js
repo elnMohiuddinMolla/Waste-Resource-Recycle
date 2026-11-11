@@ -9,6 +9,7 @@ const { toCents, centsToString } = require('../utils/money');
 const collectionModel = require('../models/collection.model');
 const ledgerModel = require('../models/ledger.model');
 const statusLogModel = require('../models/statusLog.model');
+const userModel = require('../models/user.model');
 
 async function listRecords(filters) {
   const { total, rows } = await collectionModel.listForAdmin({
@@ -39,7 +40,7 @@ async function correctWeight(admin, recordId, { actualWeightKg, remarks }) {
       ]);
     }
 
-    await conn.execute('SELECT user_id FROM users WHERE user_id = ? FOR UPDATE', [record.user_id]);
+    await userModel.lockById(conn, record.user_id);
 
     const delta = await collectionModel.adjustmentFor(conn, recordId, actualWeightKg);
     const balance = await ledgerModel.getBalance(record.user_id, conn);

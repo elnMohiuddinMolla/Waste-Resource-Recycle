@@ -17,6 +17,11 @@ async function listAll() {
   return zoneModel.listAll();
 }
 
+// Used by form validation: can this zone be chosen for a new account or request?
+async function isActiveZone(zoneId) {
+  return Boolean(await zoneModel.findActiveById(zoneId));
+}
+
 async function createZone({ name, description }) {
   if (await zoneModel.findByName(name)) throw duplicateName(name);
   try {
@@ -48,6 +53,7 @@ async function updateZone(zoneId, changes) {
 
 module.exports = {
   listAll,
+  isActiveZone,
   createZone,
   updateZone
 };

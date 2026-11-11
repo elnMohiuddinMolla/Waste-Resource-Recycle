@@ -7,15 +7,21 @@ const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const { testConnection } = require('./config/db'); // also loads .env
+const { secretProblem } = require('./config/secret');
 const { notFoundHandler, errorHandler } = require('./middleware/error');
+const { securityHeaders } = require('./middleware/securityHeaders');
 
-if (!process.env.JWT_SECRET) {
-  console.error('JWT_SECRET is missing. Copy .env.example to .env and set it.');
+// Refuse to start with a missing, short or example JWT secret
+const problem = secretProblem(process.env.JWT_SECRET);
+if (problem) {
+  console.error(`${problem} Set a long random value in backend/.env (see .env.example).`);
   process.exit(1);
 }
 
 const app = express();
 
+app.disable('x-powered-by'); // don't advertise "Express" to the world
+app.use(securityHeaders);
 app.use(express.json());
 app.use(cookieParser());
 

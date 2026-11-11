@@ -51,7 +51,7 @@ The prompts work in two situations:
 - [x] B18 — Admin: users + collector accounts
 - [x] B19 — Admin: collection records + weight correction (ADJUST)
 - [x] B20 — Admin: 5 reports
-- [ ] B21 — Backend audit (every endpoint vs api-spec, security, performance)
+- [x] B21 — Backend audit (every endpoint vs api-spec, security, performance)
 
 **Phase C — Frontend** (plain HTML/CSS/JS, served by Express)
 - [ ] C1 — Shared frontend core (styles, api.js, auth guard, layout, UI helpers)
@@ -119,8 +119,10 @@ Build in backend/:
 - src/config/db.js: mysql2/promise pool, dateStrings, and SET time_zone = '+06:00' on every new connection.
 - src/utils/AppError.js (statusCode, message, errors).
 - src/middleware/error.js: JSON 404 + error handler (bad JSON → 400; 500 hides internals).
-- src/app.js: express.json, cookie-parser, routers under /api/v1, JSON 404 for unknown /api paths,
-  express.static for ../frontend, exits with a clear message if JWT_SECRET is missing,
+- src/app.js: security headers (CSP, nosniff, X-Frame-Options, Referrer-Policy; x-powered-by off),
+  express.json, cookie-parser, routers under /api/v1, JSON 404 for unknown /api paths,
+  express.static for ../frontend, exits with a clear message if JWT_SECRET is missing, shorter than
+  32 characters or the .env.example placeholder (src/config/secret.js),
   exports app and only listens when run directly.
 - test/api/helpers.js: rebuilds TEST_DB_NAME (default wrr_test, refuses wrr_db) from
   database/schema.sql + seed.sql, starts the app on a random port, call() and login() helpers.
@@ -530,7 +532,7 @@ Tests: each type returns 200 with the columns of database.md §6; seed numbers (
 unknown type 404; non-admin 403.
 ```
 
-### B21 — Backend audit  `[ ]`
+### B21 — Backend audit  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Do not add features in this step.
@@ -554,6 +556,8 @@ Report findings to me first; fix only after I agree.
 Frontend rules for every C step (also in architecture.md §2.1):
 plain HTML/CSS/JS, no framework or build step · one stylesheet `frontend/css/style.css` ·
 mobile-first, works from 360 px · every page loads `js/api.js` · user text only via `textContent` ·
+**no inline code** — the server's Content-Security-Policy blocks inline `<script>`, `onclick="..."` and `style="..."`,
+so use separate `.js`/`.css` files, `addEventListener` and CSS classes ·
 show `errors[]` next to the matching field · disable the submit button while waiting ·
 dates shown as `DD MMM YYYY, hh:mm a` in Bangladesh time · every portal page checks the role on load.
 

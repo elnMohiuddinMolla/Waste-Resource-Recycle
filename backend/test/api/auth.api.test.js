@@ -78,6 +78,26 @@ test('logout works without a valid session and still clears the cookie', async (
   assert.equal(r.status, 200);
 });
 
+test('every response carries the security headers and hides the server type', async () => {
+  const base = `http://127.0.0.1:${api.port}`;
+  for (const url of ['/api/v1/categories', '/api/v1/does-not-exist', '/']) {
+    const res = await fetch(base + url);
+    assert.match(res.headers.get('content-security-policy'), /default-src 'self'/, url);
+    assert.match(res.headers.get('content-security-policy'), /frame-ancestors 'none'/, url);
+    assert.equal(res.headers.get('x-content-type-options'), 'nosniff', url);
+    assert.equal(res.headers.get('x-frame-options'), 'DENY', url);
+    assert.equal(res.headers.get('referrer-policy'), 'same-origin', url);
+    assert.equal(res.headers.get('x-powered-by'), null, url);
+  }
+});
+
+test('unknown email and wrong password give the same 401 answer', async () => {
+  const unknown = await api.call('POST', '/auth/login', { body: { email: 'nobody@example.com', password: 'password123' } });
+  const wrong = await api.call('POST', '/auth/login', { body: { email: 'sadia@gmail.com', password: 'not-her-password' } });
+  assert.equal(unknown.status, 401);
+  assert.deepEqual(unknown.body, wrong.body);
+});
+
 test('unknown API paths return JSON 404', async () => {
   const r = await api.call('GET', '/does-not-exist');
   assert.equal(r.status, 404);

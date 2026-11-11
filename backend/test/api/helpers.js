@@ -15,7 +15,7 @@ if (TEST_DB === 'wrr_db') {
 
 // Must be set before src/config/db.js is loaded
 process.env.DB_NAME = TEST_DB;
-process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_only_secret';
+process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_only_secret_not_for_real_use_0123456789';
 process.env.NODE_ENV = 'test';
 
 const ROOT = path.join(__dirname, '..', '..', '..');
@@ -69,7 +69,7 @@ function startServer() {
     await require('../../src/config/db').pool.end();
   }
 
-  return { call, login, close };
+  return { call, login, close, port: server.address().port };
 }
 
 // A date-time string N days from now, in the "YYYY-MM-DDTHH:mm" format the form sends (BST)

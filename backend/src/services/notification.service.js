@@ -2,7 +2,6 @@
 // Waste Resource Recycle (WRR) - Notification Service
 // ==============================================================================
 
-const { pool } = require('../config/db');
 const AppError = require('../utils/AppError');
 const notificationModel = require('../models/notification.model');
 
@@ -23,26 +22,14 @@ const NOTIFICATION_TYPES = Object.freeze({
 
 /**
  * Creates an in-website notification for a user.
- * Can be executed inside an existing transaction (pass connection) or standalone.
+ * Pass the transaction's connection so it commits together with the event that
+ * caused it; without one it is written on its own.
  */
 async function createNotification({ userId, requestId = null, redemptionId = null, type, message, connection = null }) {
   if (!Object.values(NOTIFICATION_TYPES).includes(type)) {
     throw new Error(`Unknown notification type: ${type}`);
   }
-
-  const query = `
-    INSERT INTO notifications (user_id, request_id, redemption_id, type, message, is_read, created_at)
-    VALUES (?, ?, ?, ?, ?, FALSE, CURRENT_TIMESTAMP)
-  `;
-  const params = [userId, requestId, redemptionId, type, message];
-
-  if (connection) {
-    const [result] = await connection.execute(query, params);
-    return result.insertId;
-  } else {
-    const [result] = await pool.execute(query, params);
-    return result.insertId;
-  }
+  return notificationModel.insert(connection || undefined, { userId, requestId, redemptionId, type, message });
 }
 
 // ---------- Reading and marking (api-spec.md Module 7, FR-14) ----------

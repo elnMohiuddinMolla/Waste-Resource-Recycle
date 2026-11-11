@@ -38,11 +38,13 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 - **Redemptions:** `approve` Pending→Approved, `paid` Approved→Paid (needs `payout_trx_id`), `reject` Pending/Approved→Rejected (+REFUND). Lock the user row with `SELECT ... FOR UPDATE` when submitting.
 - **Notifications:** the 11 types in FR-14, all to users/collectors. Admins get queue counts on the dashboard, not notification rows.
 - **Validation:** password ≥ 8 chars; `preferred_at` strictly in the future; login limit 5 failed / 15 min.
-- **Security:** parameterized SQL only; insert user text with `textContent`; check ownership on every request.
+- **Security:** parameterized SQL only; insert user text with `textContent`; check ownership on every request. `JWT_SECRET` must be ≥ 32 characters (the server refuses the example value).
+- **Frontend and CSP:** the Content-Security-Policy blocks inline code. Use separate `.js`/`.css` files, `addEventListener` and CSS classes — never inline `<script>`, `onclick="..."` or `style="..."`.
+- **Layers:** controllers call services only; services never contain SQL; all SQL (including row locks such as `userModel.lockById`) lives in models.
 
 ## 5. Current code status
 
-**Built and tested** (`prompt.md` A1–A3, B1–B20) — all 44 endpoints of `api-spec.md` §2, matching `api-spec.md`:
+**Built, tested and audited** (`prompt.md` A1–A3, B1–B21) — all 44 endpoints of `api-spec.md` §2. `npm run perf` checks NFR-02 (latest: slowest core call ~150 ms, slowest report ~110 ms with 50 concurrent users), matching `api-spec.md`:
 
 | Area | Endpoints (prefix `/api/v1`) |
 |---|---|
@@ -69,7 +71,7 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 - Models: `statusLog.model.insert(connection, ...)` (always inside the transaction), `pickup.model.findByIdForUpdate` (row lock), `ledger.model.insertEarn` / `insertRedemptionRow` / `insertAdjust` / `getBalance(userId, connection)`, `collection.model.adjustmentFor` (ADJUST = target − points posted, in SQL), `rule.model.findActive` / `deactivateAll` (locks all rules first) / `insert`.
 - Points and money are computed in SQL with `ROUND(..., 2)`. A job or request that is not yours returns 404.
 
-Not built yet: backend audit (B21), `frontend/` (C1–C14), testing and lab-report docs (D1–D3).
+Not built yet: `frontend/` (C1–C14), testing and lab-report docs (D1–D3).
 
 **Tests:** `npm test` = unit tests (no database). `npm run test:api` = API tests; they rebuild a separate database `wrr_test` (override with `TEST_DB_NAME`) from `database/*.sql` and refuse to run on `wrr_db`. Add tests for each new module.
 

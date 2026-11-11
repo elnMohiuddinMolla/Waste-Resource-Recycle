@@ -52,6 +52,7 @@ graph TD
 - **Data fetching:** `js/api.js` wraps `fetch` with `credentials: 'same-origin'`, parses the standard JSON envelope, and redirects to `login.html` on HTTP 401.
 - **Live updates:** the notifications badge and request lists poll the API every 30 seconds (no WebSockets).
 - **XSS safety:** user-supplied text is inserted with `textContent`, never `innerHTML` (NFR-03).
+- **No inline code:** the server's Content-Security-Policy only allows scripts and styles from separate files on the same server. Pages must load `.js` and `.css` files; inline `<script>` blocks, `onclick="..."` attributes and `style="..."` attributes are blocked by the browser. Attach events with `addEventListener` and style with CSS classes.
 - **Role portals:**
   - `login.html`, `register.html` — shared authentication pages.
   - `user/` — dashboard, new request, my requests, history, redeem, notifications.
@@ -65,6 +66,8 @@ The backend keeps a strict four-layer separation (NFR-07):
 2. **Controller Layer (`controllers/`):** validates request bodies and parameters, calls a service, and formats the standard JSON response.
 3. **Service Layer (`services/`):** all business rules — request state machine, ledger accounting, row locks against double-spending, rate snapshots, notifications.
 4. **Model Layer (`models/`):** parameterized SQL only (`mysql2/promise`, `?` placeholders).
+
+Each layer only calls the one below it: controllers never touch models or the database, and services never contain SQL. Row locks (e.g. `userModel.lockById`) are model functions too.
 
 ### 2.3 Data Tier (XAMPP)
 - **DBMS:** XAMPP ships **MariaDB 10.4** (shown as "MySQL" in the XAMPP Control Panel). The schema also runs on MySQL 8.0+.
@@ -153,6 +156,9 @@ sequenceDiagram
 - `middleware/role.js` exposes `requireRole('admin')`, `requireRole('collector')`, etc.
 - Services check ownership: a user can only touch their own requests (`WHERE user_id = ?`), a collector only requests assigned to them (`WHERE collector_id = ?`).
 - `SameSite=Lax` blocks the cookie on cross-site form posts, which covers CSRF for this project.
+- `config/secret.js`: the server refuses to start with a `JWT_SECRET` that is missing, shorter than 32 characters, or the `.env.example` placeholder — a known secret would let anyone sign an admin token.
+- `middleware/securityHeaders.js`: Content-Security-Policy (same-origin scripts/styles only, no framing), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: same-origin`; `X-Powered-By` is disabled. No extra package is needed.
+- Login compares the password against a dummy bcrypt hash when the email is unknown, so the response time does not reveal which emails are registered.
 
 ---
 
@@ -198,11 +204,13 @@ Waste_Resource_Recycle/
 ├── backend/                        # Express.js server (API + static files)
 │   ├── src/
 │   │   ├── config/
-│   │   │   └── db.js               # mysql2 connection pool (XAMPP localhost)
+│   │   │   ├── db.js               # mysql2 connection pool (XAMPP localhost)
+│   │   │   └── secret.js           # refuses weak or example JWT secrets
 │   │   ├── middleware/
 │   │   │   ├── auth.js             # Reads JWT from cookie, re-checks account status
 │   │   │   ├── role.js             # requireRole(...) guards
 │   │   │   ├── rateLimiter.js      # Login limiter (5 failed / 15 min)
+│   │   │   ├── securityHeaders.js  # CSP, nosniff, X-Frame-Options, Referrer-Policy
 │   │   │   └── error.js            # 404 + central error handler
 │   │   ├── routes/
 │   │   │   ├── auth.routes.js

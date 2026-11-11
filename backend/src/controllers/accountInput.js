@@ -5,7 +5,7 @@
 // ==============================================================================
 
 const AppError = require('../utils/AppError');
-const zoneModel = require('../models/zone.model');
+const zoneService = require('../services/zone.service');
 const { isValidEmail, isValidPhone, toPositiveInt, cleanText } = require('../utils/validators');
 
 /**
@@ -38,7 +38,7 @@ async function parseAccountInput(body) {
   if (address && address.length > 255) {
     errors.push({ field: 'address', message: 'Address must be at most 255 characters.' });
   }
-  if (!zoneId || !(await zoneModel.findActiveById(zoneId))) {
+  if (!zoneId || !(await zoneService.isActiveZone(zoneId))) {
     errors.push({ field: 'zone_id', message: 'Select an active zone.' });
   }
 

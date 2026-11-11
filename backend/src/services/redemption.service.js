@@ -10,6 +10,7 @@ const { toCents } = require('../utils/money');
 const ledgerModel = require('../models/ledger.model');
 const ruleModel = require('../models/rule.model');
 const redemptionModel = require('../models/redemption.model');
+const userModel = require('../models/user.model');
 const { nextStatus } = require('./redemptionStateMachine');
 const { createNotification, NOTIFICATION_TYPES } = require('./notification.service');
 
@@ -27,7 +28,7 @@ async function getActiveRule() {
  */
 async function submitRedemption(user, { points, payoutMethod, payoutAccount }) {
   return withTransaction(async (conn) => {
-    await conn.execute('SELECT user_id FROM users WHERE user_id = ? FOR UPDATE', [user.user_id]);
+    await userModel.lockById(conn, user.user_id);
 
     const rule = await ruleModel.findActive(conn);
     if (!rule) {

@@ -33,6 +33,15 @@ async function createUser({ fullName, email, phone, passwordHash, role = 'user',
   return result.insertId;
 }
 
+/**
+ * Locks the user's row until the transaction ends. Every change to a user's points
+ * that depends on their balance (redemption, weight correction) takes this lock
+ * first, so two such changes for the same user run one after another.
+ */
+async function lockById(connection, userId) {
+  await connection.execute('SELECT user_id FROM users WHERE user_id = ? FOR UPDATE', [userId]);
+}
+
 // An account that can receive assignments: role collector and status active
 async function findActiveCollector(connection, userId) {
   const [rows] = await connection.execute(
@@ -95,6 +104,7 @@ module.exports = {
   findByEmail,
   findById,
   createUser,
+  lockById,
   findActiveCollector,
   listForAdmin,
   findAdminView,

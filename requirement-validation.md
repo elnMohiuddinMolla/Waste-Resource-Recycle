@@ -104,6 +104,9 @@ try {
 | **IDOR** | Changing IDs in URLs | Ownership checks: `WHERE request_id = ? AND user_id = ?` for users, `WHERE collector_id = ?` for collectors. |
 | **Brute-force login** | `/api/v1/auth/login` | `express-rate-limit`: 5 failed attempts per 15 minutes per IP. |
 | **Password leak** | Database dump | bcrypt (cost 10); `password_hash` never returned by any endpoint. |
+| **Weak JWT secret** | Copying the `.env.example` placeholder | The server refuses to start with a secret shorter than 32 characters or the example value (`config/secret.js`). |
+| **Clickjacking / injected scripts** | Pages framed by another site; script text slipped into a page | Content-Security-Policy (same-origin scripts and styles, `frame-ancestors 'none'`), `X-Frame-Options: DENY`, `nosniff`. |
+| **Account enumeration** | Comparing login replies for unknown vs. known emails | Same 401 message, and a dummy bcrypt comparison so the response time is the same. |
 | **JWT tampering** | Changing `role` in the token | HMAC SHA-256 signature with a server-only `JWT_SECRET`; role and status are re-read from the database on each request. |
 
 ---
