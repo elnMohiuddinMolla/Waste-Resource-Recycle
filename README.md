@@ -15,8 +15,8 @@ A web platform that connects households with local waste collectors for recyclab
 | Requirements & design (PRD, API spec, database, architecture, DFD) | Done |
 | Database schema + seed data | Done |
 | Backend REST API — all 44 endpoints | Done, tested and audited |
-| Frontend (User, Collector, Admin portals) | Next |
-| End-to-end testing & lab report | After the frontend |
+| Frontend (User, Collector, Admin portals) | Done |
+| End-to-end testing & lab report | Next |
 
 Progress is tracked step by step in [`prompt.md`](prompt.md).
 
@@ -76,7 +76,7 @@ WRR server running at http://localhost:5000
 Successfully connected to database: wrr_db
 ```
 
-> `http://localhost:5000/` returns a JSON 404 until the frontend is built. The API lives under `/api/v1`.
+> Open `http://localhost:5000/` for the website. The API lives under `/api/v1`.
 
 ## Trying the API
 
@@ -139,7 +139,7 @@ Waste_Resource_Recycle/
 │   ├── scripts/           perf-check.js
 │   └── .env.example
 ├── database/              schema.sql, seed.sql
-├── frontend/              (next phase)
+├── frontend/              HTML pages per role, css/style.css, js/ (api, ui, auth, notifications, pages/)
 └── docs/archive/          superseded documents
 ```
 

@@ -67,7 +67,7 @@ The prompts work in two situations:
 - [x] C11 — Admin: redemptions
 - [x] C12 — Admin: users, collectors, zones, categories, rules
 - [x] C13 — Admin: collection records + weight correction
-- [ ] C14 — Admin: reports (print + CSV export)
+- [x] C14 — Admin: reports (print + CSV export)
 
 **Phase D — Testing & lab report**
 - [ ] D1 — End-to-end walkthrough + NFR checks
@@ -764,7 +764,7 @@ Done when: a correction updates the table and the request timeline shows "Weight
 to Y kg".
 ```
 
-### C14 — Admin: reports  `[ ]`
+### C14 — Admin: reports  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md FR-17, api-spec.md §8.10, database.md §6.

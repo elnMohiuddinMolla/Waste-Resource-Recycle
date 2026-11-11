@@ -592,10 +592,24 @@ a.list-item.selected { background: var(--green-50); box-shadow: inset 4px 0 0 va
 
 .empty { text-align: center; color: var(--muted); padding: 1.5rem 0.5rem; }
 
+/* ---------- Reports (C14) ---------- */
+
+tr.total-row td { font-weight: 700; background: #f9fafb; border-top: 2px solid var(--border); }
+.print-only { display: none; }
+.report-head h2 { margin-bottom: 0.25rem; }
+
 /* ---------- Print (reports, C14) ---------- */
 
 @media print {
+  @page { size: A4; margin: 15mm; }
   .site-header, .site-footer, .no-print, .toast-area, .btn { display: none !important; }
-  body { background: #fff; }
+  .print-only { display: block; }
+  body { background: #fff; font-size: 11pt; }
+  main.container { max-width: none; padding: 0; }
   .card { box-shadow: none; border: 0; padding: 0; }
+  .table-wrap { overflow: visible; }
+  table { font-size: 10pt; }
+  th { background: #eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  tr { break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
 }

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reports — WRR admin</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/admin-reports.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <main class="container">
+    <div class="page-title no-print">
+      <h1>Reports</h1>
+      <div class="row">
+        <button type="button" class="btn btn-secondary btn-small" id="print" disabled>Print</button>
+        <button type="button" class="btn btn-secondary btn-small" id="csv" disabled>Export CSV</button>
+      </div>
+    </div>
+
+    <section class="card mb-2 no-print">
+      <form id="filters" class="filters" novalidate>
+        <div class="field">
+          <label for="type">Report</label>
+          <select id="type" name="type">
+            <option value="weight-by-category">1. Weight collected by zone and category</option>
+            <option value="request-volume-by-status">2. Requests by status</option>
+            <option value="collector-performance">3. Collector performance</option>
+            <option value="point-liability">4. Points issued, redeemed and outstanding</option>
+            <option value="redemption-summary">5. Cash redemptions by status</option>
+          </select>
+        </div>
+        <div class="field" data-filter="dates">
+          <label for="from">From</label>
+          <input id="from" name="from" type="date">
+        </div>
+        <div class="field" data-filter="dates">
+          <label for="to">To</label>
+          <input id="to" name="to" type="date">
+        </div>
+        <div class="field" data-filter="zone_id">
+          <label for="zone_id">Zone</label>
+          <select id="zone_id" name="zone_id">
+            <option value="">All zones</option>
+          </select>
+        </div>
+        <div class="field" data-filter="category_id">
+          <label for="category_id">Category</label>
+          <select id="category_id" name="category_id">
+            <option value="">All categories</option>
+          </select>
+        </div>
+        <div class="actions">
+          <button type="submit" class="btn btn-primary btn-small">Run report</button>
+        </div>
+        <div class="form-alert alert" role="alert"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <div class="print-only">
+        <strong>Waste Resource Recycle (WRR)</strong> — management report
+      </div>
+      <div class="report-head">
+        <h2 id="report-title">Report</h2>
+        <p class="muted small" id="report-filters"></p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead id="head"></thead>
+          <tbody id="body"></tbody>
+        </table>
+      </div>
+      <p class="muted small mt-1 mb-0" id="report-note"></p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>
