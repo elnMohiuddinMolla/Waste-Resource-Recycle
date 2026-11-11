@@ -344,6 +344,7 @@ html { scroll-behavior: smooth; }
 /* Faint bottle and can silhouettes behind the hero text (decoration only) */
 .lp-hero-deco { position: absolute; inset: 0; width: 100%; height: 100%; fill: rgba(255, 255, 255, 0.06); pointer-events: none; }
 .lp-hero-deco .deco-lime { fill: rgba(163, 230, 53, 0.09); }
+.lp-hero-deco .deco-mark { color: rgba(255, 255, 255, 0.05); }
 .lp-hero > .container { position: relative; z-index: 1; }
 .lp-hero-grid { display: grid; gap: 2.5rem; align-items: center; }
 .lp-eyebrow {
@@ -371,38 +372,9 @@ html { scroll-behavior: smooth; }
 }
 
 /* Hero illustration: a phone card with floating notes */
-.lp-hero-visual { position: relative; max-width: 360px; margin: 0 auto; width: 100%; padding: 1.5rem 0; }
-.lp-phone {
-  background: #fff;
-  color: var(--text);
-  border-radius: 24px;
-  padding: 1.1rem;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35), 0 0 0 8px rgba(255, 255, 255, 0.08);
-}
-.lp-phone-top { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: var(--muted); margin-bottom: 0.75rem; }
-.lp-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-600); }
-.lp-balance {
-  display: flex; flex-direction: column;
-  padding: 1rem;
-  border-radius: 16px;
-  color: #fff;
-  background: linear-gradient(135deg, #15803d, #0b2e22);
-  margin-bottom: 0.9rem;
-}
-.lp-balance-label { font-size: 0.8rem; opacity: 0.8; }
-.lp-balance-value { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; }
-.lp-balance-value small { font-size: 0.9rem; font-weight: 600; opacity: 0.8; }
-.lp-balance-cash { font-size: 0.9rem; color: var(--lp-accent); font-weight: 600; }
-.lp-feed { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.55rem; }
-.lp-feed li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.65rem; padding: 0.55rem; border-radius: 12px; background: #f8faf8; }
-.lp-feed strong { display: block; font-size: 0.88rem; }
-.lp-feed small { display: block; font-size: 0.75rem; color: var(--muted); }
-.lp-feed-icon { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-size: 1.05rem; font-weight: 800; }
-.lp-i-plastic { background: #e0f2fe; }
-.lp-i-ewaste { background: #fef3c7; }
-.lp-i-cash { background: #fce7f3; color: #be185d; }
-.lp-plus { color: var(--green-700); font-size: 0.95rem; }
-.lp-minus { color: #be185d; font-size: 0.95rem; }
+.lp-hero-visual { position: relative; max-width: 440px; margin: 0 auto; width: 100%; padding: 1.5rem 0; }
+.lp-hero-art { display: block; width: 100%; height: auto; filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.25)); }
+.lp-hero-art text { font: 800 12px var(--font); letter-spacing: 0.1em; fill: #fff; }
 
 .lp-float {
   position: absolute;
@@ -419,9 +391,9 @@ html { scroll-behavior: smooth; }
 .lp-float strong { display: block; font-size: 0.85rem; }
 .lp-float small { display: block; font-size: 0.75rem; color: var(--muted); }
 .lp-float-icon { font-size: 1.3rem; }
-/* Beside the phone, so they never cover its text */
-.lp-float-a { top: 34%; left: -13rem; }
-.lp-float-b { bottom: -0.5rem; right: -7.5rem; animation-delay: -2s; }
+/* Over the corners of the bins picture: away from the headline and inside the screen */
+.lp-float-a { top: 0; left: -1.5rem; }
+.lp-float-b { bottom: 0; right: -0.5rem; animation-delay: -2s; }
 @media (min-width: 1200px) { .lp-float { display: flex; } }
 @keyframes lp-bob { 50% { transform: translateY(-8px); } }
 @media (prefers-reduced-motion: reduce) { .lp-float { animation: none; } html { scroll-behavior: auto; } }
