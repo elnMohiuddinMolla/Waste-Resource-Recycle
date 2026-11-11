@@ -77,7 +77,9 @@ If two files disagree, `WRR_PRD.md` wins for requirements and `api-spec.md` wins
 
 D1 done: browser checklist run in Chrome (18/18; two layout/UX fixes). Firefox/Edge and CSV-in-Excel are left to check by hand.
 
-Not done yet: test-case table (D2), doc sync and viva notes (D3), testing and lab-report docs (D1–D3).
+D2 done: `docs/test-cases.md` (50 test cases covering FR-01–FR-21, EC-01–EC-06 and NFRs; 47 pass, 3 not run).
+
+Not done yet: doc sync and viva notes (D3), testing and lab-report docs (D1–D3).
 
 **Tests:** `npm test` = unit tests (no database). `npm run test:api` = API tests; they rebuild a separate database `wrr_test` (override with `TEST_DB_NAME`) from `database/*.sql` and refuse to run on `wrr_db`. Add tests for each new module.
 
