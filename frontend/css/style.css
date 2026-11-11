@@ -404,6 +404,13 @@ td.num, th.num { text-align: right; white-space: nowrap; }
 .status-cancelled { background: #f3f4f6; color: #4b5563; }
 .status-approved  { background: #dbeafe; color: #1e40af; }
 .status-paid      { background: var(--green-100); color: var(--green-900); }
+.status-active    { background: var(--green-100); color: var(--green-900); }
+.status-inactive  { background: #f3f4f6; color: #4b5563; }
+
+.field label.row { font-weight: 600; gap: 0.5rem; }
+.field label.row input[type="checkbox"] { width: auto; }
+tr.is-inactive td { color: var(--muted); }
+td .row { flex-wrap: nowrap; }
 
 /* ---------- Lists (latest requests, notifications) ---------- */
 

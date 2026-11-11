@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Users — WRR admin</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/admin-users.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Users</h1>
+      <a class="btn btn-secondary btn-small" href="/admin/collectors.html">Collectors</a>
+    </div>
+
+    <section class="card mb-2">
+      <form id="filters" class="filters" novalidate>
+        <div class="field">
+          <label for="role">Role</label>
+          <select id="role" name="role">
+            <option value="">All</option>
+            <option value="user">General user</option>
+            <option value="collector">Collector</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <option value="">All</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="zone_id">Zone</label>
+          <select id="zone_id" name="zone_id">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="field"></div>
+        <div class="actions">
+          <button type="submit" class="btn btn-primary btn-small">Apply</button>
+          <button type="button" class="btn btn-secondary btn-small" id="reset">Reset</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card">
+      <p class="muted small" id="count"></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Contact</th><th>Role</th><th>Zone</th><th class="num">Open jobs</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="pager hidden" id="pager">
+        <button type="button" class="btn btn-secondary btn-small" id="prev">Previous</button>
+        <span class="muted small" id="page-info"></span>
+        <button type="button" class="btn btn-secondary btn-small" id="next">Next</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Waste categories — WRR admin</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/admin-categories.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Waste categories</h1>
+      <button type="button" class="btn btn-primary" id="add">Add category</button>
+    </div>
+
+    <section class="card">
+      <p class="muted small">Changing a rate only affects waste weighed from now on — past collections keep the rate they were weighed with. Deactivating hides the category from new requests; jobs in progress still finish.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Category</th><th class="num">Points per kg</th><th>Type</th><th>Status</th><th></th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

@@ -225,6 +225,96 @@ export function reasonDialog({ title, message, label = 'Reason', confirmText = '
   });
 }
 
+/**
+ * A small form in a dialog (edit a zone, a category, correct a weight...).
+ *   fields: [{ name, label, type: 'text'|'number'|'textarea'|'select'|'checkbox', value, options, hint, attrs }]
+ *   onSubmit(values) must return the api() response. On failure the server's errors are
+ *   shown inside the dialog and it stays open; on success it closes and resolves the response.
+ *   Cancelling resolves null.
+ */
+export function formDialog({ title, intro, fields, confirmText = 'Save', danger = false, onSubmit, onChange }) {
+  return new Promise((resolve) => {
+    const close = (answer) => { backdrop.remove(); document.removeEventListener('keydown', onKey); resolve(answer); };
+    const onKey = (e) => { if (e.key === 'Escape') close(null); };
+
+    const inputs = {};
+    const fieldNodes = fields.map((f) => {
+      const id = `dlg-${f.name}`;
+      let input;
+      if (f.type === 'textarea') {
+        input = el('textarea', { attrs: { id, name: f.name, ...f.attrs } });
+        input.value = f.value ?? '';
+      } else if (f.type === 'select') {
+        input = el('select', { attrs: { id, name: f.name, ...f.attrs } },
+          f.options.map(([value, text]) => el('option', { text, attrs: { value } })));
+        input.value = f.value ?? '';
+      } else if (f.type === 'checkbox') {
+        input = el('input', { attrs: { id, name: f.name, type: 'checkbox', ...f.attrs } });
+        input.checked = Boolean(f.value);
+      } else {
+        input = el('input', { attrs: { id, name: f.name, type: f.type || 'text', ...f.attrs } });
+        input.value = f.value ?? '';
+      }
+      inputs[f.name] = input;
+      if (onChange) input.addEventListener('input', () => onChange(readValues(), extra));
+      if (f.type === 'checkbox') {
+        return el('div', { className: 'field' }, [
+          el('label', { className: 'row', attrs: { for: id } }, [input, f.label]),
+          f.hint ? el('div', { className: 'hint', text: f.hint }) : null,
+          el('div', { className: 'field-error' })
+        ]);
+      }
+      return el('div', { className: 'field' }, [
+        el('label', { text: f.label, attrs: { for: id } }),
+        input,
+        f.hint ? el('div', { className: 'hint', text: f.hint }) : null,
+        el('div', { className: 'field-error' })
+      ]);
+    });
+
+    function readValues() {
+      const v = {};
+      for (const f of fields) {
+        const input = inputs[f.name];
+        v[f.name] = f.type === 'checkbox' ? input.checked : input.value.trim();
+      }
+      return v;
+    }
+
+    const extra = el('div', { className: 'preview hidden' }); // optional live note (onChange)
+    const submit = el('button', { text: confirmText, className: `btn ${danger ? 'btn-danger' : 'btn-primary'}`, attrs: { type: 'submit' } });
+    const form = el('form', { className: 'form', attrs: { novalidate: true } }, [
+      el('div', { className: 'form-alert alert', attrs: { role: 'alert' } }),
+      intro ? el('p', { text: intro, className: 'mb-0' }) : null,
+      ...fieldNodes,
+      extra,
+      el('div', { className: 'modal-actions' }, [
+        el('button', { text: 'Cancel', className: 'btn btn-secondary', attrs: { type: 'button' }, on: { click: () => close(null) } }),
+        submit
+      ])
+    ]);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearErrors(form);
+      setLoading(submit, true, 'Saving…');
+      const response = await onSubmit(readValues());
+      setLoading(submit, false);
+      if (response && response.ok) return close(response);
+      if (response) showApiError(form, response);
+    });
+
+    const backdrop = el('div', { className: 'modal-backdrop', on: { click: (e) => { if (e.target === backdrop) close(null); } } }, [
+      el('div', { className: 'modal', attrs: { role: 'dialog', 'aria-modal': 'true' } }, [el('h2', { text: title }), form])
+    ]);
+    document.addEventListener('keydown', onKey);
+    document.body.append(backdrop);
+    if (onChange) onChange(readValues(), extra);
+    const first = form.querySelector('input, select, textarea');
+    if (first) first.focus();
+  });
+}
+
 // Loading and empty placeholders for lists
 export function loadingNode(text = 'Loading…') {
   return el('div', { text, className: 'loading' });

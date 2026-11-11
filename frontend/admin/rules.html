@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redemption rules — WRR admin</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/admin-rules.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Redemption rules</h1>
+    </div>
+
+    <div class="grid grid-2">
+      <section class="card">
+        <h2>Current rule</h2>
+        <div id="active"></div>
+      </section>
+
+      <section class="card">
+        <h2>Set a new rule</h2>
+        <p class="muted small">The new rule applies to redemptions made from now on. Pending redemptions keep the amount they were created with.</p>
+        <form id="rule-form" class="form" novalidate>
+          <div class="form-alert alert" role="alert"></div>
+          <div class="form-row">
+            <div class="field">
+              <label for="taka_per_point">Taka per point</label>
+              <input id="taka_per_point" name="taka_per_point" type="number" inputmode="decimal" min="0.0001" step="0.0001" required>
+              <div class="hint">Up to 4 decimals, e.g. 0.5</div>
+              <div class="field-error"></div>
+            </div>
+            <div class="field">
+              <label for="min_points">Minimum points to redeem</label>
+              <input id="min_points" name="min_points" type="number" inputmode="decimal" min="0" step="0.01" required>
+              <div class="field-error"></div>
+            </div>
+          </div>
+          <div class="preview"><span class="muted small" id="example">Enter a rate to see an example.</span></div>
+          <button type="submit" class="btn btn-primary">Activate new rule</button>
+        </form>
+      </section>
+    </div>
+
+    <section class="card mt-2">
+      <h2>History</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Rule</th><th class="num">Taka per point</th><th class="num">Minimum points</th><th>Set by</th><th>From</th></tr>
+          </thead>
+          <tbody id="history"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

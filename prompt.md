@@ -65,7 +65,7 @@ The prompts work in two situations:
 - [x] C9 — Admin: dashboard KPIs
 - [x] C10 — Admin: request queue + assignment
 - [x] C11 — Admin: redemptions
-- [ ] C12 — Admin: users, collectors, zones, categories, rules
+- [x] C12 — Admin: users, collectors, zones, categories, rules
 - [ ] C13 — Admin: collection records + weight correction
 - [ ] C14 — Admin: reports (print + CSV export)
 
@@ -734,7 +734,7 @@ points, BDT, method, account, requested time. Pending: Approve / Reject. Approve
 Done when: the full approve → paid and reject flows work and the user's balance reflects refunds.
 ```
 
-### C12 — Admin: governance pages  `[ ]`
+### C12 — Admin: governance pages  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.3 steps 2 and 4, FR-16, FR-19, FR-20,
