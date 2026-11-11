@@ -49,7 +49,7 @@ The prompts work in two situations:
 - [x] B16 — Admin: zones
 - [x] B17 — Admin: redemption rules
 - [x] B18 — Admin: users + collector accounts
-- [ ] B19 — Admin: collection records + weight correction (ADJUST)
+- [x] B19 — Admin: collection records + weight correction (ADJUST)
 - [ ] B20 — Admin: 5 reports
 - [ ] B21 — Backend audit (every endpoint vs api-spec, security, performance)
 
@@ -488,7 +488,7 @@ Tests: list filters; create collector can log in; duplicate 409; deactivate user
 non-admin 403.
 ```
 
-### B19 — Admin: collection records + weight correction  `[ ]`
+### B19 — Admin: collection records + weight correction  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read api-spec.md §8.5, WRR_PRD.md FR-18, §5.3, NFR-08,

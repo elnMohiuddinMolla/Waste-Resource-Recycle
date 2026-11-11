@@ -9,6 +9,7 @@ const categoryController = require('../controllers/category.controller');
 const zoneController = require('../controllers/zone.controller');
 const ruleController = require('../controllers/rule.controller');
 const userController = require('../controllers/user.controller');
+const recordController = require('../controllers/record.controller');
 const { authenticateToken } = require('../middleware/auth');
 const { requireRole } = require('../middleware/role');
 
@@ -37,5 +38,8 @@ router.get('/users', userController.list);
 router.post('/collectors', userController.createCollector);
 router.patch('/users/:id/status', userController.setStatus);
 router.patch('/users/:id/zone', userController.setZone);
+
+router.get('/collection-records', recordController.list);
+router.put('/collection-records/:id', recordController.correctWeight);
 
 module.exports = router;

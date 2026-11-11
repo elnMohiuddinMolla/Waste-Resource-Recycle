@@ -34,6 +34,15 @@ async function insertRedemptionRow(connection, { userId, redemptionId, txnType, 
   );
 }
 
+// ADJUST (signed) after an admin weight correction (FR-18)
+async function insertAdjust(connection, { userId, recordId, points }) {
+  await connection.execute(
+    `INSERT INTO reward_transactions (user_id, txn_type, record_id, points)
+     VALUES (?, 'ADJUST', ?, ?)`,
+    [userId, recordId, points]
+  );
+}
+
 // Pass the transaction connection when the balance is used for a decision
 async function getBalance(userId, connection = pool) {
   const [[row]] = await connection.execute(
@@ -71,6 +80,7 @@ async function listByUser(userId, { limit, offset }) {
 module.exports = {
   insertEarn,
   insertRedemptionRow,
+  insertAdjust,
   getBalance,
   listByUser
 };

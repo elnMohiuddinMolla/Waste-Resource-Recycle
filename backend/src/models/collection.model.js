@@ -80,9 +80,94 @@ async function listCompletedByCollector(collectorId, { from, to, categoryId, lim
   };
 }
 
+// ---------- Admin: records + weight correction (api-spec §8.5, FR-18) ----------
+
+// Points already posted for a record = its EARN row plus every ADJUST row
+const POINTS_POSTED_SQL = `(SELECT COALESCE(SUM(rt.points), 0.00) FROM reward_transactions rt
+   WHERE rt.record_id = cr.record_id AND rt.txn_type IN ('EARN', 'ADJUST'))`;
+
+async function listForAdmin({ from, to, zoneId, limit, offset }) {
+  const where = [];
+  const params = [];
+  if (from) { where.push('cr.collected_at >= ?'); params.push(from); }
+  if (to) { where.push('cr.collected_at < DATE_ADD(?, INTERVAL 1 DAY)'); params.push(to); }
+  if (zoneId) { where.push('pr.zone_id = ?'); params.push(zoneId); }
+  const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+
+  const [[{ total }]] = await pool.execute(
+    `SELECT COUNT(*) AS total
+     FROM collection_records cr
+     JOIN pickup_requests pr ON pr.request_id = cr.request_id
+     ${whereSql}`,
+    params
+  );
+
+  const [rows] = await pool.execute(
+    `SELECT cr.record_id, cr.request_id, pr.status AS request_status,
+            u.full_name AS user_name, c.full_name AS collector_name,
+            wc.name AS category_name, z.name AS zone_name,
+            cr.actual_weight_kg, cr.points_per_kg_applied,
+            ${POINTS_POSTED_SQL} AS points_posted,
+            cr.remarks, cr.collected_at, cr.completed_at
+     FROM collection_records cr
+     JOIN pickup_requests pr ON pr.request_id = cr.request_id
+     JOIN users u ON u.user_id = pr.user_id
+     JOIN users c ON c.user_id = cr.collector_id
+     JOIN waste_categories wc ON wc.category_id = pr.category_id
+     JOIN zones z ON z.zone_id = pr.zone_id
+     ${whereSql}
+     ORDER BY cr.collected_at DESC, cr.record_id DESC
+     LIMIT ${Number(limit)} OFFSET ${Number(offset)}`,
+    params
+  );
+  return { total: Number(total), rows };
+}
+
+// Locks the record and its request, and returns what a correction needs
+async function findForCorrection(connection, recordId) {
+  const [rows] = await connection.execute(
+    `SELECT cr.record_id, cr.request_id, cr.actual_weight_kg, cr.points_per_kg_applied,
+            pr.user_id, pr.status AS request_status
+     FROM collection_records cr
+     JOIN pickup_requests pr ON pr.request_id = cr.request_id
+     WHERE cr.record_id = ?
+     FOR UPDATE`,
+    [recordId]
+  );
+  return rows[0] || null;
+}
+
+/**
+ * The signed ADJUST needed so the record's total becomes ROUND(new_kg × rate, 2).
+ * Computed by the database with exact DECIMAL maths (api-spec §8.5).
+ */
+async function adjustmentFor(connection, recordId, newWeightKg) {
+  const [[row]] = await connection.execute(
+    `SELECT ROUND(? * cr.points_per_kg_applied, 2) - ${POINTS_POSTED_SQL} AS delta
+     FROM collection_records cr
+     WHERE cr.record_id = ?`,
+    [newWeightKg, recordId]
+  );
+  return row.delta; // DECIMAL string, e.g. '-35.00'
+}
+
+async function updateWeight(connection, recordId, { actualWeightKg, remarks }) {
+  // Remarks are only replaced when the admin sends new ones
+  await connection.execute(
+    `UPDATE collection_records
+     SET actual_weight_kg = ?, remarks = COALESCE(?, remarks)
+     WHERE record_id = ?`,
+    [actualWeightKg, remarks, recordId]
+  );
+}
+
 module.exports = {
   insert,
   findByRequestId,
   markCompleted,
-  listCompletedByCollector
+  listCompletedByCollector,
+  listForAdmin,
+  findForCorrection,
+  adjustmentFor,
+  updateWeight
 };

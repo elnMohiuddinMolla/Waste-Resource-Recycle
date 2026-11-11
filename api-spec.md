@@ -1049,44 +1049,61 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 
 ---
 
-#### 8.5 Scale Weight Dispute Correction (FR-18)
-- **Endpoint:** `PUT /api/v1/admin/collection-records/:id`
-- **Authentication:** `Required (Role: admin)`
-- **Request Body:**
-  ```json
-  {
-    "actual_weight_kg": 12.00,
-    "remarks": "Admin audited certified scale ticket: corrected from 15.50 kg to 12.00 kg"
-  }
-  ```
-- **Atomic Balance Guard Execution:**
-  1. Computes delta so the record's total always equals the points for the new weight
-     (works for repeated corrections and avoids double rounding):
-     $$\Delta = \text{ROUND}(\text{new\_kg} \times \text{points\_per\_kg\_applied}, 2) - \sum(\text{EARN} + \text{ADJUST points already posted for this record})$$
-     Example: $\text{ROUND}(12.00 \times 10.00, 2) - 155.00 = -35.00$. If $\Delta = 0$ no ledger row is written.
-  2. Locks user row: `SELECT user_id FROM users WHERE user_id = ? FOR UPDATE;`
-  3. Pre-checks balance (in the service; the controller turns the error into the response):
-     ```javascript
-     if (currentBalance + deltaPoints < 0) {
-       throw new AppError(422, "Weight correction denied: the user's balance would drop below 0.00.");
-     }
-     ```
-  4. Updates `collection_records.actual_weight_kg = 12.00`.
-  5. Inserts `reward_transactions` row (`txn_type = 'ADJUST'`, `points = -35.00`).
-  6. Inserts `request_status_logs` row (`old_status = new_status = 'Completed'`, `changed_by_id` = admin, `note = "Weight corrected from 15.50 kg to 12.00 kg"`).
-  *(Steps 2–6 run in one transaction. Only `Completed` records can be corrected.)*
-- **Response `200 OK`:**
-  ```json
-  {
-    "success": true,
-    "message": "Weight corrected and ledger balance adjusted successfully.",
-    "data": {
-      "record_id": 1,
-      "corrected_weight_kg": "12.00",
-      "point_adjustment": "-35.00"
+#### 8.5 Collection Records & Scale Weight Correction (FR-18)
+Both endpoints: `Required (Role: admin)`.
+
+- **Endpoint:** `GET /api/v1/admin/collection-records`
+  - **Query Parameters:** `?from=2026-11-01&to=2026-11-30&zone_id=1&page=1&limit=20` — all optional; `from`/`to` are whole days on `collected_at`. Newest first.
+  - **Response `200 OK`:**
+    ```json
+    {
+      "success": true,
+      "data": {
+        "total": 1, "page": 1, "limit": 20,
+        "records": [
+          {
+            "record_id": 1, "request_id": 1, "request_status": "Completed",
+            "user_name": "Tanvir Ahmed", "collector_name": "Rafiqul Islam",
+            "category_name": "Plastic", "zone_name": "Zone 1 - Baitul Aman",
+            "actual_weight_kg": "15.50", "points_per_kg_applied": "10.00", "points_posted": "155.00",
+            "remarks": "Clean PET bottles, verified scale",
+            "collected_at": "2026-11-10 11:00:00", "completed_at": "2026-11-10 11:05:00"
+          }
+        ]
+      }
     }
-  }
-  ```
+    ```
+    `points_posted` = the record's `EARN` row plus all its `ADJUST` rows.
+- **Endpoint:** `PUT /api/v1/admin/collection-records/:id`
+  - **Request Body:**
+    ```json
+    {
+      "actual_weight_kg": 12.00,
+      "remarks": "Admin audited certified scale ticket."
+    }
+    ```
+  - **Validation:** `actual_weight_kg` > 0 (2 decimals); `remarks` optional, ≤ 1000 characters (kept unchanged when not sent). The same weight as now → 400. Unknown id → 404. A record whose request is not `Completed` → 409.
+  - **Atomic Balance Guard (one transaction):**
+    1. Lock the record and its request (`FOR UPDATE`), then the user's row (`SELECT user_id FROM users WHERE user_id = ? FOR UPDATE`) so no redemption can run in between.
+    2. Compute the change so the record's total always equals the points for the new weight (this also works for repeated corrections and avoids double rounding):
+       $$\Delta = \text{ROUND}(\text{new\_kg} \times \text{points\_per\_kg\_applied}, 2) - \sum(\text{EARN} + \text{ADJUST points already posted for this record})$$
+       Example: $\text{ROUND}(12.00 \times 10.00, 2) - 155.00 = -35.00$.
+    3. If `current_balance + Δ < 0` → **422** `"Weight correction denied: the user's balance would drop below 0.00."` and nothing changes.
+    4. Update `collection_records.actual_weight_kg` (and `remarks` if sent).
+    5. Insert one `reward_transactions` row (`txn_type = 'ADJUST'`, `points = Δ`); skipped when Δ = 0.
+    6. Insert a `request_status_logs` row: `old_status = new_status = 'Completed'`, `changed_by_id` = admin, `note = "Weight corrected from 15.50 kg to 12.00 kg"`.
+  - **Response `200 OK`:**
+    ```json
+    {
+      "success": true,
+      "message": "Weight corrected and ledger balance adjusted successfully.",
+      "data": {
+        "record_id": 1,
+        "corrected_weight_kg": "12.00",
+        "point_adjustment": "-35.00"
+      }
+    }
+    ```
 
 ---
 
