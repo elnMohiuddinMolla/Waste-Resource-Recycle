@@ -24,9 +24,11 @@ const NAV = {
     ['Notifications', '/user/notifications.html', 'badge']
   ],
   collector: [
-    ['Dashboard', '/collector/dashboard.html', 'badge'],
+    ['Dashboard', '/collector/dashboard.html'],
     ['My Jobs', '/collector/requests.html'],
-    ['History', '/collector/records.html']
+    ['History', '/collector/records.html'],
+    // Collectors read notifications on their dashboard; the link jumps to that section
+    ['Notifications', '/collector/dashboard.html#notifications', 'badge']
   ],
   admin: [
     ['Dashboard', '/admin/dashboard.html'],
@@ -42,9 +44,11 @@ const NAV = {
   ]
 };
 
-// Icons for the admin sidebar (desktop); on phones the same links fold behind "Menu"
-const ADMIN_ICONS = {
-  Dashboard: 'home', Requests: 'list', Redemptions: 'cash', Users: 'users', Collectors: 'truck',
+// An icon for every menu link (sidebar on wide screens, "Menu" list on phones)
+const MENU_ICONS = {
+  Dashboard: 'home', 'New Request': 'plus', 'My Requests': 'list', Points: 'star', Redeem: 'cash', Notifications: 'bell',
+  'My Jobs': 'truck', History: 'history',
+  Requests: 'list', Redemptions: 'cash', Users: 'users', Collectors: 'truck',
   Zones: 'map', Categories: 'tag', Rules: 'sliders', Records: 'clipboard', Reports: 'chart'
 };
 
@@ -103,13 +107,13 @@ export function renderHeader(user) {
   if (!header) return;
   header.className = 'site-header';
   clear(header);
-  // The admin has ten menu items: on wide screens they go in a left sidebar (css: .has-sidebar)
-  document.body.classList.toggle('has-sidebar', user.role === 'admin');
+  // All three portals: on wide screens the menu is a left sidebar (css: .has-sidebar)
+  document.body.classList.add('has-sidebar');
 
   let badge = null;
   const links = (NAV[user.role] || []).map(([label, href, hasBadge]) => {
     const a = el('a', { text: label, attrs: { href } });
-    if (user.role === 'admin') a.prepend(icon(ADMIN_ICONS[label]));
+    a.prepend(icon(MENU_ICONS[label]));
     if (location.pathname === href) {
       a.classList.add('active');
       a.setAttribute('aria-current', 'page');

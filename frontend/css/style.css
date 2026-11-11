@@ -197,11 +197,11 @@ main.container { flex: 1; padding-top: 1.25rem; padding-bottom: 2rem; }
   .header-user { border-top: 0; padding: 0 0 0 0.75rem; margin: 0; }
 }
 
-/* Menu icons (admin): beside the text in the phone menu and in the sidebar */
+/* Menu icons: beside the text in the phone menu and in the sidebar */
 .site-nav a svg { width: 18px; height: 18px; flex: none; vertical-align: -4px; margin-right: 0.55rem; }
 
-/* Admin sidebar on wide screens. The header keeps only the brand; the menu becomes a
-   fixed white column on the left, with the user and Logout at its bottom. */
+/* Sidebar on wide screens (all three portals). The header keeps only the brand; the menu
+   becomes a fixed white column on the left, with the user and Logout at its bottom. */
 @media (min-width: 960px) {
   body.has-sidebar { --sidebar: 232px; padding-left: var(--sidebar); }
   .has-sidebar .site-header { margin-left: calc(-1 * var(--sidebar)); }
@@ -857,6 +857,7 @@ a.list-item.selected { background: var(--green-50); box-shadow: inset 4px 0 0 va
 /* Calm on purpose: one accent colour (green), light surfaces, colour only where it means something. */
 
 .db { padding-top: 1.25rem; padding-bottom: 2.5rem; }
+.db [id] { scroll-margin-top: 72px; } /* jump links (e.g. #notifications) clear the sticky header */
 .db [data-icon] svg, .db-tile-icon svg, .db-tile-arrow svg, .db-list-icon svg, .db-detail-icon svg, .db-empty-icon svg { width: 100%; height: 100%; }
 .btn [data-icon] { display: inline-flex; width: 17px; height: 17px; }
 
