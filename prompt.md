@@ -58,7 +58,7 @@ The prompts work in two situations:
 - [x] C2 — Public pages: landing, login, register
 - [x] C3 — User: dashboard + notifications page
 - [x] C4 — User: new pickup request
-- [ ] C5 — User: my requests, details timeline, cancel
+- [x] C5 — User: my requests, details timeline, cancel
 - [ ] C6 — User: points history + cash redemption
 - [ ] C7 — Collector: dashboard + job actions (accept / reject / abort)
 - [ ] C8 — Collector: record weight, complete, history
@@ -632,7 +632,7 @@ Done when: a request appears in "My requests" as Pending, and a past date shows 
 message under the date field.
 ```
 
-### C5 — User: my requests, details, cancel  `[ ]`
+### C5 — User: my requests, details, cancel  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.1 steps 4–5, FR-05, FR-06,

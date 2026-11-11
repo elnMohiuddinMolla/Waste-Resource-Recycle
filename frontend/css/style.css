@@ -465,6 +465,52 @@ a.list-item:hover .title { color: var(--green-700); }
 }
 .tab[aria-selected="true"] { background: var(--green-700); border-color: var(--green-700); color: #fff; }
 
+/* ---------- Filters & paging ---------- */
+
+.filters { display: grid; gap: 0.75rem; grid-template-columns: 1fr 1fr; align-items: end; }
+.filters .field { gap: 0.2rem; }
+.filters .actions { grid-column: 1 / -1; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.filters .form-alert { grid-column: 1 / -1; }
+@media (min-width: 960px) {
+  .filters { grid-template-columns: repeat(4, 1fr) auto; }
+  .filters .actions { grid-column: auto; }
+}
+
+.pager { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; margin-top: 0.75rem; flex-wrap: wrap; }
+
+a.list-item.selected { background: var(--green-50); box-shadow: inset 4px 0 0 var(--green-600); padding-left: 0.75rem; }
+
+/* ---------- Details panel ---------- */
+
+.details { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; font-size: 0.95rem; }
+.details dt { color: var(--muted); }
+.details dd { margin: 0; word-break: break-word; }
+
+@media (min-width: 960px) {
+  .sticky-panel { position: sticky; top: 72px; }
+}
+
+/* ---------- Status timeline (FR-05) ---------- */
+
+.timeline { list-style: none; margin: 0; padding: 0 0 0 1.2rem; border-left: 2px solid var(--border); }
+.timeline li { position: relative; padding: 0 0 1rem 0.75rem; }
+.timeline li:last-child { padding-bottom: 0; }
+.timeline li::before {
+  content: "";
+  position: absolute;
+  left: -1.2rem;
+  top: 0.35rem;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-left: -0.43rem;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--green-600);
+}
+.timeline li:last-child::before { background: var(--green-600); }
+.timeline .when { color: var(--muted); font-size: 0.82rem; }
+.timeline .note { font-size: 0.9rem; margin-top: 0.15rem; }
+
 /* ---------- Loading ---------- */
 
 .loading { color: var(--muted); padding: 1rem 0; }
