@@ -64,7 +64,7 @@ The prompts work in two situations:
 - [x] C8 — Collector: record weight, complete, history
 - [x] C9 — Admin: dashboard KPIs
 - [x] C10 — Admin: request queue + assignment
-- [ ] C11 — Admin: redemptions
+- [x] C11 — Admin: redemptions
 - [ ] C12 — Admin: users, collectors, zones, categories, rules
 - [ ] C13 — Admin: collection records + weight correction
 - [ ] C14 — Admin: reports (print + CSV export)
@@ -722,7 +722,7 @@ Rejected rows (from GET /pickup-requests/:id timeline). Row click shows full det
 Done when: assigning and reassigning work and the row updates.
 ```
 
-### C11 — Admin: redemptions  `[ ]`
+### C11 — Admin: redemptions  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.3 step 5, FR-21, api-spec.md §8.3, §8.4.
