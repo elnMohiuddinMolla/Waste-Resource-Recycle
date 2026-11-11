@@ -539,6 +539,34 @@ a.list-item.selected { background: var(--green-50); box-shadow: inset 4px 0 0 va
 .job-card.due-soon { border-color: #fcd34d; }
 .phone-link { font-weight: 600; }
 
+/* ---------- Choice list (assign a collector) ---------- */
+
+.choices { list-style: none; margin: 0.5rem 0 0; padding: 0; max-height: 50vh; overflow-y: auto; }
+.choice label {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  padding: 0.6rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 0.4rem;
+  cursor: pointer;
+}
+.choice input { width: auto; margin-top: 0.25rem; }
+.choice input:checked + span { font-weight: 600; }
+.choice label:hover { border-color: var(--green-600); }
+.tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  background: var(--green-100);
+  color: var(--green-900);
+  margin-left: 0.3rem;
+}
+.tag-warn { background: var(--amber-50); color: var(--amber-700); }
+
 /* ---------- Loading ---------- */
 
 .loading { color: var(--muted); padding: 1rem 0; }

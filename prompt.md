@@ -62,8 +62,8 @@ The prompts work in two situations:
 - [x] C6 — User: points history + cash redemption
 - [x] C7 — Collector: dashboard + job actions (accept / reject / abort)
 - [x] C8 — Collector: record weight, complete, history
-- [ ] C9 — Admin: dashboard KPIs
-- [ ] C10 — Admin: request queue + assignment
+- [x] C9 — Admin: dashboard KPIs
+- [x] C10 — Admin: request queue + assignment
 - [ ] C11 — Admin: redemptions
 - [ ] C12 — Admin: users, collectors, zones, categories, rules
 - [ ] C13 — Admin: collection records + weight correction
@@ -694,7 +694,7 @@ Done when: a job goes Accepted → Collected → Completed from the UI and the u
 the shown points.
 ```
 
-### C9 — Admin: dashboard  `[ ]`
+### C9 — Admin: dashboard  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.3 step 1.
@@ -708,7 +708,7 @@ redemptions (admin/redemptions?status=…&limit=1). Each card links to its page.
 Done when: the numbers match the seed data.
 ```
 
-### C10 — Admin: request queue + assignment  `[ ]`
+### C10 — Admin: request queue + assignment  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.3 step 3, FR-07, api-spec.md §8.1, §8.2.

@@ -17,8 +17,52 @@
         <h1 id="greeting">Loading…</h1>
         <p id="zone" class="muted mb-0"></p>
       </div>
+      <button type="button" class="btn btn-secondary btn-small" id="refresh">Refresh</button>
     </div>
 
+    <h2>Needs attention</h2>
+    <section class="grid grid-4 mb-2" aria-label="Queues">
+      <a class="card card-link" href="/admin/requests.html?status=Pending">
+        <div class="stat-label">Pending requests</div>
+        <div class="stat-value" id="kpi-pending">—</div>
+        <div class="muted small">Waiting for a collector</div>
+      </a>
+      <a class="card card-link" href="/admin/requests.html?status=Rejected">
+        <div class="stat-label">Rejected by collectors</div>
+        <div class="stat-value" id="kpi-rejected">—</div>
+        <div class="muted small">Need reassigning</div>
+      </a>
+      <a class="card card-link" href="/admin/redemptions.html?status=Pending">
+        <div class="stat-label">Redemptions to review</div>
+        <div class="stat-value" id="kpi-red-pending">—</div>
+        <div class="muted small">Approve or reject</div>
+      </a>
+      <a class="card card-link" href="/admin/redemptions.html?status=Approved">
+        <div class="stat-label">Approved, not paid</div>
+        <div class="stat-value" id="kpi-red-approved">—</div>
+        <div class="muted small">Send the money</div>
+      </a>
+    </section>
+
+    <h2>Overview</h2>
+    <section class="grid grid-3 mb-2" aria-label="Overview">
+      <a class="card card-link" href="/admin/collectors.html">
+        <div class="stat-label">Active collectors</div>
+        <div class="stat-value" id="kpi-collectors">—</div>
+      </a>
+      <a class="card card-link" href="/admin/reports.html?type=weight-by-category">
+        <div class="stat-label">Collected this month</div>
+        <div class="stat-value" id="kpi-kg">—</div>
+        <div class="muted small" id="kpi-kg-note"></div>
+      </a>
+      <a class="card card-link" href="/admin/reports.html?type=point-liability">
+        <div class="stat-label">Points liability</div>
+        <div class="stat-value" id="kpi-liability">—</div>
+        <div class="muted small" id="kpi-liability-bdt"></div>
+      </a>
+    </section>
+
+    <h2 class="mt-3">Manage</h2>
     <div id="shortcuts" class="grid grid-3"></div>
   </main>
 

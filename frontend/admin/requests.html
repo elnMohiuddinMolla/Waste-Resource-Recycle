@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Requests — WRR admin</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/admin-requests.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Pickup requests</h1>
+      <button type="button" class="btn btn-secondary btn-small" id="refresh">Refresh</button>
+    </div>
+
+    <section class="card mb-2">
+      <div class="row row-between">
+        <div class="tabs" role="tablist" aria-label="Status">
+          <button type="button" class="tab" role="tab" data-status="Pending">Pending</button>
+          <button type="button" class="tab" role="tab" data-status="Rejected">Rejected</button>
+          <button type="button" class="tab" role="tab" data-status="Assigned">Assigned</button>
+          <button type="button" class="tab" role="tab" data-status="Accepted">Accepted</button>
+          <button type="button" class="tab" role="tab" data-status="Collected">Collected</button>
+          <button type="button" class="tab" role="tab" data-status="Completed">Completed</button>
+          <button type="button" class="tab" role="tab" data-status="Cancelled">Cancelled</button>
+          <button type="button" class="tab" role="tab" data-status="">All</button>
+        </div>
+        <div class="field">
+          <label for="zone" class="sr-only">Zone</label>
+          <select id="zone">
+            <option value="">All zones</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid grid-2">
+      <section class="card">
+        <p class="muted small mb-0" id="count"></p>
+        <div id="list"></div>
+        <div class="pager hidden" id="pager">
+          <button type="button" class="btn btn-secondary btn-small" id="prev">Previous</button>
+          <span class="muted small" id="page-info"></span>
+          <button type="button" class="btn btn-secondary btn-small" id="next">Next</button>
+        </div>
+      </section>
+
+      <section class="card sticky-panel" id="detail" aria-live="polite">
+        <p class="empty mb-0">Select a request to see its details, timeline and actions.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>
