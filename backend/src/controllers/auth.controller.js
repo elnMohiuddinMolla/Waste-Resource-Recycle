@@ -6,9 +6,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const userModel = require('../models/user.model');
-const zoneModel = require('../models/zone.model');
 const AppError = require('../utils/AppError');
-const { isValidEmail, isValidPhone } = require('../utils/validators');
+const accountService = require('../services/account.service');
+const { parseAccountInput } = require('./accountInput');
 
 const TOKEN_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
@@ -35,64 +35,9 @@ function publicUser(user) {
 
 async function register(req, res, next) {
   try {
-    const { full_name, email, phone, password, address, zone_id } = req.body || {};
-    const errors = [];
-
-    const name = typeof full_name === 'string' ? full_name.trim() : '';
-    const mail = typeof email === 'string' ? email.trim().toLowerCase() : '';
-    const tel = typeof phone === 'string' ? phone.trim() : '';
-    const addr = typeof address === 'string' && address.trim() ? address.trim() : null;
-    const zoneId = Number.parseInt(zone_id, 10);
-
-    if (name.length < 3 || name.length > 100) {
-      errors.push({ field: 'full_name', message: 'Full name must be 3 to 100 characters.' });
-    }
-    if (!isValidEmail(mail)) {
-      errors.push({ field: 'email', message: 'Enter a valid email address.' });
-    }
-    if (!isValidPhone(tel)) {
-      errors.push({ field: 'phone', message: 'Enter a valid Bangladeshi mobile number (e.g. 01711000000).' });
-    }
-    if (typeof password !== 'string' || password.length < 8) {
-      errors.push({ field: 'password', message: 'Password must be at least 8 characters.' });
-    }
-    if (addr && addr.length > 255) {
-      errors.push({ field: 'address', message: 'Address must be at most 255 characters.' });
-    }
-    if (Number.isNaN(zoneId) || !(await zoneModel.findActiveById(zoneId))) {
-      errors.push({ field: 'zone_id', message: 'Select an active zone.' });
-    }
-
-    if (errors.length > 0) {
-      throw new AppError(400, 'Validation failed.', errors);
-    }
-
-    if (await userModel.findByEmail(mail)) {
-      throw new AppError(409, 'An account with this email already exists.');
-    }
-
-    const passwordHash = await bcrypt.hash(password, 10);
-
-    let userId;
-    try {
-      userId = await userModel.createUser({
-        fullName: name,
-        email: mail,
-        phone: tel,
-        passwordHash,
-        role: 'user', // self-registration always creates a General User
-        address: addr,
-        zoneId
-      });
-    } catch (err) {
-      // Two sign-ups with the same email at the same moment
-      if (err.code === 'ER_DUP_ENTRY') {
-        throw new AppError(409, 'An account with this email already exists.');
-      }
-      throw err;
-    }
-
-    const user = await userModel.findById(userId);
+    const input = await parseAccountInput(req.body);
+    // Self-registration always creates a General User
+    const user = await accountService.createAccount(input, 'user');
     res.status(201).json({
       success: true,
       message: 'User registered successfully.',

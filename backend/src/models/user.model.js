@@ -43,10 +43,62 @@ async function findActiveCollector(connection, userId) {
   return rows[0] || null;
 }
 
+// ---------- Admin view (FR-20) ----------
+
+// Never selects password_hash. open_jobs = this collector's unfinished jobs (0 for others).
+const ADMIN_SELECT = `
+  SELECT u.user_id, u.full_name, u.email, u.phone, u.role, u.address,
+         u.zone_id, z.name AS zone_name, u.status, u.created_at,
+         (SELECT COUNT(*) FROM pickup_requests pr
+          WHERE pr.collector_id = u.user_id
+            AND pr.status IN ('Assigned', 'Accepted', 'Collected')) AS open_jobs
+  FROM users u
+  LEFT JOIN zones z ON z.zone_id = u.zone_id`;
+
+function toAdminView(row) {
+  return { ...row, open_jobs: Number(row.open_jobs) };
+}
+
+async function listForAdmin({ role, status, zoneId, limit, offset }) {
+  const where = [];
+  const params = [];
+  if (role) { where.push('u.role = ?'); params.push(role); }
+  if (status) { where.push('u.status = ?'); params.push(status); }
+  if (zoneId) { where.push('u.zone_id = ?'); params.push(zoneId); }
+  const whereSql = where.length ? `WHERE ${where.join(' AND ')}` : '';
+
+  const [[{ total }]] = await pool.execute(`SELECT COUNT(*) AS total FROM users u ${whereSql}`, params);
+  // LIMIT/OFFSET are validated integers; mysql2's execute() can't bind them on MariaDB
+  const [rows] = await pool.execute(
+    `${ADMIN_SELECT} ${whereSql}
+     ORDER BY u.role, u.full_name, u.user_id
+     LIMIT ${Number(limit)} OFFSET ${Number(offset)}`,
+    params
+  );
+  return { total: Number(total), rows: rows.map(toAdminView) };
+}
+
+async function findAdminView(userId) {
+  const [rows] = await pool.execute(`${ADMIN_SELECT} WHERE u.user_id = ?`, [userId]);
+  return rows[0] ? toAdminView(rows[0]) : null;
+}
+
+async function updateStatus(userId, status) {
+  await pool.execute('UPDATE users SET status = ? WHERE user_id = ?', [status, userId]);
+}
+
+async function updateZone(userId, zoneId) {
+  await pool.execute('UPDATE users SET zone_id = ? WHERE user_id = ?', [zoneId, userId]);
+}
+
 module.exports = {
   findByEmail,
   findById,
   createUser,
-  findActiveCollector
+  findActiveCollector,
+  listForAdmin,
+  findAdminView,
+  updateStatus,
+  updateZone
 };
 

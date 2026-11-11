@@ -8,6 +8,7 @@ const redemptionController = require('../controllers/redemption.controller');
 const categoryController = require('../controllers/category.controller');
 const zoneController = require('../controllers/zone.controller');
 const ruleController = require('../controllers/rule.controller');
+const userController = require('../controllers/user.controller');
 const { authenticateToken } = require('../middleware/auth');
 const { requireRole } = require('../middleware/role');
 
@@ -31,5 +32,10 @@ router.put('/zones/:id', zoneController.update);
 
 router.get('/redemption-rules', ruleController.list);
 router.post('/redemption-rules', ruleController.create);
+
+router.get('/users', userController.list);
+router.post('/collectors', userController.createCollector);
+router.patch('/users/:id/status', userController.setStatus);
+router.patch('/users/:id/zone', userController.setZone);
 
 module.exports = router;

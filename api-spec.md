@@ -1217,9 +1217,23 @@ Both endpoints: `Required (Role: admin)`. Exactly one rule is active at any time
 
 ---
 
-#### 8.9 Collector Provisioning & User Status Management
+#### 8.9 User & Collector Account Management (FR-20)
+All endpoints: `Required (Role: admin)`. Responses never include `password_hash`.
+
+**Admin user view** (returned by every endpoint below):
+```json
+{
+  "user_id": 2, "full_name": "Rafiqul Islam", "email": "collector1@wrr.com", "phone": "01711000002",
+  "role": "collector", "address": "Baitul Aman, Faridpur", "zone_id": 1, "zone_name": "Zone 1 - Baitul Aman",
+  "status": "active", "created_at": "2026-11-10 08:00:00", "open_jobs": 1
+}
+```
+`open_jobs` = the collector's requests in `Assigned`, `Accepted` or `Collected` (always 0 for other roles).
+
+- **Endpoint:** `GET /api/v1/admin/users`
+  - **Query Parameters:** `?role=user|collector|admin&status=active|inactive&zone_id=1&page=1&limit=20` — all optional; a value outside the lists → 400.
+  - **Response `200 OK`:** `{ "success": true, "data": { "total": 5, "page": 1, "limit": 20, "users": [ <admin user view>, ... ] } }` ordered by role, then name.
 - **Endpoint:** `POST /api/v1/admin/collectors`
-  - **Authentication:** `Required (Role: admin)`
   - **Request Body:**
     ```json
     {
@@ -1230,26 +1244,16 @@ Both endpoints: `Required (Role: admin)`. Exactly one rule is active at any time
       "zone_id": 3
     }
     ```
-  - **Response `201 Created`**
+  - **Validation:** exactly the same rules as §1.1 registration (`address` optional); the zone is required and must be active. Duplicate email (any letter case) → 409.
+  - **Response `201 Created`:** `{ "success": true, "message": "Collector account created.", "data": <admin user view with role "collector"> }`. The collector can log in at once.
 - **Endpoint:** `PATCH /api/v1/admin/users/:id/status`
-  - **Authentication:** `Required (Role: admin)`
-  - **Request Body:**
-    ```json
-    {
-      "status": "inactive"
-    }
-    ```
-  - **Response `200 OK`**
+  - **Request Body:** `{ "status": "inactive" }` (`active` or `inactive`)
+  - **Rules:** a deactivated account is refused at login and on its very next request (403). An admin cannot deactivate their own account → 409. A collector with open jobs **can** be deactivated; the response's `open_jobs` tells the admin how many jobs to reassign (automatic reassignment is future work, requirement-validation MF-02). Unknown id → 404.
+  - **Response `200 OK`:** `{ "success": true, "message": "Account is now inactive.", "data": <admin user view> }`
 - **Endpoint:** `PATCH /api/v1/admin/users/:id/zone`
-  - **Authentication:** `Required (Role: admin)`
-  - **Request Body:**
-    ```json
-    {
-      "zone_id": 2
-    }
-    ```
-  - **Business Rule:** Target user must have `role = 'collector'`; zone must be active.
-  - **Response `200 OK`**
+  - **Request Body:** `{ "zone_id": 2 }`
+  - **Rules:** only for collectors (any other role → 409); the zone must be active (else 400). Unknown id → 404.
+  - **Response `200 OK`:** `{ "success": true, "message": "Collector zone updated.", "data": <admin user view> }`
 
 ---
 
