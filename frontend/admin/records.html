@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Collection records — WRR admin</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/admin-records.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Collection records</h1>
+    </div>
+
+    <section class="card mb-2">
+      <form id="filters" class="filters" novalidate>
+        <div class="field">
+          <label for="from">Collected from</label>
+          <input id="from" name="from" type="date">
+        </div>
+        <div class="field">
+          <label for="to">to</label>
+          <input id="to" name="to" type="date">
+        </div>
+        <div class="field">
+          <label for="zone_id">Zone</label>
+          <select id="zone_id" name="zone_id">
+            <option value="">All</option>
+          </select>
+        </div>
+        <div class="field"></div>
+        <div class="actions">
+          <button type="submit" class="btn btn-primary btn-small">Apply</button>
+          <button type="button" class="btn btn-secondary btn-small" id="reset">Reset</button>
+        </div>
+        <div class="form-alert alert" role="alert"></div>
+      </form>
+    </section>
+
+    <section class="card">
+      <p class="muted small">Only completed collections can be corrected. A correction posts the point difference to the user's ledger and is refused if their balance would go below zero.</p>
+      <p class="muted small" id="count"></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Record</th><th>Household</th><th>Collector</th><th>Category / zone</th>
+              <th class="num">Weight</th><th class="num">Rate</th><th class="num">Points</th><th>Collected</th><th></th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="pager hidden" id="pager">
+        <button type="button" class="btn btn-secondary btn-small" id="prev">Previous</button>
+        <span class="muted small" id="page-info"></span>
+        <button type="button" class="btn btn-secondary btn-small" id="next">Next</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

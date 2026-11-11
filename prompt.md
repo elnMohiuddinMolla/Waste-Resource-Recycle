@@ -66,7 +66,7 @@ The prompts work in two situations:
 - [x] C10 — Admin: request queue + assignment
 - [x] C11 — Admin: redemptions
 - [x] C12 — Admin: users, collectors, zones, categories, rules
-- [ ] C13 — Admin: collection records + weight correction
+- [x] C13 — Admin: collection records + weight correction
 - [ ] C14 — Admin: reports (print + CSV export)
 
 **Phase D — Testing & lab report**
@@ -751,7 +751,7 @@ Build:
 Done when: each create/edit/toggle works and duplicate names show the 409 message.
 ```
 
-### C13 — Admin: collection records + weight correction  `[ ]`
+### C13 — Admin: collection records + weight correction  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.3 step 6, FR-18, api-spec.md §8.5.
