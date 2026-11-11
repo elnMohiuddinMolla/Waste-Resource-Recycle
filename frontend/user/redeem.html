@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Redeem points — WRR</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/pages/user-redeem.js"></script>
+</head>
+<body>
+  <header id="app-header" class="site-header"></header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Redeem points</h1>
+      <a href="/user/history.html" class="small">Points ledger</a>
+    </div>
+
+    <div class="grid grid-2">
+      <section class="card">
+        <div class="grid grid-2 mb-2">
+          <div>
+            <div class="stat-label">Available points</div>
+            <div class="stat-value" id="balance">—</div>
+          </div>
+          <div>
+            <div class="stat-label">Current rate</div>
+            <div class="stat-value" id="rate">—</div>
+            <div class="muted small" id="minimum"></div>
+          </div>
+        </div>
+
+        <div class="alert alert-warning hidden" id="blocked" role="status"></div>
+
+        <form id="redeem-form" class="form" novalidate>
+          <div class="form-alert alert" role="alert"></div>
+
+          <div class="field">
+            <label for="points_redeemed">Points to redeem</label>
+            <div class="input-with-button">
+              <input id="points_redeemed" name="points_redeemed" type="number" inputmode="decimal" min="0.01" step="0.01" required>
+              <button type="button" class="btn btn-secondary btn-small" id="use-all">Use all</button>
+            </div>
+            <div class="field-error"></div>
+          </div>
+
+          <div class="form-row">
+            <div class="field">
+              <label for="payout_method">Pay me by</label>
+              <select id="payout_method" name="payout_method" required>
+                <option value="bKash">bKash</option>
+                <option value="Nagad">Nagad</option>
+                <option value="Bank">Bank transfer</option>
+              </select>
+              <div class="field-error"></div>
+            </div>
+            <div class="field">
+              <label for="payout_account" id="account-label">bKash number</label>
+              <input id="payout_account" name="payout_account" inputmode="tel" maxlength="30" required>
+              <div class="hint" id="account-hint">The 11-digit mobile number of your bKash account.</div>
+              <div class="field-error"></div>
+            </div>
+          </div>
+
+          <div class="preview">
+            <div class="stat-label">You will receive</div>
+            <div class="stat-value" id="preview">৳ 0.00</div>
+            <div class="muted small">The points are held as soon as you submit. If the request is rejected, they come back.</div>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Request cash</button>
+        </form>
+      </section>
+
+      <section class="card">
+        <h2>My redemptions</h2>
+        <div id="redemptions"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Waste Resource Recycle — CSE-3112 Software Engineering Lab</div>
+  </footer>
+</body>
+</html>

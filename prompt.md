@@ -59,7 +59,7 @@ The prompts work in two situations:
 - [x] C3 — User: dashboard + notifications page
 - [x] C4 — User: new pickup request
 - [x] C5 — User: my requests, details timeline, cancel
-- [ ] C6 — User: points history + cash redemption
+- [x] C6 — User: points history + cash redemption
 - [ ] C7 — Collector: dashboard + job actions (accept / reject / abort)
 - [ ] C8 — Collector: record weight, complete, history
 - [ ] C9 — Admin: dashboard KPIs
@@ -647,7 +647,7 @@ messages. Support requests.html?id=<n> to open a request directly (used by C3 an
 Done when: cancel works for a Pending request and is hidden for others.
 ```
 
-### C6 — User: points history + redemption  `[ ]`
+### C6 — User: points history + redemption  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read WRR_PRD.md §4.1 steps 7–8, FR-11, FR-12, FR-15,
