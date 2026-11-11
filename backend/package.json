@@ -8,7 +8,9 @@
     "dev": "nodemon src/app.js",
     "test": "node --test \"test/unit/*.test.js\"",
     "test:api": "node --test --test-concurrency=1 \"test/api/*.test.js\"",
-    "perf": "node scripts/perf-check.js"
+    "perf": "node scripts/perf-check.js",
+    "e2e": "node scripts/e2e-walkthrough.js",
+    "check:frontend": "node scripts/frontend-check.js"
   },
   "keywords": [
     "waste-management",

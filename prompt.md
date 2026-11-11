@@ -70,7 +70,7 @@ The prompts work in two situations:
 - [x] C14 — Admin: reports (print + CSV export)
 
 **Phase D — Testing & lab report**
-- [ ] D1 — End-to-end walkthrough + NFR checks
+- [ ] D1 — End-to-end walkthrough + NFR checks *(automated part done: `npm run e2e` 45/45, `npm run check:frontend` 352/352; manual browser checklist in `docs/e2e-walkthrough.md` §2 still to fill)*
 - [ ] D2 — Test-case table for the lab report
 - [ ] D3 — Documentation sync + viva preparation
 

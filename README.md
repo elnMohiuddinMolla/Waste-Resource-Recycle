@@ -115,6 +115,8 @@ Run from `backend/`:
 |---|---|:---:|
 | `npm test` | Unit tests (state machines, validators, security checks) | No |
 | `npm run test:api` | API tests for every endpoint | Yes |
+| `npm run e2e` | Full story end to end (register → request → assign → reject → reassign → weigh → complete → redeem → pay → reject → corrections → reports → deactivate), 45 checks | Yes |
+| `npm run check:frontend` | Static checks of all pages: files exist, links work, no inline code, no innerHTML | No |
 | `npm run perf` | NFR-02 performance check: 50 users, 1,000 requests, 50 concurrent calls per endpoint | Yes |
 
 The API and performance tests rebuild a **separate** database, `wrr_test`, from `database/*.sql`. They refuse to run against `wrr_db`, so your data is never touched.
