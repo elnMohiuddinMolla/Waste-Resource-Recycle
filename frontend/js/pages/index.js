@@ -3,6 +3,9 @@
 import { api } from '../api.js';
 import { currentUser, DASHBOARDS } from '../auth.js';
 import { el, clear, $, formatPoints } from '../ui.js';
+import { fillIcons } from '../icons.js';
+
+fillIcons(); // the line icons on the role cards
 
 // A picture for each category, chosen by a word in its name
 const ICONS = [[/plastic/i, '🧴'], [/paper|card/i, '📦'], [/e-?waste|electr/i, '🔌'], [/metal|tin|can/i, '🥫'], [/glass/i, '🍾']];

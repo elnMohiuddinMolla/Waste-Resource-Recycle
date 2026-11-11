@@ -326,15 +326,12 @@ html { scroll-behavior: smooth; }
 }
 .lp-lead { font-size: 1.05rem; color: rgba(255, 255, 255, 0.85); max-width: 560px; margin-bottom: 1.5rem; }
 .lp-cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; }
-.lp-trust { list-style: none; padding: 0; margin: 1.75rem 0 0; display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: 0.9rem; color: rgba(255, 255, 255, 0.8); }
-.lp-trust li { display: flex; align-items: center; gap: 0.4rem; }
-.lp-trust svg { width: 18px; height: 18px; color: var(--lp-accent); flex: none; }
 
 @media (min-width: 640px) { .lp-hero h1 { font-size: 2.9rem; } }
 @media (min-width: 960px) {
   .lp-hero { padding: 4.5rem 0 6rem; }
   .lp-hero-grid { grid-template-columns: 1.1fr 0.9fr; gap: 3rem; }
-  .lp-hero h1 { font-size: 3.4rem; }
+  .lp-hero h1 { font-size: 3rem; }
 }
 
 /* Hero illustration: a phone card with floating notes */
@@ -478,8 +475,21 @@ html { scroll-behavior: smooth; }
 
 /* Roles */
 .lp-roles { display: grid; gap: 1rem; }
-.lp-role { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; }
-.lp-role-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+.lp-role {
+  background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.lp-role:hover { border-color: #bbf7d0; box-shadow: 0 12px 28px rgba(11, 46, 34, 0.08); }
+.lp-role-icon {
+  display: grid; place-items: center;
+  width: 52px; height: 52px; padding: 13px; margin-bottom: 1rem;
+  border-radius: 14px;
+  background: var(--green-50); color: var(--green-700);
+  border: 1px solid #d1fae5;
+}
+.lp-role-icon svg { width: 100%; height: 100%; }
+.lp-role h3 { margin-bottom: 0.2rem; }
+.lp-role-text { color: var(--text); font-size: 0.95rem; margin: 0; }
 .lp-role ul { list-style: none; padding: 0; margin: 0.75rem 0 0; display: grid; gap: 0.5rem; }
 .lp-role li { position: relative; padding-left: 1.6rem; color: var(--muted); }
 .lp-role li::before { content: "✓"; position: absolute; left: 0; color: var(--green-600); font-weight: 800; }
