@@ -28,7 +28,6 @@ app.use('/api/v1/rewards', require('./routes/reward.routes'));
 app.use('/api/v1/redemptions', require('./routes/redemption.routes'));
 app.use('/api/v1/notifications', require('./routes/notification.routes'));
 app.use('/api/v1/admin', require('./routes/admin.routes'));
-// Still to add: rest of admin (categories, zones, rules, users, records, reports).
 
 app.use('/api', notFoundHandler); // unknown API paths return JSON 404
 

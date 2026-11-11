@@ -50,7 +50,7 @@ The prompts work in two situations:
 - [x] B17 — Admin: redemption rules
 - [x] B18 — Admin: users + collector accounts
 - [x] B19 — Admin: collection records + weight correction (ADJUST)
-- [ ] B20 — Admin: 5 reports
+- [x] B20 — Admin: 5 reports
 - [ ] B21 — Backend audit (every endpoint vs api-spec, security, performance)
 
 **Phase C — Frontend** (plain HTML/CSS/JS, served by Express)
@@ -513,7 +513,7 @@ two corrections in a row leave the record total = ROUND(final_kg × rate, 2); co
 would go negative → 422 with nothing changed; non-Completed record 409; non-admin 403.
 ```
 
-### B20 — Admin: reports  `[ ]`
+### B20 — Admin: reports  `[x]`
 
 ```
 Follow the Common Rules in prompt.md. Read api-spec.md §8.10, WRR_PRD.md FR-17, NFR-02,

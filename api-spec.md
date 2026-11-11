@@ -1274,21 +1274,27 @@ All endpoints: `Required (Role: admin)`. Responses never include `password_hash`
 
 ---
 
-#### 8.10 Analytical & KPI Reports
+#### 8.10 Analytical & KPI Reports (FR-17)
 - **Endpoint:** `GET /api/v1/admin/reports/:type`
 - **Authentication:** `Required (Role: admin)`
-- **Path Parameter `:type`:**
-  1. `weight-by-category` (FR-17 Report 1)
-  2. `request-volume-by-status` (FR-17 Report 2)
-  3. `collector-performance` (FR-17 Report 3)
-  4. `point-liability` (FR-17 Report 4)
-  5. `redemption-summary` (FR-17 Report 5)
-- **Query Parameters:** `?from=2026-11-01&to=2026-11-30&zone_id=1&category_id=1` (`zone_id` and `category_id` optional; `category_id` applies to `weight-by-category`). SQL for each report: `database.md` §6.
-- **Response `200 OK` (Example for `collector-performance`):**
+- **Query Parameters:** `?from=2026-11-01&to=2026-11-30&zone_id=1&category_id=1` — all optional. Dates are whole days (`to` is included); defaults are the 1st of the current month to today (Bangladesh time). Impossible dates or `to` before `from` → 400.
+- **Report types** (SQL: `database.md` §6) and the filters each one uses:
+
+  | `:type` | FR-17 report | Uses | `data` rows |
+  |---|---|---|---|
+  | `weight-by-category` | 1 | dates (on `completed_at`), `zone_id`, `category_id` | `zone_name, category_name, total_pickups, total_weight_kg` — completed pickups only |
+  | `request-volume-by-status` | 2 | dates (on `created_at`), `zone_id` | `status, request_count, percentage` — percentages of the filtered rows add up to 100 |
+  | `collector-performance` | 3 | dates, `zone_id` (collector's zone) | `collector_id, collector_name, primary_zone, completed_pickups, total_kg_collected, rejection_count, rejection_rate_percentage` — rate = rejections ÷ (accepts + rejections) from the status logs; `null` when the collector made no decision |
+  | `point-liability` | 4 | none (all-time) | one row: `total_points_issued, total_points_redeemed, total_points_refunded, total_points_adjusted, net_outstanding_point_liability, estimated_cash_liability_bdt` (at the active rule; `null` if none) |
+  | `redemption-summary` | 5 | dates (on `requested_at`) | `status, redemption_count, total_points, total_cash_bdt` |
+
+  Filters a report does not use are ignored. Counts are numbers; weights, points and money are 2-decimal strings. Unknown `:type` → 404 (the message lists the valid types).
+- **Response `200 OK`** (example for `collector-performance`; `filters` echoes only the filters this report uses):
   ```json
   {
     "success": true,
     "report_type": "collector-performance",
+    "filters": { "from": "2026-11-01", "to": "2026-11-30", "zone_id": null },
     "data": [
       {
         "collector_id": 2,
