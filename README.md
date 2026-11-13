@@ -93,6 +93,8 @@ Successfully connected to database: wrr_db
 ### 5. Deploy (optional)
 To put the site online, follow [`docs/deploy-railway.md`](docs/deploy-railway.md): one Railway project with the server, a MySQL database and a volume for photos. `npm run db:setup` loads the tables once.
 
+Live site: **https://web-production-68465354.up.railway.app**
+
 ## Trying the API
 
 Public endpoints open directly in the browser:

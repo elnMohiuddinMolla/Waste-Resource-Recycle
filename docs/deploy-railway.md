@@ -51,22 +51,26 @@ DB_NAME=wrr_db
 
 ## 5. Create the tables (once)
 
-The database is still empty. Load it from your own computer:
+The database is still empty. A new Railway MySQL is only reachable inside Railway, so open a **temporary** public port, load the tables from your own computer, and close the port again.
 
-1. MySQL service → **Variables**: copy `MYSQL_PUBLIC_URL`. It looks like `mysql://root:PASSWORD@HOST.proxy.rlwy.net:PORT/railway`.
-2. In PowerShell (fill in the parts of that URL; choose your own admin password, at least 8 characters):
+1. Open the port: MySQL service → **Settings → Networking → TCP Proxy**, port `3306` (or `railway tcp-proxy create --port 3306 --service MySQL`). Railway shows an address such as `thomas.proxy.rlwy.net:24149`.
+2. MySQL service → **Variables**: copy `MYSQLPASSWORD`.
+3. In PowerShell (fill in host, port and password; choose your own admin password, at least 8 characters):
 
    ```powershell
    cd backend
-   $env:DB_HOST="HOST.proxy.rlwy.net"; $env:DB_PORT="PORT"; $env:DB_USER="root"
-   $env:DB_PASSWORD="PASSWORD"; $env:DB_NAME="wrr_db"; $env:ADMIN_PASSWORD="your-new-admin-password"
+   $env:DB_HOST="thomas.proxy.rlwy.net"; $env:DB_PORT="24149"; $env:DB_USER="root"
+   $env:DB_PASSWORD="MYSQLPASSWORD-value"; $env:DB_NAME="wrr_db"; $env:ADMIN_PASSWORD="your-new-admin-password"
    npm run db:setup
    ```
 
    Expected output: `Ran database/schema.sql …`, `Ran database/seed.sql …`, `Set a new password for admin@wrr.com.`
-3. Close that PowerShell window afterwards (it holds the database password).
+4. **Close the port again:** delete the TCP proxy in the same settings page (or `railway tcp-proxy delete <id> --service MySQL --yes`). The web service does not need it; it uses the private network.
+5. Close that PowerShell window (it holds the database password), then restart the web service once so it reconnects.
 
 `db:setup` uses the backend's own mysql2 driver, because XAMPP's older `mysql.exe` client often cannot log in to MySQL 8+ (`caching_sha2_password`). Running it a second time does nothing: it stops when the tables already exist. `--force` wipes everything, so never use it on a database with real data.
+
+> **Railway CLI from Git Bash:** Git Bash turns `/data` into `C:/Program Files/Git/data`. Run `export MSYS_NO_PATHCONV=1` first, or use PowerShell.
 
 ## 6. Deploy and open the site
 
