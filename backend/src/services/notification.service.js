@@ -6,6 +6,8 @@ const AppError = require('../utils/AppError');
 const notificationModel = require('../models/notification.model');
 
 // The 12 notification types from PRD FR-14 (recipient in brackets)
+const MAX_MESSAGE = 255; // notifications.message VARCHAR(255)
+
 const NOTIFICATION_TYPES = Object.freeze({
   PICKUP_SUBMITTED: 'PICKUP_SUBMITTED',         // user
   PICKUP_ASSIGNED: 'PICKUP_ASSIGNED',           // collector
@@ -30,7 +32,11 @@ async function createNotification({ userId, requestId = null, redemptionId = nul
   if (!Object.values(NOTIFICATION_TYPES).includes(type)) {
     throw new Error(`Unknown notification type: ${type}`);
   }
-  return notificationModel.insert(connection || undefined, { userId, requestId, redemptionId, type, message });
+  // notifications.message is VARCHAR(255). A long reason could exceed it: MySQL 8 (strict
+  // mode) would then refuse the insert and roll back the whole action. Messages put the
+  // free text last, so only the end of the reason is cut; the full text stays in its own column.
+  const text = message.length > MAX_MESSAGE ? `${message.slice(0, MAX_MESSAGE - 1)}…` : message;
+  return notificationModel.insert(connection || undefined, { userId, requestId, redemptionId, type, message: text });
 }
 
 // ---------- Reading and marking (api-spec.md Module 7, FR-14) ----------

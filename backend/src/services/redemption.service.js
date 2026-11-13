@@ -119,7 +119,7 @@ async function processRedemption(admin, redemptionId, { action, adminNote, payou
         points: r.points_redeemed
       });
       type = NOTIFICATION_TYPES.REDEMPTION_REJECTED;
-      message = `Redemption #${redemptionId} was rejected: ${adminNote} ${r.points_redeemed} points were refunded.`;
+      message = `Redemption #${redemptionId} was rejected and ${r.points_redeemed} points were refunded. Reason: ${adminNote}`;
     }
 
     await createNotification({ connection: conn, userId: r.user_id, redemptionId, type, message });

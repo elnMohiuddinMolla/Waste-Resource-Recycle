@@ -49,9 +49,9 @@ Run against a freshly rebuilt `wrr_test` database (seed data), never `wrr_db`.
 | 8 | Admin deactivates the logged-in user, then reactivates | next action 403; same session works again after reactivation | ✅ 3/3 |
 | NFR-03 | Six wrong passwords in a row | `401 ×5`, then `429` | ✅ 1/1 |
 
-### 1.2 Static frontend check — `npm run check:frontend` (352 checks passed)
+### 1.2 Static frontend check — `npm run check:frontend` (453 checks passed)
 
-For all 23 pages and 28 scripts:
+For all 26 pages and 32 scripts:
 
 | Check | Result |
 |---|:---:|
@@ -66,7 +66,7 @@ For all 23 pages and 28 scripts:
 | NFR | Evidence | Result |
 |---|---|:---:|
 | NFR-02 Performance | `npm run perf`: 50 users, 1,000 requests; slowest core call ~150 ms (limit 2 s), slowest report ~110 ms (limit 5 s), 50 simultaneous submissions ~110 ms | ✅ |
-| NFR-03 Security | 103 API tests incl. 401/403/404 ownership checks, security headers, same 401 answer for unknown email and wrong password, server refuses weak JWT secrets | ✅ |
+| NFR-03 Security | 116 API tests incl. 401/403/404 ownership checks, security headers, same 401 answer for unknown email and wrong password, server refuses weak JWT secrets | ✅ |
 | NFR-04 ACID | Concurrent "complete" credits once; concurrent redemptions cannot overspend; concurrent rule switches leave one active rule (API tests) | ✅ |
 
 ---

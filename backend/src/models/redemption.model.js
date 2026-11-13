@@ -7,12 +7,14 @@ const { pool } = require('../config/db');
 const PUBLIC_COLUMNS = `cr.redemption_id, cr.points_redeemed, cr.cash_amount, cr.payout_method,
   cr.payout_account, cr.payout_trx_id, cr.status, cr.admin_note, cr.requested_at, cr.processed_at`;
 
-// cash_amount is computed by the database: ROUND(points × taka_per_point, 2)
+// cash_amount is computed by the database: ROUND(points × taka_per_point, 2).
+// A JS number arrives as a DOUBLE, so it is CAST to DECIMAL first: 100.05 × 0.5 must
+// give 50.03 (exact maths), not 50.02 (floating-point maths).
 async function insert(connection, { userId, ruleId, points, payoutMethod, payoutAccount }) {
   const [result] = await connection.execute(
     `INSERT INTO cash_redemptions
        (user_id, rule_id, points_redeemed, cash_amount, payout_method, payout_account, status)
-     SELECT ?, rule_id, ?, ROUND(? * taka_per_point, 2), ?, ?, 'Pending'
+     SELECT ?, rule_id, ?, ROUND(CAST(? AS DECIMAL(10,2)) * taka_per_point, 2), ?, ?, 'Pending'
      FROM redemption_rules
      WHERE rule_id = ?`,
     [userId, points, points, payoutMethod, payoutAccount, ruleId]

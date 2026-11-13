@@ -139,11 +139,13 @@ async function findForCorrection(connection, recordId) {
 
 /**
  * The signed ADJUST needed so the record's total becomes ROUND(new_kg × rate, 2).
- * Computed by the database with exact DECIMAL maths (api-spec §8.5).
+ * Computed by the database with exact DECIMAL maths (api-spec §8.5). The new weight
+ * arrives as a DOUBLE, so it is CAST to DECIMAL first (1.15 kg × 1.50 = 1.73, as the
+ * EARN row computes it, not 1.72).
  */
 async function adjustmentFor(connection, recordId, newWeightKg) {
   const [[row]] = await connection.execute(
-    `SELECT ROUND(? * cr.points_per_kg_applied, 2) - ${POINTS_POSTED_SQL} AS delta
+    `SELECT ROUND(CAST(? AS DECIMAL(10,2)) * cr.points_per_kg_applied, 2) - ${POINTS_POSTED_SQL} AS delta
      FROM collection_records cr
      WHERE cr.record_id = ?`,
     [newWeightKg, recordId]

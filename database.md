@@ -456,7 +456,7 @@ VALUES (4, 'REFUND', 3, 200.00, CURRENT_TIMESTAMP);
 
 -- Step 3: Dispatch refund alert
 INSERT INTO notifications (user_id, redemption_id, type, message, is_read, created_at)
-VALUES (4, 3, 'REDEMPTION_REJECTED', 'Redemption #3 was rejected: Invalid wallet. 200.00 points were refunded.', FALSE, CURRENT_TIMESTAMP);
+VALUES (4, 3, 'REDEMPTION_REJECTED', 'Redemption #3 was rejected and 200.00 points were refunded. Reason: Invalid wallet.', FALSE, CURRENT_TIMESTAMP);
 
 COMMIT;
 ```

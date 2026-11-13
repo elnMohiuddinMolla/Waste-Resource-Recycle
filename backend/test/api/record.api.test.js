@@ -152,3 +152,22 @@ test('a newly completed job can be corrected too', async () => {
   assert.equal(r.status, 200);
   assert.equal(r.body.data.point_adjustment, '3.00');
 });
+
+test('a correction uses exact decimals, like the EARN row (1.15 kg × 1.50 = 1.73)', async () => {
+  const cat = await api.call('POST', '/admin/categories', { cookie: admin, body: { name: 'Tin Cans', points_per_kg: 1.5 } });
+  const created = await api.call('POST', '/pickup-requests', {
+    cookie: tanvir,
+    body: { category_id: cat.body.data.category_id, zone_id: 1, pickup_address: 'House 14', contact_phone: '01811000004', estimated_weight_kg: 2, preferred_at: bdDateTime(1), photo: SAMPLE_PHOTO }
+  });
+  const id = created.body.data.request_id;
+  await api.call('PUT', `/admin/pickup-requests/${id}/assign`, { cookie: admin, body: { collector_id: 2 } });
+  await api.call('PUT', `/collector/requests/${id}/accept`, { cookie: rafiqul });
+  const w = await api.call('POST', '/collector/collection-records', { cookie: rafiqul, body: { request_id: id, actual_weight_kg: 2 } });
+  await api.call('PUT', `/collector/requests/${id}/complete`, { cookie: rafiqul }); // 2 × 1.50 = 3.00
+
+  const recordId = w.body.data.record_id;
+  const r = await correct(recordId, { actual_weight_kg: 1.15 });
+  assert.equal(r.status, 200);
+  assert.equal(r.body.data.point_adjustment, '-1.27'); // 1.73 − 3.00 (floating-point maths: −1.28)
+  assert.equal(await recordTotal(recordId), '1.73');
+});

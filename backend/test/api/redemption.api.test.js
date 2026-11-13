@@ -120,6 +120,14 @@ test('two redemptions at the same moment cannot spend the same points', async ()
   assert.equal(await balanceOf(sadia), '50.00');
 });
 
+test('cash is computed with exact decimals: 100.05 points × ৳0.50 = ৳50.03', async () => {
+  await givePoints(5, 100.05);
+  const r = await redeem(sadia, 100.05);
+  assert.equal(r.status, 201);
+  assert.equal(r.body.data.cash_amount, '50.03'); // floating-point maths would give 50.02
+  await decide(r.body.data.redemption_id, { action: 'reject', admin_note: 'Test cleanup refund.' });
+});
+
 test('a Bank account number is accepted for Bank payouts', async () => {
   await givePoints(5, 100);
   const r = await redeem(sadia, 100, 'Bank', '1234-5678-9012');
@@ -203,7 +211,16 @@ test('reject needs a note and refunds the points (from Pending or Approved)', as
   assert.equal(r.status, 409);
 
   const [[n]] = await pool.query("SELECT message FROM notifications WHERE redemption_id = ? AND type = 'REDEMPTION_REJECTED'", [a]);
-  assert.match(n.message, /Invalid bKash wallet number\. 100\.00 points were refunded/);
+  assert.equal(n.message, `Redemption #${a} was rejected and 100.00 points were refunded. Reason: Invalid bKash wallet number.`);
+
+  // A 200-character reason still fits the 255-character notification (MySQL 8 strict mode)
+  await givePoints(5, 100);
+  const c = (await redeem(sadia, 100)).body.data.redemption_id;
+  r = await decide(c, { action: 'reject', admin_note: 'x'.repeat(200) });
+  assert.equal(r.status, 200);
+  const [[long]] = await pool.query("SELECT message FROM notifications WHERE redemption_id = ? AND type = 'REDEMPTION_REJECTED'", [c]);
+  assert.ok(long.message.length <= 255);
+  assert.match(long.message, /100.00 points were refunded. Reason: x+…$/);
 });
 
 test('bad action, unknown id and non-admin are refused', async () => {
