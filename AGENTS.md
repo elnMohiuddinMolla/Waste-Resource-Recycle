@@ -88,7 +88,7 @@ D3 done: `docs/er-diagram.md` (Mermaid ER from `database/schema.sql`), `docs/viv
 
 **Help & support (PRD v1.5.0, FR-22):** public `help.html` (FAQ in `<details>`, admin contact); `support.html` for users and collectors (new ticket with optional related request / cash-out, `?request_id=` pre-selects; my tickets with answers; close); `admin/support.html` (tabs, reply via `ui.formDialog`, close); "Support" in every sidebar; open tickets are a queue on the admin dashboard. Max 5 open tickets per person. An existing database needs `database/migrations/002_add_support_tickets.sql` once.
 
-**Deployment:** Railway, see `docs/deploy-railway.md` (root `package.json` + `railway.json`; env `TRUST_PROXY=1`, `UPLOAD_DIR=/data`; `npm run db:setup` loads the schema once and refuses if tables exist).
+**Deployment:** Railway, see `docs/deploy-railway.md` (root `package.json` build/start scripts, no `railway.json`; env `TRUST_PROXY=1`, `UPLOAD_DIR=/data`; `npm run db:setup` loads the schema once and refuses if tables exist).
 
 **Tests:** `npm test` = unit tests (no database). `npm run test:api` = API tests; they rebuild a separate database `wrr_test` (override with `TEST_DB_NAME`) from `database/*.sql` and refuse to run on `wrr_db`. Add tests for each new module.
 

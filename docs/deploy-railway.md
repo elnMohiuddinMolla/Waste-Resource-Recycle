@@ -6,8 +6,7 @@ Files in the repository that Railway uses:
 
 | File | Purpose |
 |---|---|
-| `package.json` (repository root) | `npm run build` installs `backend/`, `npm start` starts it; Node 22 |
-| `railway.json` | Build and start commands, health check on `/api/v1/categories`, restart on failure |
+| `package.json` (repository root) | Railway runs its `build` script (installs `backend/`) and its `start` script (starts the server); Node 22 |
 | `backend/scripts/db-setup.js` | `npm run db:setup`: loads `schema.sql` + `seed.sql` once (refuses if tables already exist) |
 
 > Railway is a paid service after its free trial credit. Check the current prices on railway.com before you start.
