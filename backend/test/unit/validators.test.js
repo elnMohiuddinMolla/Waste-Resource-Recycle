@@ -22,6 +22,16 @@ test('positive integers', () => {
   assert.equal(v.toPositiveInt(0), null);
   assert.equal(v.toPositiveInt('1.5'), null);
   assert.equal(v.toPositiveInt('abc'), null);
+  assert.equal(v.toPositiveInt(7), 7);
+  // only plain digits, no hex / exponent / booleans / arrays
+  assert.equal(v.toPositiveInt('0x10'), null);
+  assert.equal(v.toPositiveInt('1e3'), null);
+  assert.equal(v.toPositiveInt(true), null);
+  assert.equal(v.toPositiveInt([5]), null);
+  // at most the MySQL INT maximum (a huge ?page= used to break LIMIT/OFFSET)
+  assert.equal(v.toPositiveInt('2147483647'), 2147483647);
+  assert.equal(v.toPositiveInt('2147483648'), null);
+  assert.equal(v.toPositiveInt('1e20'), null);
 });
 
 test('positive amounts are rounded to 2 decimals', () => {

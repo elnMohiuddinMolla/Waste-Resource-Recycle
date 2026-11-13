@@ -76,7 +76,7 @@ All times are Bangladesh time (+06:00). Requests send `YYYY-MM-DDTHH:mm` (or `YY
 | `500 Server Error` | System Exception | Uncaught runtime error (the transaction is rolled back). |
 
 ### 1.5 Paging
-List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is given with each endpoint; any value above **50** is reduced to 50. A non-numeric or negative value falls back to the default.
+List endpoints take `?page=` (default 1) and `?limit=`. The default `limit` is given with each endpoint; any value above **50** is reduced to 50. A value that is not a whole number from 1 to 2,147,483,647 (e.g. `abc`, `-1`, `1e20`) falls back to the default. Path ids follow the same rule: anything else is a 404.
 
 ---
 

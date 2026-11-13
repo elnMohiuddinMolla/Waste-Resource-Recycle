@@ -18,10 +18,17 @@ function isValidEmail(value) {
   return typeof value === 'string' && EMAIL_REGEX.test(value.trim()) && value.trim().length <= 100;
 }
 
-// Returns a positive integer, or null if the value is not one
+// Largest value of a MySQL INT column (all our ids)
+const MAX_INT = 2147483647;
+
+// Returns a positive integer (1 .. MAX_INT), or null if the value is not one.
+// Only plain digits count: "0x10", "1e3" or true are not ids. The upper limit also
+// keeps ?page= small enough for LIMIT/OFFSET (a huge page once gave "1e+21" in the SQL).
 function toPositiveInt(value) {
+  if (typeof value === 'string' && !/^\d+$/.test(value.trim())) return null;
+  if (typeof value !== 'string' && typeof value !== 'number') return null;
   const n = Number(value);
-  return Number.isInteger(n) && n > 0 ? n : null;
+  return Number.isInteger(n) && n > 0 && n <= MAX_INT ? n : null;
 }
 
 // Returns a number > 0 rounded to 2 decimals, or null
