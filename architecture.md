@@ -354,3 +354,6 @@ async function api(path, { method = 'GET', body } = {}) {
 1. Start **MySQL** from the XAMPP Control Panel.
 2. `cd backend && npm install && npm run dev`
 3. Open `http://localhost:5000` — the same port serves pages and API.
+
+### 10.3 Deployment (Railway)
+The same single server runs on Railway with a Railway MySQL and a volume for `UPLOAD_DIR`; see `docs/deploy-railway.md`. Only environment variables differ: `NODE_ENV=production` (Secure cookie), `TRUST_PROXY=1` (one proxy in front, so the login limit counts per visitor) and `UPLOAD_DIR=/data`. The root `package.json` and `railway.json` hold the build/start commands; `npm run db:setup` loads `schema.sql` + `seed.sql` once.

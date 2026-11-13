@@ -21,6 +21,10 @@ if (problem) {
 const app = express();
 
 app.disable('x-powered-by'); // don't advertise "Express" to the world
+// Behind a hosting proxy (Railway, Nginx) set TRUST_PROXY=1, so req.ip is the visitor's
+// address and the login limit (NFR-03) counts per visitor, not per proxy.
+// Leave it unset locally: then nobody can fake their IP with an X-Forwarded-For header.
+if (process.env.TRUST_PROXY) app.set('trust proxy', Number(process.env.TRUST_PROXY));
 app.use(securityHeaders);
 // A pickup request carries a photo (data URL, at most 2 MB decoded): allow 3 MB there only.
 // It must come first: the general parser below then skips the body that was already read.

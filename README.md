@@ -90,6 +90,9 @@ Successfully connected to database: wrr_db
 
 > Open `http://localhost:5000/` for the website. The API lives under `/api/v1`.
 
+### 5. Deploy (optional)
+To put the site online, follow [`docs/deploy-railway.md`](docs/deploy-railway.md): one Railway project with the server, a MySQL database and a volume for photos. `npm run db:setup` loads the tables once.
+
 ## Trying the API
 
 Public endpoints open directly in the browser:
@@ -175,3 +178,4 @@ Waste_Resource_Recycle/
 | [`docs/test-cases.md`](docs/test-cases.md) | Test-case table for the lab report (FR, EC, NFR) |
 | [`docs/er-diagram.md`](docs/er-diagram.md) | Up-to-date ER diagram from `database/schema.sql` |
 | [`docs/viva-notes.md`](docs/viva-notes.md) | Viva preparation: key design points and 20 likely questions |
+| [`docs/deploy-railway.md`](docs/deploy-railway.md) | Putting the site online on Railway (server + MySQL + photo volume) |
