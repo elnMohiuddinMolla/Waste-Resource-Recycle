@@ -18,7 +18,7 @@ A web platform that connects households with local waste collectors for recyclab
 | Frontend (User, Collector, Admin portals) | Done |
 | End-to-end testing, test cases, ER diagram, viva notes | Done |
 
-Progress is tracked step by step in [`prompt.md`](prompt.md).
+Progress is tracked step by step in [`prompt.md`](prompt.md) and on the GitHub project board: **[Waste Resource Recycle board](https://github.com/users/elnMohiuddinMolla/projects/2)** (one issue per task A1–E2, plus the open manual checks).
 
 ## Features
 
