@@ -1,6 +1,6 @@
 # Waste Resource Recycle (WRR)
 
-**🌐 Live demo: https://web-production-68465354.up.railway.app** · 📋 [Project board](https://github.com/users/elnMohiuddinMolla/projects/2)
+**🌐 Live demo: https://waste-resource-recycle.up.railway.app** · 📋 [Project board](https://github.com/users/elnMohiuddinMolla/projects/2)
 
 A web platform that connects households with local waste collectors for recyclable waste pickup. Households request a pickup, a collector weighs the waste on site, and the household earns reward points (actual kg × category rate) that can be redeemed for cash via bKash, Nagad or bank transfer.
 
@@ -95,7 +95,7 @@ Successfully connected to database: wrr_db
 ### 5. Deploy (optional)
 To put the site online, follow [`docs/deploy-railway.md`](docs/deploy-railway.md): one Railway project with the server, a MySQL database and a volume for photos. `npm run db:setup` loads the tables once.
 
-Live site: **https://web-production-68465354.up.railway.app**
+Live site: **https://waste-resource-recycle.up.railway.app**
 
 ## Trying the API
 
