@@ -146,8 +146,8 @@ Repeat M3, M6, M8 and R2 in each browser.
 From `backend/`, with MySQL running:
 
 ```
-npm test                # 22 unit tests
-npm run test:api        # 114 API tests (separate wrr_test database)
+npm test                # 23 unit tests
+npm run test:api        # 116 API tests (separate wrr_test database)
 npm run e2e             # this walkthrough, 45 checks (wrr_test)
 npm run check:frontend  # 453 static checks of the pages (no database)
 npm run perf            # NFR-02 timings (wrr_test)

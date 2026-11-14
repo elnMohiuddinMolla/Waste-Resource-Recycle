@@ -70,7 +70,7 @@ The prompts work in two situations:
 - [x] C14 — Admin: reports (print + CSV export)
 
 **Phase D — Testing & lab report**
-- [x] D1 — End-to-end walkthrough + NFR checks *(API 45/45, static 352/352, Chrome 18/18 + 50 page views; Firefox/Edge and CSV-in-Excel by hand still open in `docs/e2e-walkthrough.md`)*
+- [x] D1 — End-to-end walkthrough + NFR checks *(API 45/45, static 352/352, Chrome 18/18 + 50 page views; Edge checked; Firefox and CSV-in-Excel by hand still open in `docs/e2e-walkthrough.md`)*
 - [x] D2 — Test-case table for the lab report
 - [x] D3 — Documentation sync + viva preparation
 - [x] E1 — Change request: waste photo on pickup requests (PRD v1.4.0, G14): schema + migration, `POST /pickup-requests` `photo`, `GET /pickup-requests/:id/photo`, browser shrink + preview, photo in details / job cards / admin view, tests

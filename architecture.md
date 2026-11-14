@@ -164,7 +164,7 @@ sequenceDiagram
 - Services check ownership: a user can only touch their own requests (`WHERE user_id = ?`), a collector only requests assigned to them (`WHERE collector_id = ?`).
 - `SameSite=Lax` blocks the cookie on cross-site form posts, which covers CSRF for this project.
 - `config/secret.js`: the server refuses to start with a `JWT_SECRET` that is missing, shorter than 32 characters, or the `.env.example` placeholder — a known secret would let anyone sign an admin token.
-- `middleware/securityHeaders.js`: Content-Security-Policy (same-origin scripts/styles only, no framing), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: same-origin`; `X-Powered-By` is disabled. No extra package is needed.
+- `middleware/securityHeaders.js`: Content-Security-Policy (same-origin scripts/styles only, no framing), `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: same-origin`, and `Strict-Transport-Security` (1 year) when the request came over HTTPS; `X-Powered-By` is disabled. No extra package is needed.
 - Login compares the password against a dummy bcrypt hash when the email is unknown, so the response time does not reveal which emails are registered.
 
 ---
@@ -217,7 +217,7 @@ Waste_Resource_Recycle/
 │   │   │   ├── auth.js             # Reads JWT from cookie, re-checks account status
 │   │   │   ├── role.js             # requireRole(...) guards
 │   │   │   ├── rateLimiter.js      # Login limiter (5 failed / 15 min)
-│   │   │   ├── securityHeaders.js  # CSP, nosniff, X-Frame-Options, Referrer-Policy
+│   │   │   ├── securityHeaders.js  # CSP, nosniff, X-Frame-Options, Referrer-Policy, HSTS
 │   │   │   └── error.js            # 404 + central error handler
 │   │   ├── routes/
 │   │   │   ├── auth.routes.js

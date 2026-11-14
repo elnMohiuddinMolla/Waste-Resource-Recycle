@@ -36,14 +36,14 @@ Key rules: a strict 8-transition request state machine, a signed points ledger w
 | Layer | Technology |
 |---|---|
 | Frontend | Plain HTML, CSS, JavaScript (served by the same Express server) |
-| Backend | Node.js 18+, Express 4 — layered `routes → controllers → services → models` |
+| Backend | Node.js 22, Express 4 — layered `routes → controllers → services → models` |
 | Database | MySQL 8.0+ or MariaDB 10.4+ (XAMPP) |
 | Auth | bcryptjs + JWT in an `HttpOnly` cookie |
 
 ## Getting started
 
 ### 1. Requirements
-- [Node.js](https://nodejs.org/) 18 or newer
+- [Node.js](https://nodejs.org/) 22 (LTS); the test scripts need Node 21 or newer
 - [XAMPP](https://www.apachefriends.org/) (only its MySQL/MariaDB is used)
 
 ### 2. Database
@@ -140,7 +140,7 @@ Run from `backend/`:
 
 The API and performance tests rebuild a **separate** database, `wrr_test`, from `database/*.sql`. They refuse to run against `wrr_db`, so your data is never touched.
 
-Latest results: 22 unit + 114 API tests passing; slowest core call ~150 ms (limit 2 s) and slowest report ~110 ms (limit 5 s) with 50 concurrent users.
+Latest results: 23 unit + 116 API tests passing; slowest core call ~150 ms (limit 2 s) and slowest report ~110 ms (limit 5 s) with 50 concurrent users.
 
 ## Project structure
 

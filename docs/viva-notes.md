@@ -116,7 +116,7 @@ When the collector records the weight, the category's current `points_per_kg` is
 16. **What happens when the admin corrects a weight?** In one transaction: the new weight is saved, an ADJUST row of `ROUND(new kg × rate, 2) − points already posted` is written, and the status log gets "Weight corrected from X kg to Y kg" with the admin's id.
 
 17. **How did you test it?**
-    - 22 unit tests and 114 API tests on a separate `wrr_test` database, all passing.
+    - 23 unit tests and 116 API tests on a separate `wrr_test` database, all passing.
     - A 45-check end-to-end story.
     - 352 static page checks.
     - A real Chrome run of the browser checklist at 360 px and 1280 px.
@@ -150,5 +150,5 @@ After implementation the team decided collectors should see the waste before tra
 | Request statuses / transitions | 7 / 8 |
 | Notification types | 12 |
 | Reports | 5 |
-| Tests | 22 unit + 114 API (100 % pass), 45 e2e checks |
+| Tests | 23 unit + 116 API (100 % pass), 45 e2e checks |
 | Seed rates | Plastic 10, Paper 6, E-waste 25, Metal 15, Glass 4, Other 5 points/kg; ৳0.50 per point, minimum 100 points |

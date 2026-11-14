@@ -20,7 +20,7 @@
 - **Mechanism:** the JWT is sent only in a cookie: `token=<JWT>; HttpOnly; SameSite=Lax; Path=/; Max-Age=604800` (7 days), plus `Secure` when served over HTTPS. The token is never returned in a response body, and frontend JavaScript never reads it. Because pages and API share one origin, `fetch` sends the cookie automatically (`credentials: 'same-origin'`).
 - **Testing tools:** Postman/Thunder Client keep the cookie after calling `/auth/login`.
 - **Login rate limit:** 5 failed attempts per 15 minutes per IP, then HTTP 429.
-- **Security headers (every response):** `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: same-origin`. No `X-Powered-By` header.
+- **Security headers (every response):** `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: same-origin`; over HTTPS (deployment) also `Strict-Transport-Security: max-age=31536000`. No `X-Powered-By` header.
 - **JWT secret:** the server will not start if `JWT_SECRET` is missing, shorter than 32 characters, or the `.env.example` placeholder.
 - **JWT Payload Schema:**
   ```json

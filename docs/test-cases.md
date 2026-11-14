@@ -10,9 +10,9 @@
 
 | Suite | Command | Tests | Passed | Failed | Pass rate |
 |---|---|:---:|:---:|:---:|:---:|
-| Unit tests (no database) | `npm test` | 22 | 22 | 0 | 100 % |
-| API tests (`wrr_test` database) | `npm run test:api` | 114 | 114 | 0 | 100 % |
-| **Automated total (unit + API)** | | **136** | **136** | **0** | **100 %** |
+| Unit tests (no database) | `npm test` | 23 | 23 | 0 | 100 % |
+| API tests (`wrr_test` database) | `npm run test:api` | 116 | 116 | 0 | 100 % |
+| **Automated total (unit + API)** | | **139** | **139** | **0** | **100 %** |
 | End-to-end story through the API | `npm run e2e` | 45 checks | 45 | 0 | 100 % |
 | Static page checks (26 pages, 32 scripts) | `npm run check:frontend` | 453 checks | 453 | 0 | 100 % |
 | Browser story in Chrome (D1) | `docs/e2e-walkthrough.md` §2 | 18 checks | 18 | 0 | 100 % |
@@ -132,8 +132,8 @@ Plastic is 10.00 points/kg; the active rule is ৳0.50 per point with a minimum 
 From `backend/`, with MySQL running:
 
 ```
-npm test                # 22 unit tests
-npm run test:api        # 114 API tests (separate wrr_test database)
+npm test                # 23 unit tests
+npm run test:api        # 116 API tests (separate wrr_test database)
 npm run e2e             # 45 end-to-end checks (wrr_test)
 npm run check:frontend  # 453 static page checks (no database)
 npm run perf            # NFR-02 timings (wrr_test)

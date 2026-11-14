@@ -24,6 +24,9 @@ function securityHeaders(req, res, next) {
   res.setHeader('X-Content-Type-Options', 'nosniff'); // never guess a file's type
   res.setHeader('X-Frame-Options', 'DENY');           // no embedding in other sites (clickjacking)
   res.setHeader('Referrer-Policy', 'same-origin');    // don't leak our URLs to other sites
+  // HTTPS only (deployment, NFR-03.2): the browser must use HTTPS for this site for one year.
+  // req.secure is true behind Railway's HTTPS proxy (TRUST_PROXY=1), false on localhost.
+  if (req.secure) res.setHeader('Strict-Transport-Security', 'max-age=31536000');
   next();
 }
 
