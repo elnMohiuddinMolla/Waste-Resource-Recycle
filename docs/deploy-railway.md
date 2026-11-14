@@ -95,3 +95,4 @@ The database is still empty. A new Railway MySQL is only reachable inside Railwa
 | Login works but you are logged out at once | The site was opened over `http://`; use the `https://` address |
 | Every visitor gets "Too many failed login attempts" together | `TRUST_PROXY=1` is missing |
 | Photos disappear after a redeploy | Volume not attached at `/data`, or `UPLOAD_DIR` is not `/data` |
+| A push to `main` does not start a deploy | The Railway GitHub App is not installed for the repo: GitHub → Settings → Applications → Installed GitHub Apps must list **Railway** with access to `Waste-Resource-Recycle` (install it from github.com/apps/railway-app). Then web service → Settings → Source shows branch `main` |
