@@ -1,5 +1,7 @@
 # Waste Resource Recycle (WRR)
 
+**🌐 Live demo: https://web-production-68465354.up.railway.app** · 📋 [Project board](https://github.com/users/elnMohiuddinMolla/projects/2)
+
 A web platform that connects households with local waste collectors for recyclable waste pickup. Households request a pickup, a collector weighs the waste on site, and the household earns reward points (actual kg × category rate) that can be redeemed for cash via bKash, Nagad or bank transfer.
 
 **CSE-3112 Software Engineering Lab** · Faridpur Engineering College
