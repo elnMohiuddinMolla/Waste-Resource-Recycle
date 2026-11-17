@@ -397,7 +397,3 @@ Waste_Resource_Recycle/
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for complete details.
 
 ---
-
-<div align="center">
-  <sub>Built with ❤️ for CSE-3112 Software Engineering Lab · Faridpur Engineering College</sub>
-</div>
