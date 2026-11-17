@@ -112,13 +112,13 @@ The system is deployed and active in cloud production:
 
 ```mermaid
 graph TD
-    subgraph Client ["🖥️ Presentation Layer (Vanilla Web Standards)"]
+    subgraph Client ["🖥️ Presentation Layer: Vanilla Web Standards"]
         UP["Citizen Portal (user)"]
         CP["Collector Portal (collector)"]
         AP["Municipal Portal (admin)"]
     end
 
-    subgraph Server ["⚡ Application Layer (Express.js 4 & Node.js 22)"]
+    subgraph Server ["⚡ Application Layer: Express.js 4 & Node.js 22"]
         MW["Security Middleware (JWT Cookie, RBAC, Rate-Limit, CSP)"]
         CTRL["Controllers (Input Validation & HTTP Envelopes)"]
         SRV["Domain Services (Lifecycle State Machine & Business Logic)"]
@@ -126,34 +126,34 @@ graph TD
         MOD["Data Models (Parameterized SQL via mysql2)"]
     end
 
-    subgraph DB ["💾 Persistence Layer (MySQL 8.0 / MariaDB 10.4)"]
-        TABLES[("11 Normalized Relational Tables (InnoDB, Strict FKs)")]
+    subgraph DB ["💾 Persistence Layer: MySQL 8.0 / MariaDB 10.4"]
+        TABLES[("11 Normalized Relational Tables: InnoDB, Strict FKs")]
     end
 
-    Client -->|HTTPS / JSON / SameSite Cookie| MW
+    Client -->|"HTTPS / JSON / SameSite Cookie"| MW
     MW --> CTRL
     CTRL --> SRV
     SRV --> LEDGER
     SRV --> MOD
-    MOD -->|Connection Pool (BST UTC+6)| TABLES
+    MOD -->|"Connection Pool: BST UTC+6"| TABLES
 ```
 
 ### 🔄 Formal 8-Transition Request State Machine (PRD §5.1)
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Pending: Citizen submits request (FR-03)
-    Pending --> Assigned: Admin dispatches collector (FR-07)
-    Pending --> Cancelled: Citizen cancels while pending (FR-06)
+    [*] --> Pending: Citizen submits request
+    Pending --> Assigned: Admin dispatches collector
+    Pending --> Cancelled: Citizen cancels while pending
     
-    Assigned --> Accepted: Collector accepts task (FR-08)
-    Assigned --> Rejected: Collector declines with note (FR-08)
-    Rejected --> Assigned: Admin reassigns collector (FR-07)
+    Assigned --> Accepted: Collector accepts task
+    Assigned --> Rejected: Collector declines with note
+    Rejected --> Assigned: Admin reassigns collector
     
-    Accepted --> Collected: Collector records scale weight (FR-09)
-    Accepted --> Cancelled: Collector aborts on-site with note (FR-08)
+    Accepted --> Collected: Collector records scale weight
+    Accepted --> Cancelled: Collector aborts on-site with note
     
-    Collected --> Completed: Collector confirms & reward is credited (FR-10)
+    Collected --> Completed: Collector confirms & reward posted
     
     Completed --> [*]
     Cancelled --> [*]
