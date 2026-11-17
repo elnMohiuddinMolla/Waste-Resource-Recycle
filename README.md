@@ -1,4 +1,4 @@
-﻿# ♻️ Waste Resource Recycle (WRR)
+# ♻️ Waste Resource Recycle (WRR)
 ### *Smart Municipal Waste Management & Recyclable Reward Incentive Platform*
 
 <p align="center">
