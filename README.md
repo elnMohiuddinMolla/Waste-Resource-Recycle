@@ -122,7 +122,8 @@ Cancelled <───────────────── Rejected ──(A
 | Layer | Technology | Specification / Details |
 |---|---|---|
 | **Runtime** | [Node.js](https://nodejs.org/) | v22.x LTS (compatible with Node 20+) |
-| **Backend Framework** | [Express.js](https://expressjs.com/) | v4.x — Layered architecture (outes → controllers → services → models) |
+| **Backend Framework** | [Express.js](https://expressjs.com/) | v4.x — Layered architecture (
+outes → controllers → services → models) |
 | **Database** | [MariaDB](https://mariadb.org/) / [MySQL](https://www.mysql.com/) | MariaDB 10.4+ (XAMPP local) or MySQL 8.0+ (InnoDB, UTF8mb4) |
 | **Authentication** | [JWT](https://jwt.io/) + [bcryptjs](https://github.com/dcodeIO/bcrypt.js) | Stateless JSON Web Tokens stored in HttpOnly, SameSite=Lax cookies |
 | **Frontend** | Vanilla Web Standards | HTML5, CSS3 Custom Properties, Vanilla ES6+ JS (Zero frameworks for academic viva transparency) |
@@ -141,7 +142,7 @@ The system is deployed and active in production:
 
 | Email | Role | Operational Role / Scope |
 |---|---|---|
-| dmin@wrr.com | **Administrator** | Municipal Headquarters, access to all queues, redemptions, settings & reports |
+| admin@wrr.com | **Administrator** | Municipal Headquarters, access to all queues, redemptions, settings & reports |
 | collector1@wrr.com | **Collector** | Zone 1 (Baitul Aman), pre-assigned active collection task |
 | collector2@wrr.com | **Collector** | Zone 2 (Goalchamot), secondary field operative |
 | 	anvir@gmail.com | **General User** | Zone 1 Resident, pre-credited wallet balance (55.00 points), verified history |
