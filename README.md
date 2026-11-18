@@ -112,13 +112,13 @@ The system is deployed and active in cloud production:
 
 ```mermaid
 graph TD
-    subgraph Client ["🖥️ Presentation Layer: Vanilla Web Standards"]
+    subgraph Client ["Presentation Layer: Vanilla Web Standards"]
         UP["Citizen Portal (user)"]
         CP["Collector Portal (collector)"]
         AP["Municipal Portal (admin)"]
     end
 
-    subgraph Server ["⚡ Application Layer: Express.js 4 & Node.js 22"]
+    subgraph Server ["Application Layer: Express.js 4 & Node.js 22"]
         MW["Security Middleware (JWT Cookie, RBAC, Rate-Limit, CSP)"]
         CTRL["Controllers (Input Validation & HTTP Envelopes)"]
         SRV["Domain Services (Lifecycle State Machine & Business Logic)"]
@@ -126,7 +126,7 @@ graph TD
         MOD["Data Models (Parameterized SQL via mysql2)"]
     end
 
-    subgraph DB ["💾 Persistence Layer: MySQL 8.0 / MariaDB 10.4"]
+    subgraph DB ["Persistence Layer: MySQL 8.0 / MariaDB 10.4"]
         TABLES[("11 Normalized Relational Tables: InnoDB, Strict FKs")]
     end
 
