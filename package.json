@@ -3,8 +3,12 @@
   "private": true,
   "description": "Deployment entry point (Railway): installs and starts the server in backend/",
   "scripts": {
+    "dev": "npm run dev --prefix backend",
+    "start": "npm start --prefix backend",
     "build": "npm ci --prefix backend --omit=dev",
-    "start": "npm start --prefix backend"
+    "test": "npm test --prefix backend",
+    "test:api": "npm run test:api --prefix backend",
+    "e2e": "npm run e2e --prefix backend"
   },
   "engines": {
     "node": "22.x"
